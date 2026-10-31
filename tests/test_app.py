@@ -60,7 +60,11 @@ class AppTests(unittest.TestCase):
     def test_live_selection_and_comparison_with_mocked_provider(self):
         row=StoreProduct('CU','실시간 모의 매장','서울 관악구','검증용 음료',barcode='TEST8801',price=1800,
                          stock=5,promotion='1+1',store_code='L1',data_source='LIVE',latitude=37.4582,longitude=126.9522,
-                         stock_updated_at=datetime.now().astimezone().isoformat())
+                         stock_updated_at=datetime.now().astimezone().isoformat(),
+                         price_updated_at=datetime.now().astimezone().isoformat(),
+                         promotion_updated_at=datetime.now().astimezone().isoformat(),
+                         price_source='모의 제공자',stock_source='모의 제공자',promotion_source='모의 제공자',
+                         price_data_status='LIVE',stock_data_status='LIVE',promotion_data_status='LIVE')
         with patch('core.data.data_manager.DataManager.search_all',return_value=([row],[DataLoadResult('CU',[row],'LIVE','모의 제공자')])):
             at=self.app();at.radio(key='mode').set_value('LIVE').run()
             at.text_input(key='live_keyword').set_value('검증용 음료')

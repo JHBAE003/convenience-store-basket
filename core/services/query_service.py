@@ -9,11 +9,11 @@ from core.data.data_manager import DataManager
 from core.data.promotion_manager import PromotionManager
 
 
-def new_session_manager(mode='TEST'):
+def new_session_manager(mode='TEST', test_csv=None):
     directory=TemporaryDirectory(prefix='basket_')
     root=Path(directory.name)
     promotion=PromotionManager(cache_path=root/'promotions.json')
-    manager=DataManager(TEST_DATA_PATH,mode,cache_path=root/'inventory.json',
+    manager=DataManager(test_csv or TEST_DATA_PATH,mode,cache_path=root/'inventory.json',
                         cache_ttl_seconds=300,promotion_manager=promotion)
     return manager,directory
 

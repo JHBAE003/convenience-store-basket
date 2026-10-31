@@ -1,0 +1,21 @@
+brand,barcode,product_code,product_name,group,amount,unit
+CU,DEMO-DRINK,CU-drink,시연 음료 250ml,시연 음료 대체군,250,ml
+CU,DEMO-NOODLE,CU-noodle,시연 컵라면 65g,시연 컵라면 대체군,65,g
+CU,DEMO-SNACK,CU-snack,시연 과자 60g,시연 과자 대체군,60,g
+CU,DEMO-ALT-DRINK,CU-alt-drink,시연 대체 음료 250ml,시연 음료 대체군,250,ml
+CU,DEMO-ALT-SNACK,CU-alt-snack,시연 대체 과자 60g,시연 과자 대체군,60,g
+GS25,DEMO-DRINK,GS25-drink,시연 음료 250ml,시연 음료 대체군,250,ml
+GS25,DEMO-NOODLE,GS25-noodle,시연 컵라면 65g,시연 컵라면 대체군,65,g
+GS25,DEMO-SNACK,GS25-snack,시연 과자 60g,시연 과자 대체군,60,g
+GS25,DEMO-ALT-DRINK,GS25-alt-drink,시연 대체 음료 250ml,시연 음료 대체군,250,ml
+GS25,DEMO-ALT-SNACK,GS25-alt-snack,시연 대체 과자 60g,시연 과자 대체군,60,g
+세븐일레븐,DEMO-DRINK,세븐일레븐-drink,시연 음료 250ml,시연 음료 대체군,250,ml
+세븐일레븐,DEMO-NOODLE,세븐일레븐-noodle,시연 컵라면 65g,시연 컵라면 대체군,65,g
+세븐일레븐,DEMO-SNACK,세븐일레븐-snack,시연 과자 60g,시연 과자 대체군,60,g
+세븐일레븐,DEMO-ALT-DRINK,세븐일레븐-alt-drink,시연 대체 음료 250ml,시연 음료 대체군,250,ml
+세븐일레븐,DEMO-ALT-SNACK,세븐일레븐-alt-snack,시연 대체 과자 60g,시연 과자 대체군,60,g
+이마트24,DEMO-DRINK,이마트24-drink,시연 음료 250ml,시연 음료 대체군,250,ml
+이마트24,DEMO-NOODLE,이마트24-noodle,시연 컵라면 65g,시연 컵라면 대체군,65,g
+이마트24,DEMO-SNACK,이마트24-snack,시연 과자 60g,시연 과자 대체군,60,g
+이마트24,DEMO-ALT-DRINK,이마트24-alt-drink,시연 대체 음료 250ml,시연 음료 대체군,250,ml
+이마트24,DEMO-ALT-SNACK,이마트24-alt-snack,시연 대체 과자 60g,시연 과자 대체군,60,g

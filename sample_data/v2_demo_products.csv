@@ -1,0 +1,31 @@
+﻿brand,store_name,address,product_name,barcode,price,promotion,stock,latitude,longitude,store_code,product_code,updated_at,stock_known,stock_quantity_exact,promotion_known
+CU,가상 CU A점,서울 관악구 시연 주소 A,시연 음료 250ml,DEMO-DRINK,1800,1+1,10,37.458615,126.952661,A,CU-drink,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU A점,서울 관악구 시연 주소 A,시연 컵라면 65g,DEMO-NOODLE,1500,,10,37.458615,126.952661,A,CU-noodle,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU A점,서울 관악구 시연 주소 A,시연 과자 60g,DEMO-SNACK,2000,,10,37.458615,126.952661,A,CU-snack,2026-10-31T10:00:00+09:00,true,true,true
+GS25,가상 GS25 B점,서울 관악구 시연 주소 B,시연 음료 250ml,DEMO-DRINK,1600,,10,37.459115,126.95316100000001,B,GS25-drink,2026-10-31T10:00:00+09:00,true,true,true
+GS25,가상 GS25 B점,서울 관악구 시연 주소 B,시연 컵라면 65g,DEMO-NOODLE,1400,,10,37.459115,126.95316100000001,B,GS25-noodle,2026-10-31T10:00:00+09:00,true,true,true
+GS25,가상 GS25 B점,서울 관악구 시연 주소 B,시연 과자 60g,DEMO-SNACK,1900,,10,37.459115,126.95316100000001,B,GS25-snack,2026-10-31T10:00:00+09:00,true,true,true
+세븐일레븐,가상 세븐일레븐 C점,서울 관악구 시연 주소 C,시연 음료 250ml,DEMO-DRINK,1500,1+1,1,37.459615,126.953661,C,세븐일레븐-drink,2026-10-31T10:00:00+09:00,true,true,true
+세븐일레븐,가상 세븐일레븐 C점,서울 관악구 시연 주소 C,시연 컵라면 65g,DEMO-NOODLE,1300,,10,37.459615,126.953661,C,세븐일레븐-noodle,2026-10-31T10:00:00+09:00,true,true,true
+세븐일레븐,가상 세븐일레븐 C점,서울 관악구 시연 주소 C,시연 과자 60g,DEMO-SNACK,1800,,10,37.459615,126.953661,C,세븐일레븐-snack,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU D점,서울 관악구 시연 주소 D,시연 음료 250ml,DEMO-DRINK,1800,1+1,0,37.460115,126.954161,D,CU-drink,2026-10-31T10:00:00+09:00,false,true,true
+CU,가상 CU D점,서울 관악구 시연 주소 D,시연 컵라면 65g,DEMO-NOODLE,1500,,10,37.460115,126.954161,D,CU-noodle,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU D점,서울 관악구 시연 주소 D,시연 과자 60g,DEMO-SNACK,2000,,10,37.460115,126.954161,D,CU-snack,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU E점,서울 관악구 시연 주소 E,시연 음료 250ml,DEMO-DRINK,1800,1+1,10,37.460615,126.954661,E,CU-drink,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU E점,서울 관악구 시연 주소 E,시연 컵라면 65g,DEMO-NOODLE,0,,10,37.460615,126.954661,E,CU-noodle,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU E점,서울 관악구 시연 주소 E,시연 과자 60g,DEMO-SNACK,2000,,10,37.460615,126.954661,E,CU-snack,2026-10-31T10:00:00+09:00,true,true,true
+이마트24,가상 이마트24 F점,서울 관악구 시연 주소 F,시연 음료 250ml,DEMO-DRINK,1800,1+1,10,37.461115,126.955161,F,이마트24-drink,2026-10-31T10:00:00+09:00,true,true,false
+이마트24,가상 이마트24 F점,서울 관악구 시연 주소 F,시연 컵라면 65g,DEMO-NOODLE,1500,,10,37.461115,126.955161,F,이마트24-noodle,2026-10-31T10:00:00+09:00,true,true,true
+이마트24,가상 이마트24 F점,서울 관악구 시연 주소 F,시연 과자 60g,DEMO-SNACK,2000,,10,37.461115,126.955161,F,이마트24-snack,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU A점,서울 관악구 시연 주소 A,시연 대체 음료 250ml,DEMO-ALT-DRINK,1600,1+1,10,37.458615,126.952661,A,CU-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU A점,서울 관악구 시연 주소 A,시연 대체 과자 60g,DEMO-ALT-SNACK,1800,,10,37.458615,126.952661,A,CU-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
+GS25,가상 GS25 B점,서울 관악구 시연 주소 B,시연 대체 음료 250ml,DEMO-ALT-DRINK,1500,1+1,10,37.459115,126.95316100000001,B,GS25-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+GS25,가상 GS25 B점,서울 관악구 시연 주소 B,시연 대체 과자 60g,DEMO-ALT-SNACK,1700,,10,37.459115,126.95316100000001,B,GS25-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
+세븐일레븐,가상 세븐일레븐 C점,서울 관악구 시연 주소 C,시연 대체 음료 250ml,DEMO-ALT-DRINK,1400,1+1,10,37.459615,126.953661,C,세븐일레븐-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+세븐일레븐,가상 세븐일레븐 C점,서울 관악구 시연 주소 C,시연 대체 과자 60g,DEMO-ALT-SNACK,1600,,10,37.459615,126.953661,C,세븐일레븐-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU D점,서울 관악구 시연 주소 D,시연 대체 음료 250ml,DEMO-ALT-DRINK,1600,1+1,10,37.460115,126.954161,D,CU-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU D점,서울 관악구 시연 주소 D,시연 대체 과자 60g,DEMO-ALT-SNACK,1800,,10,37.460115,126.954161,D,CU-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU E점,서울 관악구 시연 주소 E,시연 대체 음료 250ml,DEMO-ALT-DRINK,1600,1+1,10,37.460615,126.954661,E,CU-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+CU,가상 CU E점,서울 관악구 시연 주소 E,시연 대체 과자 60g,DEMO-ALT-SNACK,1800,,10,37.460615,126.954661,E,CU-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
+이마트24,가상 이마트24 F점,서울 관악구 시연 주소 F,시연 대체 음료 250ml,DEMO-ALT-DRINK,1600,1+1,10,37.461115,126.955161,F,이마트24-alt-drink,2026-10-31T10:00:00+09:00,true,true,true
+이마트24,가상 이마트24 F점,서울 관악구 시연 주소 F,시연 대체 과자 60g,DEMO-ALT-SNACK,1800,,10,37.461115,126.955161,F,이마트24-alt-snack,2026-10-31T10:00:00+09:00,true,true,true
