@@ -22,7 +22,7 @@ class QueryServiceTests(unittest.TestCase):
     def test_unpriced_rows_optional_and_ttl_refresh(self):
         manager=self.manager()
         row=StoreProduct('CU','점포','주소','음료',price=0,stock=2,store_code='A')
-        with patch.object(manager,'_search_inventory_tracks',return_value=[row]) as query:
+        with patch.object(manager,'_query_inventory',return_value=([row],'',[],{})) as query:
             with patch('core.data.data_manager.time.time',return_value=1000):
                 self.assertEqual(manager.search_all('음료',37,127,['CU'])[0],[])
             with patch('core.data.data_manager.time.time',return_value=1200):
@@ -35,11 +35,11 @@ class QueryServiceTests(unittest.TestCase):
     def test_force_refresh_and_cache_failure(self):
         manager=self.manager()
         row=StoreProduct('CU','A','주소','음료',price=1000,stock=2,store_code='A')
-        with patch.object(manager,'_search_inventory_tracks',return_value=[row]) as query:
+        with patch.object(manager,'_query_inventory',return_value=([row],'',[],{})) as query:
             manager.search_all('음료',37,127,['CU'])
             manager.search_all('음료',37,127,['CU'],force_refresh=True)
             self.assertEqual(query.call_count,2)
-        with patch.object(manager,'_search_inventory_tracks',side_effect=RuntimeError('offline')):
+        with patch.object(manager,'_query_inventory',side_effect=RuntimeError('offline')):
             rows,statuses=manager.search_all('음료',37,127,['CU'],force_refresh=True)
         self.assertEqual(statuses[0].source,'CACHE')
         self.assertEqual(rows[0].data_source,'CACHE')

@@ -1,0 +1,16 @@
+{
+  "official_url": "https://company.lottechilsung.co.kr/kor/company/tasteworld/view.do?detailsKey=29",
+  "verification": "parent official search excerpt: 펩시; #펩시 #음료 #롯데칠성음료",
+  "independent_checks": [
+    {
+      "method": "web open",
+      "result": "502"
+    },
+    {
+      "method": "Python GET",
+      "requests": 1,
+      "result": "local certificate verification failed; no body; verification not bypassed"
+    }
+  ],
+  "design_scope": "manual confirmation only; observed retailer labels; no automatic manufacturer alias map"
+}

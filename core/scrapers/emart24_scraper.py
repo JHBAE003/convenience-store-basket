@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 import requests
 
 from core.models import StoreProduct
+from core.scrapers.event_metadata import checked_now, event_metadata
 
 
 class _ProductCardParser(HTMLParser):
@@ -26,7 +27,7 @@ class _ProductCardParser(HTMLParser):
         attributes = dict(attrs)
         classes = attributes.get("class", "")
         if tag == "div" and "itemWrap" in classes.split():
-            self.card = {"name": "", "prices": [], "labels": [], "images": []}
+            self.card = {"name": "", "prices": [], "labels": [], "images": [], "period": ""}
             self.cards.append(self.card)
             self.card_depth = 1
             self.stack = [(tag, classes)]
@@ -38,8 +39,11 @@ class _ProductCardParser(HTMLParser):
         self.stack.append((tag, classes))
         if tag == "img" and attributes.get("src"):
             self.card["images"].append(attributes["src"])
-        if tag == "span" and any(label in classes.split() for label in ("sale", "gola", "event")):
+        if tag == "span" and any(label in classes.split() for label in ("onepl", "twopl", "threepl", "thrpl", "sale", "gola", "event")):
             self.capture = "label"
+            self.buffer = ""
+        elif tag == "span" and any("itemDate" in parent_class.split() for _, parent_class in self.stack[:-1]):
+            self.capture = "period"
             self.buffer = ""
         elif tag == "a" and "price" in classes.split():
             self.capture = "price"
@@ -54,9 +58,6 @@ class _ProductCardParser(HTMLParser):
         value = data.strip()
         if not value:
             return
-        for tag, classes in self.stack:
-            if tag == "span" and any(label in classes.split() for label in ("sale", "gola", "event")):
-                self.card["labels"].append(value)
         if self.capture:
             self.buffer += value
 
@@ -69,6 +70,10 @@ class _ProductCardParser(HTMLParser):
                 self.card["name"] = value
             elif self.capture == "price" and value:
                 self.card["prices"].append(value)
+            elif self.capture == "label" and value:
+                self.card["labels"].append(value)
+            elif self.capture == "period" and value:
+                self.card["period"] = value
             self.capture = None
             self.buffer = ""
         if tag == "div":
@@ -91,11 +96,11 @@ class Emart24PromotionScraper:
 
     def search(self, keyword: str) -> list[StoreProduct]:
         query = self._normalize(keyword)
-        timestamp = datetime.now().astimezone().isoformat(timespec="seconds")
+        timestamp = checked_now()
         result: dict[tuple[str, str], StoreProduct] = {}
-        # These category IDs are read from the public links rendered by the
-        # official page: 1+1, 2+1, 3+1, sale, and mix-and-match.
-        categories = ((1, "1+1"), (2, "2+1"), (3, "3+1"), (4, "세일"), (12, "골라담기"))
+        # The official page renders the event label on each card. One targeted
+        # all-benefits search replaces five repeated category searches.
+        categories = ((0, ""),)
         for index, (category, category_label) in enumerate(categories):
             if index:
                 time.sleep(0.2)
@@ -121,15 +126,24 @@ class Emart24PromotionScraper:
                     continue
                 labels = list(dict.fromkeys(str(x).strip() for x in card["labels"] if str(x).strip()))
                 promotion = labels[-1] if labels else category_label
+                promotion = re.sub(r"\s+", "", promotion)
                 current_price = prices[-1] if len(prices) > 1 else prices[0]
                 record = StoreProduct(
                     brand="이마트24", store_name="", address="", product_name=name,
-                    barcode=code, product_code=code, price=current_price, promotion=promotion,
-                    promotion_known=True, stock=0, stock_known=False,
-                    data_source="LIVE", updated_at=timestamp, price_updated_at=timestamp,
+                    barcode="", product_code=code, price=current_price, promotion=promotion,
+                    promotion_known=bool(promotion), stock=0, stock_known=False,
+                    data_source="LIVE", updated_at=timestamp,
                     price_source="이마트24 공식 행사 페이지", promotion_source="이마트24 공식 행사 페이지",
-                    price_data_status="LIVE", promotion_data_status="LIVE", image_url=image,
+                    price_data_status="REFERENCE", promotion_data_status="LIVE" if promotion else "UNKNOWN", image_url=image,
+                    **event_metadata(promotion, timestamp, self.URL, period_text=card["period"]),
                 )
+                has_next_page = bool(re.search(
+                    r'(?:[?&](?:amp;)?(?:page|page_no|pageNo)=2(?:\D|$)|(?:goPage|pageMove)\s*\(\s*["\']?2\b)',
+                    response.text, re.I))
+                # Do not claim full coverage when a full page has no reliable
+                # pagination marker. A partial list still supplies reference cards.
+                record.raw_payload["collection_complete"] = not (has_next_page or len(parser.cards) >= 20)
+                record.raw_payload['identifier_source'] = 'official_image_asset'
                 result[(code or self._normalize(name), promotion)] = record
         return list(result.values())
 

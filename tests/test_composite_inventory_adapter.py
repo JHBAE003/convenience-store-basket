@@ -117,11 +117,11 @@ class CompositeInventoryAdapterTests(unittest.TestCase):
         self.assertEqual(rows[0].stock, 2)
         self.assertEqual(rows[0].product_name, "콜라 1.5L")
 
-    def test_http_cache_age_is_used_as_observation_time(self):
+    def test_http_cache_age_is_not_invented_as_source_observation_time(self):
         observed = CompositeInventoryAdapter._source_timestamp({
             "_sourceMeta": {"date": "Thu, 15 Oct 2026 00:00:00 GMT", "age": "60"},
         }, "fallback")
-        self.assertEqual(observed, "2026-10-14T23:59:00+00:00")
+        self.assertEqual(observed, "")
 
     def test_cu_rest_payload_uses_same_product_store_join(self):
         from core.data.live_mcp_adapter import DaisoMcpAdapter

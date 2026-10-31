@@ -1,0 +1,505 @@
+[
+  {
+    "brand": "GS25",
+    "tool": "search_products",
+    "arguments": {
+      "service": "gs25",
+      "keyword": "핫식스",
+      "limit": 3,
+      "timeoutMs": 8000
+    },
+    "request_count": 1,
+    "elapsed_ms": 2513.3,
+    "success": true,
+    "response": {
+      "keyword": "핫식스",
+      "count": 3,
+      "products": [
+        {
+          "itemCode": "8801056240998",
+          "itemName": "롯데)핫식스더킹그레이프355ML",
+          "shortItemName": "핫식스더킹그레",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240123_236992.jpg",
+          "rating": 4.9,
+          "stockCheckEnabled": false
+        },
+        {
+          "itemCode": "8801056912987",
+          "itemName": "롯데)핫식스더킹프로즌블루355ML",
+          "shortItemName": "핫식스프로즌",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260908_445983.jpg",
+          "rating": 4.9,
+          "stockCheckEnabled": false
+        },
+        {
+          "itemCode": "8801056249212",
+          "itemName": "롯데)핫식스더킹애플홀릭355ML",
+          "shortItemName": "핫식스더킹애플",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20250512_315913.jpg",
+          "rating": 4.9,
+          "stockCheckEnabled": false
+        }
+      ],
+      "note": "재고 확인 시 itemCode를 gs25_check_inventory에 전달하면 정확한 상품 재고를 조회할 수 있습니다.",
+      "standard": {
+        "products": [
+          {
+            "code": "8801056240998",
+            "name": "롯데)핫식스더킹그레이프355ML",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240123_236992.jpg",
+            "raw": {
+              "itemCode": "8801056240998",
+              "itemName": "롯데)핫식스더킹그레이프355ML",
+              "shortItemName": "핫식스더킹그레",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240123_236992.jpg",
+              "rating": 4.9,
+              "stockCheckEnabled": false
+            }
+          },
+          {
+            "code": "8801056912987",
+            "name": "롯데)핫식스더킹프로즌블루355ML",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260908_445983.jpg",
+            "raw": {
+              "itemCode": "8801056912987",
+              "itemName": "롯데)핫식스더킹프로즌블루355ML",
+              "shortItemName": "핫식스프로즌",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260908_445983.jpg",
+              "rating": 4.9,
+              "stockCheckEnabled": false
+            }
+          },
+          {
+            "code": "8801056249212",
+            "name": "롯데)핫식스더킹애플홀릭355ML",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20250512_315913.jpg",
+            "raw": {
+              "itemCode": "8801056249212",
+              "itemName": "롯데)핫식스더킹애플홀릭355ML",
+              "shortItemName": "핫식스더킹애플",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20250512_315913.jpg",
+              "rating": 4.9,
+              "stockCheckEnabled": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "세븐일레븐",
+    "tool": "search_products",
+    "arguments": {
+      "service": "seveneleven",
+      "query": "신라면",
+      "size": 3,
+      "page": 1,
+      "timeoutMs": 8000
+    },
+    "request_count": 1,
+    "elapsed_ms": 2318.2,
+    "success": true,
+    "response": {
+      "query": "신라면",
+      "page": 1,
+      "size": 3,
+      "sort": "recommend",
+      "totalCount": 33,
+      "count": 3,
+      "collectionIds": [
+        "pickup",
+        "reservation",
+        "giftcard",
+        "subscribe",
+        "coupon",
+        "offline"
+      ],
+      "appliedQueries": [
+        "신라면"
+      ],
+      "products": [
+        {
+          "productNo": "3042495",
+          "itemCode": "8801043014809",
+          "itemName": "농심)신라면120g",
+          "salePrice": 1000,
+          "originalPrice": 1000,
+          "imageUrl": "",
+          "eventName": "",
+          "itemType": "당일픽업",
+          "makerName": "",
+          "reviewScore": 5,
+          "reviewCount": 13
+        },
+        {
+          "productNo": "3059089",
+          "itemCode": "8801043062435",
+          "itemName": "농심)신라면로제큰사발",
+          "salePrice": 1900,
+          "originalPrice": 1900,
+          "imageUrl": "",
+          "eventName": "",
+          "itemType": "당일픽업",
+          "makerName": "",
+          "reviewScore": 4.6,
+          "reviewCount": 3
+        },
+        {
+          "productNo": "3042466",
+          "itemCode": "8801043041447",
+          "itemName": "농심)신라면블랙사발",
+          "salePrice": 1900,
+          "originalPrice": 1900,
+          "imageUrl": "",
+          "eventName": "",
+          "itemType": "당일픽업",
+          "makerName": "",
+          "reviewScore": 4.9,
+          "reviewCount": 74
+        }
+      ],
+      "standard": {
+        "products": [
+          {
+            "code": "8801043014809",
+            "name": "농심)신라면120g",
+            "price": 1000,
+            "imageUrl": null,
+            "raw": {
+              "productNo": "3042495",
+              "itemCode": "8801043014809",
+              "itemName": "농심)신라면120g",
+              "salePrice": 1000,
+              "originalPrice": 1000,
+              "imageUrl": "",
+              "eventName": "",
+              "itemType": "당일픽업",
+              "makerName": "",
+              "reviewScore": 5,
+              "reviewCount": 13
+            }
+          },
+          {
+            "code": "8801043062435",
+            "name": "농심)신라면로제큰사발",
+            "price": 1900,
+            "imageUrl": null,
+            "raw": {
+              "productNo": "3059089",
+              "itemCode": "8801043062435",
+              "itemName": "농심)신라면로제큰사발",
+              "salePrice": 1900,
+              "originalPrice": 1900,
+              "imageUrl": "",
+              "eventName": "",
+              "itemType": "당일픽업",
+              "makerName": "",
+              "reviewScore": 4.6,
+              "reviewCount": 3
+            }
+          },
+          {
+            "code": "8801043041447",
+            "name": "농심)신라면블랙사발",
+            "price": 1900,
+            "imageUrl": null,
+            "raw": {
+              "productNo": "3042466",
+              "itemCode": "8801043041447",
+              "itemName": "농심)신라면블랙사발",
+              "salePrice": 1900,
+              "originalPrice": 1900,
+              "imageUrl": "",
+              "eventName": "",
+              "itemType": "당일픽업",
+              "makerName": "",
+              "reviewScore": 4.9,
+              "reviewCount": 74
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "GS25",
+    "tool": "check_inventory",
+    "arguments": {
+      "service": "gs25",
+      "itemCode": "8801056240998",
+      "latitude": 37.5665,
+      "longitude": 126.978,
+      "storeLimit": 3,
+      "timeoutMs": 8000
+    },
+    "request_count": 1,
+    "elapsed_ms": 627.0,
+    "success": false,
+    "error": "MCP 도구 실행 실패",
+    "details": {}
+  },
+  {
+    "brand": "세븐일레븐",
+    "tool": "check_inventory",
+    "arguments": {
+      "service": "seveneleven",
+      "keyword": "농심)신라면120g",
+      "storeKeyword": "서울 중구",
+      "storeLimit": 3,
+      "timeoutMs": 8000
+    },
+    "request_count": 1,
+    "elapsed_ms": 5226.7,
+    "success": true,
+    "response": {
+      "keyword": "농심)신라면120g",
+      "storeKeyword": "서울 중구",
+      "product": {
+        "itemCode": "8801043014809",
+        "itemName": "농심)신라면120g",
+        "salePrice": 1000,
+        "imageUrl": ""
+      },
+      "stockAvailable": true,
+      "stockError": null,
+      "note": "실시간 재고 데이터가 포함되어 있습니다.",
+      "inventory": {
+        "totalStoreCount": 39,
+        "inStockStoreCount": 3,
+        "count": 3,
+        "stores": [
+          {
+            "storeCode": "64834",
+            "storeName": "명동예술극장2호점",
+            "address": "서울 중구 명동길 36-1 2층,3층명동2가",
+            "latitude": 37.563615019821,
+            "longitude": 126.984306687706,
+            "stockQuantity": 5,
+            "isSoldOut": false,
+            "distanceM": 0
+          },
+          {
+            "storeCode": "64691",
+            "storeName": "명동예술극장점",
+            "address": "서울 중구 명동길 36-1 지하 1층 명동2가",
+            "latitude": 37.5636150207393,
+            "longitude": 126.984306687706,
+            "stockQuantity": 5,
+            "isSoldOut": false,
+            "distanceM": 0
+          },
+          {
+            "storeCode": "63961",
+            "storeName": "명동스카이호텔점",
+            "address": "서울 중구 명동9길 16 지하1층",
+            "latitude": 37.5646464197639,
+            "longitude": 126.985233588299,
+            "stockQuantity": 16,
+            "isSoldOut": false,
+            "distanceM": 141
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "GS25",
+    "tool": "check_inventory raw envelope",
+    "arguments": {
+      "service": "gs25",
+      "itemCode": "8801056240998",
+      "latitude": 37.5665,
+      "longitude": 126.978,
+      "storeLimit": 3,
+      "timeoutMs": 8000
+    },
+    "request_count": 1,
+    "elapsed_ms": 2815.5,
+    "http_status": 200,
+    "response": {
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "[\n  {\n    \"expected\": \"string\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"keyword\"\n    ],\n    \"message\": \"Invalid input: expected string, received undefined\"\n  }\n]"
+          }
+        ],
+        "isError": true
+      },
+      "jsonrpc": "2.0",
+      "id": "gs-raw-fix"
+    }
+  },
+  {
+    "brand": "GS25",
+    "tool": "fixed check_selected",
+    "request_count": 1,
+    "elapsed_ms": 2180.8,
+    "success": true,
+    "rows": [
+      {
+        "code": "8801056240998",
+        "store": "중구광화문점",
+        "stock": 4,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "무교YG타워점",
+        "stock": 0,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "덕수점",
+        "stock": 7,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "북창중앙점",
+        "stock": 7,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "뉴을지로입구역점",
+        "stock": 0,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "세종로점",
+        "stock": 7,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "다동타운점",
+        "stock": 5,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "소공점",
+        "stock": 6,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "씨티스퀘어점",
+        "stock": 2,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "배재공원점",
+        "stock": 7,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "북창점",
+        "stock": 12,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "소공한진점",
+        "stock": 4,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "종로청진점",
+        "stock": 3,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "서소문점",
+        "stock": 8,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "그랑서울본점",
+        "stock": 10,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "청진본점",
+        "stock": 4,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "종로SC점",
+        "stock": 3,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "숭례문점",
+        "stock": 7,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "LX광화문빌딩점",
+        "stock": 4,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      },
+      {
+        "code": "8801056240998",
+        "store": "남대문타운점",
+        "stock": 0,
+        "stock_known": true,
+        "price": 0,
+        "source_clock": ""
+      }
+    ]
+  }
+]

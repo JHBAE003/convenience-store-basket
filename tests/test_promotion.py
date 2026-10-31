@@ -100,9 +100,9 @@ class PromotionTests(unittest.TestCase):
         stock = StoreProduct("CU", "CU점", "서울", "콜라 500ml", product_code="8801234567890",
                              price=2000, promotion_known=False)
         one_plus_one = StoreProduct("CU", "", "", "콜라500ml", barcode="8801234567890",
-                                    price=2000, promotion="1+1", data_source="LIVE")
+                                    product_code="8801234567890", price=2000, promotion="1+1", data_source="TEST")
         two_plus_one = StoreProduct("CU", "", "", "콜라500ml", barcode="8801234567890",
-                                    price=2000, promotion="2+1", data_source="LIVE")
+                                    product_code="8801234567890", price=2000, promotion="2+1", data_source="TEST")
         joined = integrate_records([stock], [one_plus_one, one_plus_one, two_plus_one])[0]
         self.assertEqual(joined.promotion, "1+1")
         self.assertEqual(joined.promotion_price_display, "1,000원")

@@ -1,3 +1,4 @@
+from tests.live_fixtures import verified_offer
 from dataclasses import replace
 from datetime import datetime, timedelta
 import unittest
@@ -37,7 +38,7 @@ class QuantitySuggestionTests(unittest.TestCase):
         now=datetime.now().astimezone().isoformat()
         old=(datetime.now().astimezone()-timedelta(hours=1)).isoformat()
         row=self.row(data_source='LIVE',price_data_status='LIVE',stock_data_status='LIVE',promotion_data_status='LIVE',
-                     stock_updated_at=now,price_updated_at=now,promotion_updated_at=now)
+                     stock_updated_at=now,price_updated_at=now,promotion_updated_at=now,**verified_offer('2+1'))
         self.assertIsNotNone(self.suggestion(2,row))
         self.assertIsNone(self.suggestion(2,replace(row,price_updated_at=old)))
         self.assertIsNone(self.suggestion(2,replace(row,promotion_updated_at=old)))

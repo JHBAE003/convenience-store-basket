@@ -18,7 +18,7 @@ def store_key(row: StoreProduct) -> str | None:
 
 def _observation_time(row):
     try:
-        t=datetime.fromisoformat((row.stock_updated_at or row.updated_at).replace('Z','+00:00'))
+        t=datetime.fromisoformat((row.stock_source_updated_at or row.source_updated_at or row.stock_updated_at or row.updated_at).replace('Z','+00:00'))
         return t.replace(tzinfo=timezone.utc) if t.tzinfo is None else t
     except (ValueError,TypeError):
         return datetime.min.replace(tzinfo=timezone.utc)
@@ -30,7 +30,11 @@ def _pick(rows):
     recent=max(_observation_time(row) for row in rows)
     latest=[r for r in rows if _observation_time(r)==recent]
     facts={(r.price,r.promotion,r.promotion_known,r.stock,r.stock_known,
-            r.stock_quantity_exact,r.data_source,r.price_data_status,r.promotion_data_status) for r in latest}
+            r.stock_quantity_exact,r.data_source,r.price_data_status,r.promotion_data_status,
+            r.stock_data_status,r.source_updated_at,r.stock_source_updated_at,
+            r.promotion_start_date,r.promotion_end_date,r.promotion_buy_quantity,r.promotion_gift_quantity,
+            r.promotion_member_condition,r.promotion_card_condition,r.promotion_cross_gift,
+            r.promotion_conditions_verified) for r in latest}
     return latest[0],len(facts)>1
 
 

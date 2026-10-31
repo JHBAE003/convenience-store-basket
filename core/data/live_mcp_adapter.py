@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 import re
 import time
@@ -20,13 +19,17 @@ from core.services.geocoding import emart24_region_korean
 class LiveDataError(RuntimeError):
     """A remote request failed or returned data that cannot safely be interpreted."""
 
+    def __init__(self, message: str, details: dict | None = None):
+        super().__init__(message)
+        self.details = details or {}
+
 
 class DaisoMcpAdapter(DataAdapter):
     """Read-only adapter for the currently documented mcp.aka.page services.
 
-    CU and Emart24 use documented MCP tools. GS25 and SevenEleven use the
-    service's documented REST routes because their MCP tool counterparts are
-    not present in the current service-reference tool list.
+    New product/selected-inventory calls use the documented unified MCP tools.
+    Legacy broad searches remain available for compatibility; REST is only a
+    conditional recovery path and is not an independent source of evidence.
     """
 
     REST = "https://mcp.aka.page"
@@ -45,6 +48,238 @@ class DaisoMcpAdapter(DataAdapter):
         self.lookup_failures: list[str] = []
         self.catalog_incomplete = False
         self.emart_region = emart_region
+        self.request_count = 0
+
+    SERVICE = {"GS25": "gs25", "CU": "cu", "세븐일레븐": "seveneleven", "이마트24": "emart24"}
+
+    @staticmethod
+    def safe_payload(value: Any) -> Any:
+        """Keep original public data/errors without credentials or session fields."""
+        if isinstance(value, dict):
+            return {key: DaisoMcpAdapter.safe_payload(item) for key, item in value.items()
+                    if not any(secret in key.casefold().replace("_", "")
+                               for secret in ("authorization", "cookie", "token", "password", "apikey", "secret"))}
+        if isinstance(value, list):
+            return [DaisoMcpAdapter.safe_payload(item) for item in value]
+        if isinstance(value, str):
+            value = re.sub(r"(?i)bearer\s+[^\s,;\"']+", "Bearer [삭제]", value)
+            value = re.sub(r"(?i)((?:api[_-]?key|(?:access[_-]?|refresh[_-]?)?token|password|secret)\s*[=:]\s*)[^\s&\"',;]+",
+                           r"\1[삭제]", value)
+        return value
+
+    def _unified(self, operation: str, **arguments) -> dict[str, Any]:
+        self.request_count += 1
+        payload = self.mcp.call(operation, {"service": self.SERVICE[self.brand], **arguments})
+        if not isinstance(payload, dict) or payload.get("error") or payload.get("success") is False:
+            raise LiveDataError("조회 응답이 오류이거나 읽을 수 없는 형식입니다.")
+        return payload
+
+    def search_products(self, keyword: str, latitude: float, longitude: float) -> list[StoreProduct]:
+        """Candidate discovery only; catalog prices never become store prices."""
+        query = keyword.strip()
+        if not query:
+            raise LiveDataError("상품명을 입력해 주세요.")
+        if self.brand == "CU":
+            # CU has no separate search_products service in the public schema.
+            payload = self._unified("check_inventory", keyword=query, latitude=latitude,
+                                    longitude=longitude, size=20, offset=0, storeLimit=1)
+            inventory = payload.get("inventory")
+            if not isinstance(inventory, dict) or not isinstance(inventory.get("items"), list):
+                raise LiveDataError("상품 후보 목록을 읽지 못했습니다.")
+            if inventory.get("available") is False:
+                raise LiveDataError(str(inventory.get("unavailableReason") or "상품 검색을 이용할 수 없습니다."))
+            products = inventory["items"]
+            self.catalog_incomplete = self._parse_int(inventory.get("totalCount"), 0) > len(products)
+        else:
+            arguments = {"query": query, "size": 20, "page": 1} if self.brand == "세븐일레븐" else {"keyword": query}
+            if self.brand == "GS25":
+                arguments["limit"] = 20
+            if self.brand == "이마트24":
+                arguments.update(page=1, pageSize=20)
+            payload = self._unified("search_products", **arguments)
+            standard = payload.get("standard") or {}
+            products = standard.get("products")
+            if not isinstance(products, list):
+                products = self._find_lists(payload, "products", "items")
+                if not products and not any(isinstance(node.get(key), list)
+                                            for node in self._walk(payload) for key in ("products", "items")):
+                    raise LiveDataError("상품 후보 목록을 읽지 못했습니다.")
+            self.catalog_incomplete = self._parse_int(payload.get("totalCount"), 0) > len(products)
+        now = datetime.now().astimezone().isoformat(timespec="seconds")
+        source_time = self._source_timestamp(payload, "")
+        rows = []
+        seen = set()
+        for product in products:
+            if not isinstance(product, dict):
+                continue
+            raw = product.get("raw") if isinstance(product.get("raw"), dict) else product
+            code = str(self._first(product, "code", default=self._first(raw, "itemCode", "pluCd", "goodsCode", "code")) or "")
+            name = str(self._first(product, "name", default=self._product_name(raw)) or "")
+            if not code or not name or code in seen:
+                continue
+            seen.add(code)
+            price = self._parse_int(self._first(product, "price", default=self._first(raw, "price", "viewPrice", "salePrice")), 0)
+            rows.append(StoreProduct(
+                self.brand, "", "", name, product_code=code,
+                barcode=str(self._first(raw, "barcode", "ean", "gtin", "upc", default="") or ""),
+                price=price, image_url=self._product_image(product) or self._product_image(raw),
+                stock_known=False, promotion_known=False, data_source="LIVE", updated_at=now,
+                received_at=now, source_updated_at=source_time,
+                price_source="상품 목록 참고 가격" if price else "미제공",
+                price_data_status="REFERENCE" if price else "UNKNOWN",
+                raw_payload=self.safe_payload({"product": raw, "response": payload}),
+            ))
+        return rows
+
+    def find_stores(self, latitude: float, longitude: float) -> list[dict[str, Any]]:
+        arguments: dict[str, Any] = {"latitude": latitude, "longitude": longitude, "limit": 20}
+        if self.brand == "이마트24":
+            region = self.emart_region or emart24_region_korean(latitude, longitude)
+            arguments.update(area1=region[0], area2=region[1])
+        if self.brand == "세븐일레븐":
+            arguments = {"keyword": self._region_keyword(latitude, longitude), "limit": 20}
+        payload = self._unified("find_stores", **arguments)
+        standard = payload.get("standard") or {}
+        stores = standard.get("stores")
+        if not isinstance(stores, list):
+            stores = self._find_lists(payload, "stores", "items")
+            if not stores and not any(isinstance(node.get("stores"), list) for node in self._walk(payload)):
+                raise LiveDataError("매장 목록을 읽지 못했습니다.")
+        return self.safe_payload(stores)
+
+    def _region_keyword(self, latitude: float, longitude: float) -> str:
+        area1, area2 = self.emart_region or emart24_region_korean(latitude, longitude)
+        for suffix in ("특별자치도", "특별자치시", "특별시", "광역시", "도"):
+            if area1.endswith(suffix):
+                area1 = area1[:-len(suffix)]
+                break
+        return " ".join(part for part in (area1, area2) if part)
+
+    def check_selected(self, link: Any, latitude: float, longitude: float) -> list[StoreProduct]:
+        code, name = str(link.product_code), str(link.product_name)
+        if not code:
+            raise LiveDataError("선택 상품 코드가 없습니다. 상품을 다시 선택해 주세요.")
+        arguments: dict[str, Any] = {"latitude": latitude, "longitude": longitude, "storeLimit": 20}
+        if self.brand == "GS25":
+            # The current server validates keyword before applying itemCode's
+            # documented search bypass. Keep both without a second search call.
+            arguments.update(itemCode=code, keyword=name)
+        elif self.brand == "이마트24":
+            arguments["pluCd"] = code
+            region = self.emart_region or emart24_region_korean(latitude, longitude)
+            arguments.update(area1=region[0], area2=region[1])
+        elif self.brand == "CU":
+            # Public CU check_inventory is keyword/offset based, not code based.
+            arguments.update(keyword=name, size=20, offset=0)
+        else:
+            arguments = {"keyword": name, "storeKeyword": self._region_keyword(latitude, longitude), "storeLimit": 20}
+        payload = self._unified("check_inventory", **arguments)
+        if payload.get("stockAvailable") is False:
+            reason = str(payload.get("stockError") or "재고 제공 경로를 이용할 수 없습니다.")
+            raise LiveDataError(reason, {"error": {"code": "INVENTORY_UNAVAILABLE", "message": reason},
+                                         "response": self.safe_payload(payload)})
+        for section in ("inventory", "nearbyStores"):
+            availability = payload.get(section)
+            if isinstance(availability, dict) and availability.get("available") is False:
+                reason = str(availability.get("unavailableReason") or "재고 조회를 이용할 수 없습니다.")
+                raise LiveDataError(reason, {
+                    "error": {"code": "INVENTORY_UNAVAILABLE", "message": reason},
+                    "response": self.safe_payload(payload),
+                })
+        now = datetime.now().astimezone().isoformat(timespec="seconds")
+        if self.brand == "CU":
+            inventory = payload.get("inventory") or {}
+            nearby = payload.get("nearbyStores") or {}
+            items = self._dict_list(inventory.get("items"))
+            if inventory.get("available") is False or nearby.get("available") is False:
+                raise LiveDataError(str(inventory.get("unavailableReason") or nearby.get("unavailableReason") or "재고 조회를 이용할 수 없습니다."))
+            if not items and isinstance(inventory.get("items"), list):
+                return []
+            reported = str(nearby.get("stockItemCode") or "")
+            if reported != code:
+                match_index = next((index for index, item in enumerate(items) if str(item.get("itemCode") or "") == code), None)
+                if match_index is None:
+                    self.lookup_failures.append(code)
+                    return []
+                payload = self._unified("check_inventory", keyword=name, latitude=latitude, longitude=longitude,
+                                        size=1, offset=match_index, storeLimit=20)
+                if str((payload.get("nearbyStores") or {}).get("stockItemCode") or "") != code:
+                    raise LiveDataError("조회된 재고의 상품 코드가 선택 상품과 다릅니다.")
+            rows = self._parse_cu(payload, name, now)
+        else:
+            # Preserve service-native rows; standard.stores currently omits stock.
+            product = payload.get("product") if isinstance(payload.get("product"), dict) else {}
+            for node in self._walk(payload):
+                if isinstance(node.get("goodsInfo"), dict):
+                    product = node["goodsInfo"]
+                    break
+            reported = str(self._first(payload, "itemCode", "itemCodeUsed", "pluCd", default=self._first(product, "itemCode", "pluCd", "code")) or "")
+            if reported and reported != code:
+                raise LiveDataError("조회된 재고의 상품 코드가 선택 상품과 다릅니다.")
+            metadata = {**product, "itemCode": code, "itemName": name}
+            rows = self._extract_inventory_records(payload, name, now, metadata)
+            if not rows and not any(isinstance(node.get("stores"), list) for node in self._walk(payload)):
+                raise LiveDataError("매장별 재고 목록을 읽지 못했습니다.")
+            rows = [row for row in rows if row.product_code == code]
+            if not rows and any(node.get("stores") for node in self._walk(payload)
+                                if isinstance(node.get("stores"), list)):
+                raise LiveDataError("응답에 매장이 있지만 재고 수량이나 상품 코드를 읽지 못했습니다.")
+        rows = self._enrich_store_locations(payload, rows, latitude, longitude)
+        source_time = self._source_timestamp(payload, "")
+        for row in rows:
+            row.received_at = now
+            row_time = row.stock_source_updated_at or row.stock_updated_at or source_time
+            row.source_updated_at = row_time
+            row.stock_source_updated_at = row_time
+            row.stock_updated_at = row_time
+            row.raw_payload = self.safe_payload(payload)
+            row.upstream_cache_status = str((payload.get("meta") or {}).get("cacheStatus") or "")
+            row.stock_source = "공개 재고 중계 서비스 (MCP)"
+        return rows
+
+    @classmethod
+    def _enrich_store_locations(cls, payload: dict[str, Any], rows: list[StoreProduct],
+                                latitude: float, longitude: float) -> list[StoreProduct]:
+        """Join separate location metadata by exact store code, never by order.
+
+        Emart24's inventory.stores contains quantities while nearbyStores.stores
+        holds coordinates. Do not manufacture stock rows for metadata-only stores.
+        """
+        data = payload.get("data") if isinstance(payload.get("data"), dict) else payload
+        nearby = data.get("nearbyStores") if isinstance(data.get("nearbyStores"), dict) else {}
+        standard = data.get("standard") if isinstance(data.get("standard"), dict) else {}
+        candidates = cls._dict_list(nearby.get("stores")) + cls._dict_list(standard.get("stores"))
+        stores: dict[str, dict[str, Any]] = {}
+        ambiguous: set[str] = set()
+        for candidate in candidates:
+            raw = candidate.get("raw") if isinstance(candidate.get("raw"), dict) else candidate
+            merged = {**candidate, **raw}
+            code = str(cls._first(merged, "storeCode", "bizNo", "storeId", "storeCd", "BIZNO", "code", default="") or "").strip()
+            if not code:
+                continue
+            if code in stores:
+                old = stores[code]
+                old_coords = (cls._first(old, "latitude", "lat", "LATITUDE"), cls._first(old, "longitude", "lng", "LONGITUDE"))
+                new_coords = (cls._first(merged, "latitude", "lat", "LATITUDE"), cls._first(merged, "longitude", "lng", "LONGITUDE"))
+                if all(value is not None for value in (*old_coords, *new_coords)) and old_coords != new_coords:
+                    ambiguous.add(code)
+            stores[code] = merged
+        for row in rows:
+            if row.store_code in ambiguous:
+                continue
+            store = stores.get(row.store_code)
+            if store is None:
+                continue
+            if row.latitude is None:
+                row.latitude = cls._parse_float(cls._first(store, "latitude", "lat", "LATITUDE"))
+            if row.longitude is None:
+                row.longitude = cls._parse_float(cls._first(store, "longitude", "lng", "LONGITUDE"))
+            row.address = row.address or str(cls._first(store, "address", "addr", "roadAddress", "ADDRESS", default="") or "")
+            row.store_name = row.store_name or str(cls._first(store, "storeName", "name", "TITLE", default="") or "")
+            distance = haversine_km(latitude, longitude, row.latitude, row.longitude)
+            if distance is not None:
+                row.distance_km = distance
+        return rows
 
     def search(self, keyword: str, user_lat: float, user_lng: float) -> list[StoreProduct]:
         query = keyword.strip()
@@ -60,7 +295,7 @@ class DaisoMcpAdapter(DataAdapter):
                 return self._search_gs25(query, user_lat, user_lng, now)
             return self._search_seven(query, user_lat, user_lng, now)
         except (McpRequestError, requests.RequestException) as exc:
-            raise LiveDataError(str(exc)) from exc
+            raise LiveDataError(str(exc), getattr(exc, "details", {})) from exc
 
     def _search_cu(self, query: str, lat: float, lng: float, now: str) -> list[StoreProduct]:
         candidates: list[tuple[int, dict[str, Any]]] = []
@@ -202,8 +437,8 @@ class DaisoMcpAdapter(DataAdapter):
                 brand="이마트24",
                 store_name=str(self._first(store, "storeName", "name", "TITLE", default=self._first(stock_store, "storeName")) or ""),
                 address=str(self._first(store, "address", "ADDRESS", "ADDRESS_DE", default=self._first(stock_store, "address")) or ""),
-                product_name=name, barcode=code if re.fullmatch(r"\d{8,14}", code) else "",
-                product_code=code, price=price, promotion=promotion, stock=qty,
+                product_name=name, barcode=str(self._first(product, "barcode", "ean", "gtin", "upc", default="") or ""),
+                product_code=code, price=self._parse_int(self._first(stock_store, "price", "salePrice", "sellPrice"), price), promotion=promotion, stock=qty,
                 image_url=self._product_image(product) or self._product_image(goods),
                 stock_quantity_exact=self._stock_quantity_is_exact(qty_raw),
                 latitude=store_lat, longitude=store_lng, distance_km=distance,
@@ -212,7 +447,7 @@ class DaisoMcpAdapter(DataAdapter):
                 promotion_source="Daiso MCP" if promotion else "미제공",
                 stock_updated_at=timestamp, price_updated_at=timestamp if price else "",
                 stock_known=known, promotion_known=bool(promotion),
-                price_data_status="LIVE" if price else "UNKNOWN",
+                price_data_status="LIVE" if self._parse_int(self._first(stock_store, "price", "salePrice", "sellPrice"), 0) else "REFERENCE" if price else "UNKNOWN",
                 stock_data_status="LIVE" if known else "UNKNOWN",
                 promotion_data_status="LIVE" if promotion else "UNKNOWN",
             ))
@@ -304,6 +539,7 @@ class DaisoMcpAdapter(DataAdapter):
         response = None
         for attempt in range(2):
             try:
+                self.request_count += 1
                 response = self.session.get(self.REST + path, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
                 if response.status_code >= 500 and attempt == 0:
                     time.sleep(0.35)
@@ -417,24 +653,30 @@ class DaisoMcpAdapter(DataAdapter):
         for store in cls._dict_list(nearby.get("stores")):
             stock = store.get("stock")
             qty, known = cls._parse_stock(stock, store)
+            store_price = cls._parse_int(cls._first(store, "price", "salePrice", "sellPrice", "searchItemSellPrice"), 0)
             records.append(StoreProduct(
                 brand="CU", store_name=str(store.get("storeName") or ""),
                 address=str(store.get("address") or ""), product_name=name,
-                barcode=code if re.fullmatch(r"\d{8,14}", code) else "", product_code=code,
-                price=price, promotion="", stock=qty, stock_quantity_exact=known,
+                barcode=str(cls._first(chosen, "barcode", "ean", "gtin", "upc", default="") or ""), product_code=code,
+                price=store_price or price, promotion="", stock=qty,
+                stock_quantity_exact=cls._stock_quantity_is_exact(stock),
                 image_url=cls._product_image(chosen),
                 latitude=cls._parse_float(store.get("latitude")), longitude=cls._parse_float(store.get("longitude")),
                 distance_km=cls._parse_distance(store.get("distanceM")), data_source="LIVE", updated_at=now,
                 store_code=str(store.get("storeCode") or ""), stock_known=known,
-                stock_source="Daiso MCP", price_source="Daiso MCP", promotion_source="미제공",
-                promotion_known=False,
+                stock_source="Daiso MCP", price_source="매장별 재고 응답" if store_price else "상품 목록 참고 가격", promotion_source="미제공",
+                price_data_status="LIVE" if store_price else "REFERENCE" if price else "UNKNOWN",
+                promotion_known=False, received_at=now, source_updated_at=cls._source_timestamp(store) or cls._source_timestamp(payload),
+                stock_source_updated_at=cls._source_timestamp(store) or cls._source_timestamp(payload),
+                stock_updated_at=cls._source_timestamp(store) or cls._source_timestamp(payload),
+                raw_payload=cls.safe_payload(payload),
             ))
         return records
 
     def _extract_inventory_records(self, payload: Any, keyword: str, now: str,
                                    product: dict[str, Any] | None = None) -> list[StoreProduct]:
         found: list[StoreProduct] = []
-        source_timestamp = self._source_timestamp(payload, now)
+        source_timestamp = self._source_timestamp(payload, "")
         fallback_product_name = self._product_name(product or {}) or keyword
         fallback_price = self._parse_int(self._first(product or {}, "price", "salePrice", "sellPrice",
                                                     "sellingPrice", "normalPrice", "viewPrice"), 0)
@@ -452,6 +694,7 @@ class DaisoMcpAdapter(DataAdapter):
             if stock_raw is None:
                 continue
             stock, known = self._parse_stock(stock_raw, merged)
+            row_source_timestamp = self._source_timestamp(merged) or source_timestamp
             product_name = str(self._first(merged, "productName", "goodsName", "itemName", "name", default=fallback_product_name) or fallback_product_name)
             code = str(self._first(merged, "itemCode", "code", "goodsCode", "pluCd", "barcode", default=fallback_code) or fallback_code)
             price_raw = self._first(merged, "price", "salePrice", "sellPrice", "searchItemSellPrice",
@@ -460,7 +703,7 @@ class DaisoMcpAdapter(DataAdapter):
             found.append(StoreProduct(
                 brand=self.brand, store_name=str(name or ""), address=str(address or ""),
                 product_name=product_name,
-                barcode=str(self._first(merged, "barcode", "ean", "gtin", "upc", default="") or ""),
+                barcode=str(self._first(merged, "barcode", "ean", "gtin", "upc", default=self._first(product or {}, "barcode", "ean", "gtin", "upc", default="")) or ""),
                 product_code=code, price=self._parse_int(price_raw, fallback_price),
                 image_url=self._product_image(product or {}) or self._product_image(merged),
                 promotion=promo, stock=stock, stock_quantity_exact=self._stock_quantity_is_exact(stock_raw),
@@ -469,9 +712,11 @@ class DaisoMcpAdapter(DataAdapter):
                 distance_km=self._parse_distance(self._first(merged, "distanceKm", "distanceM", "distance", "distance_km")),
                 data_source="LIVE", updated_at=now,
                 store_code=str(store_code or ""),
-                stock_updated_at=source_timestamp,
-                price_updated_at=source_timestamp if fallback_price or price_raw else "",
+                received_at=now, source_updated_at=row_source_timestamp, stock_source_updated_at=row_source_timestamp,
+                raw_payload=self.safe_payload(payload), stock_updated_at=row_source_timestamp,
+                price_updated_at=row_source_timestamp if fallback_price or price_raw else "",
                 stock_known=known, stock_source="Daiso MCP", price_source="Daiso MCP",
+                price_data_status="LIVE" if self._parse_int(price_raw, 0) else "REFERENCE" if fallback_price else "UNKNOWN",
                 promotion_source="Daiso MCP" if promo else "미제공", promotion_known=bool(promo),
             ))
         # Deduplicate only when a real store identifier exists; same-named branches
@@ -483,28 +728,19 @@ class DaisoMcpAdapter(DataAdapter):
         return list(result.values())
 
     @staticmethod
-    def _source_timestamp(payload: Any, fallback: str) -> str:
+    def _source_timestamp(payload: Any, fallback: str = "") -> str:
+        # HTTP Date/Age and relay fetchedAt are transport/cache times, not the
+        # original stock observation time. Never synthesize a source timestamp.
         if isinstance(payload, dict):
-            for key in ("stockUpdatedAt", "updatedAt", "retrievedAt", "fetchedAt", "cachedAt", "timestamp"):
-                value = payload.get(key)
-                if isinstance(value, str) and value.strip():
-                    return value.strip()
-            meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
-            for key in ("stockUpdatedAt", "updatedAt", "retrievedAt", "fetchedAt", "cachedAt", "timestamp"):
-                value = meta.get(key)
-                if isinstance(value, str) and value.strip():
-                    return value.strip()
-            source_meta = payload.get("_sourceMeta") if isinstance(payload.get("_sourceMeta"), dict) else {}
-            date_header = source_meta.get("date")
-            if isinstance(date_header, str) and date_header.strip():
-                try:
-                    observed = parsedate_to_datetime(date_header)
-                    age = float(source_meta.get("age") or 0)
-                    observed = observed.replace(tzinfo=observed.tzinfo or timezone.utc)
-                    return datetime.fromtimestamp(observed.timestamp() - max(age, 0), tz=timezone.utc).isoformat(timespec="seconds")
-                except (TypeError, ValueError, OverflowError):
-                    pass
-        return fallback
+            nodes = [node for node in (payload, payload.get("meta") or {}, payload.get("inventory") or {})
+                     if isinstance(node, dict)]
+            # A stock/source clock outranks a generic wrapper updatedAt.
+            for key in ("stockUpdatedAt", "sourceUpdatedAt", "updatedAt"):
+                for node in nodes:
+                    value = node.get(key)
+                    if isinstance(value, str) and value.strip():
+                        return value.strip()
+        return ""
 
     @staticmethod
     def _parse_stock(value: Any, data: dict[str, Any]) -> tuple[int, bool]:

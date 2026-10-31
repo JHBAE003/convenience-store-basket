@@ -1,0 +1,17 @@
+{
+  "source": "https://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N",
+  "method": "GET",
+  "status": 200,
+  "request_count": 1,
+  "snippets": {
+    "searchKeyword": [
+      "div id=\"holder\"></div>\r\n\t\t\t\t</ul>\r\n\t\t\t</div>\r\n\r\n\r\n\t\t\r\n<script type=\"text/javascript\">\r\nfunction gomaincategory(val,depth) {\r\n\t$('#search1').val('');\r\n\t$('#search2').val('');\r\n\t$('#searchKeyword').val('');\r\n\t$('#listType').val('0');\r\n\t$('#searchCondition').val('');\r\n\t$('#searchUseYn').val('N');\r\n\t$('#searchMainCategory').val(val);\r\n\t$('#searchSubCategory').val('');\r\n\t$('#codeParent').val(val);\r\n\r\n\t$(\"#listForm\").attr({action:\"/product/produ"
+    ],
+    "plusAjax": [
+      "\n\tidx++;\r\n\tviewList(idx, 1);\r\n}\r\n\r\nfunction viewList(pageNo, listType){\r\n\t$('#pageIndex').val(pageNo);\r\n\t$('#listType').val(listType);\r\n\r\n\t$.ajax({\r\n\t\ttype:\"post\",\r\n\t\turl: \"/event/plusAjax.do\",\r\n\t\tdataType: 'html',\r\n\t\tdata: $('#listForm').serialize(),\r\n\t\tsuccess: function(data){\r\n\t\t\t// listType 이 1이면 지우지 않고 계속 리스트 출력하기\r\n\t\t\tif(listType == 0) {\r\n\t\t\t\t$('.prodListWrap ul').remove();\r\n\t\t\t\t$('#nothing').remove();\r\n\t\t\t}\r\n\t\t\t$('.prodListBtn')"
+    ],
+    "fnSearch": [],
+    "form1": [],
+    "frm": []
+  }
+}

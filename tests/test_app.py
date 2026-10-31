@@ -5,6 +5,7 @@ from unittest.mock import patch
 from dataclasses import replace
 from datetime import datetime
 from core.models import StoreProduct, DataLoadResult
+from tests.live_fixtures import verified_offer
 
 APP=Path(__file__).resolve().parents[1]/'streamlit_app.py'
 
@@ -64,8 +65,8 @@ class AppTests(unittest.TestCase):
                          price_updated_at=datetime.now().astimezone().isoformat(),
                          promotion_updated_at=datetime.now().astimezone().isoformat(),
                          price_source='모의 제공자',stock_source='모의 제공자',promotion_source='모의 제공자',
-                         price_data_status='LIVE',stock_data_status='LIVE',promotion_data_status='LIVE')
-        with patch('core.data.data_manager.DataManager.search_all',return_value=([row],[DataLoadResult('CU',[row],'LIVE','모의 제공자')])):
+                         price_data_status='LIVE',stock_data_status='LIVE',promotion_data_status='LIVE',**verified_offer())
+        with patch('core.data.data_manager.DataManager.search_products',return_value=([row],[DataLoadResult('CU',[row],'LIVE','모의 제공자')])), patch('core.data.data_manager.DataManager.search_selected',return_value=([row],[DataLoadResult('CU',[row],'LIVE','모의 제공자')])):
             at=self.app();at.radio(key='mode').set_value('LIVE').run()
             at.text_input(key='live_keyword').set_value('검증용 음료')
             next(b for b in at.button if b.label=='실시간 상품 검색').click().run()

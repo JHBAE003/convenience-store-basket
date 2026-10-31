@@ -3,6 +3,7 @@ from datetime import datetime
 from dataclasses import replace
 from core.cart_models import CartItem, LineEvaluation
 from core.services.cart_pricing import evaluate_line
+from core.services.promotion import promotion_applicability
 
 
 def current_evidence(row) -> bool:
@@ -12,15 +13,24 @@ def current_evidence(row) -> bool:
     if any(s in ('CACHE', 'ERROR', 'PARTIAL') for s in statuses):
         return False
     if row.data_source == 'TEST':
-        return True
+        return promotion_applicability(row)[0]
     if any(s != 'LIVE' for s in statuses):
         return False
-    for raw in (row.price_updated_at or row.updated_at,
-                row.stock_updated_at or row.updated_at,
-                row.promotion_updated_at or row.updated_at):
+    if not promotion_applicability(row)[0]:
+        return False
+    # v2.1 응답의 수신 시각은 원본 재고 시각을 대신할 수 없다.
+    if row.received_at and not (row.stock_source_updated_at or row.source_updated_at or row.stock_updated_at):
+        return False
+    origin_stock = row.stock_source_updated_at or row.source_updated_at or row.stock_updated_at
+    checks = ((row.price_updated_at or row.updated_at, 300),
+              (origin_stock if row.received_at else (origin_stock or row.updated_at), 300),
+              (row.promotion_checked_at or row.promotion_updated_at or row.updated_at,
+               21600 if row.promotion_checked_at else 300))
+    for raw, max_age in checks:
         try:
             stamp = datetime.fromisoformat(raw.replace('Z', '+00:00'))
-            if stamp.tzinfo is None or not -300 <= (datetime.now().astimezone()-stamp).total_seconds() <= 300:
+            # 행사 목록은 6시간 캐시여도 매번 행사 기간/조건을 다시 검증한다.
+            if stamp.tzinfo is None or not -300 <= (datetime.now().astimezone()-stamp).total_seconds() <= max_age:
                 return False
         except (ValueError, TypeError, AttributeError):
             return False
@@ -50,12 +60,12 @@ def apply_current_evidence(stores):
             continue
         lines=[replace(line,payable=None,
                        reference_payable=line.payable if line.payable is not None else line.reference_payable,
-                       stock_state='UNKNOWN',pricing_state='REFERENCE',
-                       reason='v2 확인 기준 미충족: 가격·행사·재고의 출처/시각을 다시 확인하세요.')
+                       pricing_state='REFERENCE',
+                       reason=line.reason+' 확정 비교에 필요한 가격·행사·재고의 시각 또는 조건이 미확인입니다.')
                if line in invalid else line for line in store.lines]
         amounts=[line.payable if line.payable is not None else line.reference_payable for line in lines]
         result.append(replace(store,lines=lines,total=None,eligible=False,
                               known_subtotal=sum(line.payable or 0 for line in lines),
                               reference_total=sum(amounts) if all(a is not None for a in amounts) else None,
-                              reasons=store.reasons+['v2: 현재 확인 가능한 가격·행사·재고 자료가 부족합니다.']))
+                              reasons=store.reasons+['현재 확인 가능한 가격·행사·재고 자료가 부족합니다.']))
     return result

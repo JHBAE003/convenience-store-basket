@@ -9,6 +9,7 @@ from urllib.parse import unquote
 import requests
 
 from core.models import StoreProduct
+from core.scrapers.event_metadata import checked_now, event_metadata, KST
 
 
 class _StructuredData(HTMLParser):
@@ -35,7 +36,9 @@ class Gs25PriceScraper:
     """Targeted lookup of publicly listed GS25 promotion prices.
 
     This is a third-party event catalog, not a GS25 inventory endpoint. A
-    catalog price is usable only when its image contains a product barcode.
+    Catalog prices remain reference prices. The new official public GS Retail
+    page links to the app and exposes no documented public event list; the
+    third-party source is kept explicit rather than pretending it is official.
     """
 
     SEARCH_URL = "https://xn--vf4b15j1pa468argc.com/"
@@ -55,7 +58,7 @@ class Gs25PriceScraper:
         response.raise_for_status()
         parser = _StructuredData()
         parser.feed(response.text)
-        now = datetime.now().astimezone()
+        now = datetime.now(KST)
         month = f"{now.year}년 {now.month}월"
         observed = now.isoformat(timespec="seconds")
         results: dict[str, StoreProduct] = {}
@@ -95,14 +98,26 @@ class Gs25PriceScraper:
                 name = str(item.get("name") or "").strip()
                 if not name:
                     continue
+                period_match = re.search(r"(20\d{2})년\s*(\d{1,2})월", description)
+                start = (f"{int(period_match.group(1)):04d}-{int(period_match.group(2)):02d}-01"
+                         if period_match else "")
+                metadata = event_metadata(promotion, observed, self.SEARCH_URL,
+                                          period_text=description, start=start, end=valid_until)
+                metadata["raw_payload"].update({"description": description, "priceValidUntil": valid_until,
+                                                 "provider": "제3자 행사 목록",
+                                                 "identifier_source": "public_catalog_listing"})
+                # Only an explicit source GTIN field can populate a common barcode.
+                gtin = next((str(item[field]) for field in ("gtin13", "gtin8", "gtin14", "gtin")
+                             if item.get(field)), "")
                 results[code] = StoreProduct(
                     brand="GS25", store_name="", address="", product_name=name,
-                    barcode=code, product_code=code, price=price,
+                    barcode=gtin, product_code=code, price=price,
                     promotion=promotion, promotion_known=bool(promotion),
                     stock=0, stock_known=False, data_source="LIVE",
-                    updated_at=observed, price_updated_at=observed,
+                    updated_at=observed,
                     price_source=self.SOURCE, promotion_source=self.SOURCE if promotion else "",
-                    price_data_status="LIVE", promotion_data_status="LIVE" if promotion else "UNKNOWN",
+                    price_data_status="REFERENCE", promotion_data_status="LIVE" if promotion else "UNKNOWN",
                     image_url=str(item.get("image") or ""),
+                    **metadata,
                 )
         return list(results.values())

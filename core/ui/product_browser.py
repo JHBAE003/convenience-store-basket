@@ -26,7 +26,9 @@ def render_product_cards(products, add, quantity, demo_ids=None):
                 elif row.data_source == 'TEST':
                     st.caption('가상 가격 · 실제 판매 상품이 아닙니다.')
                 else:
-                    st.caption('조회 점포 판매가 · 재고는 매장 비교에서 확인')
+                    st.caption('상품 목록 참고가 · 매장 가격과 재고는 비교할 때 확인')
+                if row.data_source not in {'TEST', 'CATALOG'} and not row.stock_known:
+                    st.caption('상품 정보만 확인 · 재고는 아직 조회하지 않았습니다.')
                 if not available:
                     st.caption('사진 준비 중' if not row.image_url else '사진을 불러오지 못했습니다.')
                 item_id = demo_ids.get(row.product_name) if demo_ids is not None else None

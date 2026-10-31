@@ -107,7 +107,7 @@ class DataManagerTests(unittest.TestCase):
             cache = Path(folder) / "cache.json"
             manager = DataManager(Path(folder) / "test.csv", "LIVE", cache_path=cache)
             manager.promotion_manager.search = lambda *_args: []
-            barrier = threading.Barrier(4, timeout=3)
+            barrier = threading.Barrier(2, timeout=3)
 
             class Adapter:
                 def __init__(self, brand):
@@ -126,7 +126,7 @@ class DataManagerTests(unittest.TestCase):
             saved = json.loads(cache.read_text(encoding="utf-8"))
             self.assertEqual({entry["brand"] for entry in saved}, {"CU", "GS25"})
 
-    def test_two_inventory_tracks_choose_newer_store_observation(self):
+    def test_explicit_primary_gap_uses_secondary_newer_observation(self):
         with tempfile.TemporaryDirectory() as folder:
             manager = DataManager(Path(folder) / "test.csv", "LIVE",
                                   cache_path=Path(folder) / "cache.json")
@@ -142,6 +142,7 @@ class DataManagerTests(unittest.TestCase):
             class TrackAdapter:
                 def __init__(self, rows):
                     self.rows = rows
+                    self.catalog_incomplete = rows == [older]
 
                 def search(self, *_args):
                     return self.rows
@@ -153,7 +154,7 @@ class DataManagerTests(unittest.TestCase):
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0].stock, 4)
             self.assertIn("Track 2", rows[0].stock_source)
-            self.assertIn("최신 재고", status[0].message)
+            self.assertTrue(status[0].fallback_used)
 
     def test_live_mode_failure_without_cache_is_error_not_test(self):
         with tempfile.TemporaryDirectory() as folder:

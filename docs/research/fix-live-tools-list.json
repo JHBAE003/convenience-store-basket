@@ -1,0 +1,3124 @@
+{
+  "result": {
+    "tools": [
+      {
+        "name": "search_products",
+        "title": "상품 검색",
+        "description": "서비스별 상품 검색. daiso/daiso_jp/seveneleven은 query, gs25/emart24/oliveyoung은 keyword를 입력합니다. 재고 조회에 사용할 상품 코드를 얻습니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "daiso: 검색할 제품명 또는 키워드 · daiso_jp: query · seveneleven: 검색어 (예: 삼각김밥, 콜라, 도시락)",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "검색할 제품명 또는 키워드"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "string",
+                  "description": "검색어 (예: 삼각김밥, 콜라, 도시락)"
+                }
+              ]
+            },
+            "includeSoldOut": {
+              "description": "daiso: 품절 상품 포함 여부 (기본값: true). false이면 현재 페이지에서 품절 상품을 제외합니다. · oliveyoung: 품절 상품 포함 여부 (기본값: false)",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "description": "품절 상품 포함 여부 (기본값: false)",
+                  "type": "boolean"
+                }
+              ]
+            },
+            "page": {
+              "description": "daiso: 페이지 번호 (기본값: 1) · daiso_jp: page · seveneleven: 페이지 번호 (기본값: 1) · emart24: 조회 페이지 (기본값: 1) · oliveyoung: 상품 검색 페이지 번호 (기본값: 1)",
+              "anyOf": [
+                {
+                  "description": "페이지 번호 (기본값: 1)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                {
+                  "description": "페이지 번호 (기본값: 1)",
+                  "type": "number"
+                },
+                {
+                  "description": "조회 페이지 (기본값: 1)",
+                  "type": "number"
+                },
+                {
+                  "description": "상품 검색 페이지 번호 (기본값: 1)",
+                  "type": "number"
+                }
+              ]
+            },
+            "pageSize": {
+              "description": "daiso: 페이지당 결과 수 (기본값: 30) · emart24: 페이지당 결과 수 (기본값: 10)",
+              "anyOf": [
+                {
+                  "description": "페이지당 결과 수 (기본값: 30)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "페이지당 결과 수 (기본값: 10)",
+                  "type": "number"
+                }
+              ]
+            },
+            "keyword": {
+              "description": "gs25: 상품 검색어 (예: 핫식스, 삼각김밥, 커피) · emart24: 상품 검색어 (예: 두바이, 도시락, 음료) · oliveyoung: 상품 검색어 (예: 마스크팩, 선크림, 립밤)",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "상품 검색어 (예: 핫식스, 삼각김밥, 커피)"
+                },
+                {
+                  "type": "string",
+                  "description": "상품 검색어 (예: 두바이, 도시락, 음료)"
+                },
+                {
+                  "type": "string",
+                  "description": "상품 검색어 (예: 마스크팩, 선크림, 립밤)"
+                }
+              ]
+            },
+            "limit": {
+              "description": "gs25: 반환할 최대 상품 수 (기본값: 20)",
+              "type": "number"
+            },
+            "timeoutMs": {
+              "description": "gs25: 요청 제한 시간(ms, 기본값: 20000) · seveneleven: 요청 제한 시간(ms, 기본값: 15000) · emart24: 요청 제한 시간(ms, 기본값: 15000) · oliveyoung: 개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 20000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "size": {
+              "description": "seveneleven: 페이지당 결과 수 (기본값: 20) · oliveyoung: 페이지당 상품 수 (기본값: 20)",
+              "anyOf": [
+                {
+                  "description": "페이지당 결과 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "페이지당 상품 수 (기본값: 20)",
+                  "type": "number"
+                }
+              ]
+            },
+            "sort": {
+              "description": "seveneleven: 정렬 기준 (기본값: recommend) · oliveyoung: 정렬 코드 (기본값: 01)",
+              "anyOf": [
+                {
+                  "description": "정렬 기준 (기본값: recommend)",
+                  "type": "string",
+                  "enum": [
+                    "recommend",
+                    "recent",
+                    "popular"
+                  ]
+                },
+                {
+                  "description": "정렬 코드 (기본값: 01)",
+                  "type": "string"
+                }
+              ]
+            },
+            "sortType": {
+              "description": "emart24: 정렬 기준 (기본값: SALE)",
+              "type": "string",
+              "enum": [
+                "SALE",
+                "LATEST",
+                "PRICE_ASC",
+                "PRICE_DESC"
+              ]
+            },
+            "saleProductYn": {
+              "description": "emart24: 행사 상품 여부 필터 (기본값: N)",
+              "type": "string",
+              "enum": [
+                "Y",
+                "N"
+              ]
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "daiso",
+                "daiso_jp",
+                "gs25",
+                "seveneleven",
+                "emart24",
+                "oliveyoung"
+              ],
+              "description": "조회할 서비스"
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string",
+                  "description": "검색어"
+                },
+                {},
+                {
+                  "type": "string",
+                  "description": "검색어"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "query": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string",
+                  "description": "적용된 검색어"
+                },
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "page": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number",
+                  "description": "페이지 번호"
+                },
+                {
+                  "type": "number",
+                  "description": "조회 페이지"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "pageSize": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {},
+                {},
+                {
+                  "type": "number",
+                  "description": "페이지당 결과 수"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "totalCount": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {},
+                {
+                  "type": "number",
+                  "description": "검색된 전체 상품 수"
+                },
+                {
+                  "type": "number",
+                  "description": "검색된 전체 상품 수"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "count": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number",
+                  "description": "반환된 상품 수"
+                },
+                {
+                  "type": "number",
+                  "description": "반환된 상품 수"
+                },
+                {
+                  "type": "number",
+                  "description": "반환된 상품 수"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "products": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "country": {
+                        "type": "string",
+                        "const": "JP"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "currency": {
+                        "type": "string",
+                        "const": "JPY"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "imageUrl": {
+                        "type": "string"
+                      },
+                      "onlineAvailable": {
+                        "description": "온라인 판매 가능 여부. 매장 재고가 아닙니다.",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "storeInventorySupported": {
+                        "type": "boolean",
+                        "const": false
+                      },
+                      "note": {
+                        "description": "대체 조회와 확인하지 못한 항목 안내",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "country",
+                      "id",
+                      "name",
+                      "price",
+                      "currency",
+                      "url",
+                      "onlineAvailable",
+                      "storeInventorySupported"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "type": "array",
+                  "items": {},
+                  "description": "GS25 상품 검색 결과"
+                },
+                {
+                  "type": "array",
+                  "items": {},
+                  "description": "세븐일레븐 상품 검색 결과"
+                },
+                {
+                  "type": "array",
+                  "items": {},
+                  "description": "이마트24 상품 검색 결과"
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "note": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string",
+                  "description": "후속 재고 조회 안내"
+                },
+                {},
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "country": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string",
+                  "const": "JP"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "hasNext": {
+              "anyOf": [
+                {},
+                {
+                  "type": "boolean"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "currency": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string",
+                  "const": "JPY"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "size": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "type": "number",
+                  "description": "페이지 크기"
+                },
+                {},
+                {}
+              ]
+            },
+            "sort": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "type": "string",
+                  "description": "정렬 기준"
+                },
+                {},
+                {}
+              ]
+            },
+            "collectionIds": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "검색 컬렉션 ID 목록"
+                },
+                {},
+                {}
+              ]
+            },
+            "appliedQueries": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "실제로 시도한 검색어 목록"
+                },
+                {},
+                {}
+              ]
+            },
+            "status": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "description": "외부 API 차단 등으로 결과가 제한된 경우 degraded",
+                  "type": "string"
+                },
+                {
+                  "description": "외부 API 차단 등으로 결과가 제한된 경우 degraded",
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "message": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {
+                  "description": "degraded 상태의 원인 메시지",
+                  "type": "string"
+                },
+                {
+                  "description": "degraded 상태의 원인 메시지",
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "sortType": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {
+                  "type": "string",
+                  "description": "정렬 기준"
+                },
+                {}
+              ]
+            },
+            "saleProductYn": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {
+                  "type": "string",
+                  "description": "행사 상품 여부 필터"
+                },
+                {}
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "find_stores",
+        "title": "매장 검색",
+        "description": "서비스별 매장 검색. keyword 또는 latitude/longitude를 입력합니다. 일본은 매장 검색만 제공하며 매장별 재고는 지원하지 않습니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "description": "daiso: 검색할 매장명 또는 주소 키워드 (예: 강남, 홍대) · daiso_jp: keyword · gs25: 매장명/주소 키워드 (예: 강남, 안산 중앙역) · seveneleven: 매장명/지역 키워드 (예: 안산 중앙역, 강남) · cu: 매장 검색 키워드 (예: 강남, 명동, 안산) · emart24: 매장명/지역 키워드 (예: 강남) · oliveyoung: 매장 검색어 (예: 강남, 명동, 신촌). 비우면 주변 매장 전체 조회",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string",
+                  "description": "매장명/지역 키워드 (예: 안산 중앙역, 강남)"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "sido": {
+              "description": "daiso: 시/도 (예: 서울, 경기, 부산)",
+              "type": "string"
+            },
+            "gugun": {
+              "description": "daiso: 구/군 (예: 강남구, 마포구)",
+              "type": "string"
+            },
+            "dong": {
+              "description": "daiso: 동 (예: 역삼동, 합정동)",
+              "type": "string"
+            },
+            "limit": {
+              "description": "daiso: 반환할 최대 매장 수 (기본값: 50) · gs25: 반환할 최대 매장 수 (기본값: 20) · seveneleven: 반환할 최대 매장 수 (기본값: 20) · cu: 반환할 최대 매장 수 (기본값: 20) · emart24: 반환할 매장 수 (기본값: 20) · oliveyoung: 반환할 최대 매장 수 (기본값: 20)",
+              "anyOf": [
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 50)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 20)",
+                  "type": "number"
+                }
+              ]
+            },
+            "page": {
+              "description": "daiso_jp: page · emart24: 조회 페이지 (기본값: 1)",
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                },
+                {
+                  "description": "조회 페이지 (기본값: 1)",
+                  "type": "number"
+                }
+              ]
+            },
+            "latitude": {
+              "description": "gs25: 위도 (선택, 미입력 시 keyword 지오코딩 시도) · cu: 위도 (없으면 키워드 기반 검색) · emart24: 위도 (선택) · oliveyoung: 위도 (기본값: 서울 시청 37.5665)",
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "description": "위도 (기본값: 서울 시청 37.5665)",
+                  "type": "number"
+                }
+              ]
+            },
+            "longitude": {
+              "description": "gs25: 경도 (선택, 미입력 시 keyword 지오코딩 시도) · cu: 경도 (없으면 키워드 기반 검색) · emart24: 경도 (선택) · oliveyoung: 경도 (기본값: 서울 시청 126.978)",
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "description": "경도 (기본값: 서울 시청 126.978)",
+                  "type": "number"
+                }
+              ]
+            },
+            "serviceCode": {
+              "description": "gs25: 서비스 코드 (기본값: 01=GS25)",
+              "type": "string"
+            },
+            "timeoutMs": {
+              "description": "gs25: 요청 제한 시간(ms, 기본값: 20000) · seveneleven: 요청 제한 시간(ms, 기본값: 15000) · cu: 요청 제한 시간(ms, 기본값: 15000) · emart24: 요청 제한 시간(ms, 기본값: 15000) · oliveyoung: 개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 20000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "area1": {
+              "description": "emart24: 시/도 (예: 서울특별시)",
+              "type": "string"
+            },
+            "area2": {
+              "description": "emart24: 구/군 (예: 강남구)",
+              "type": "string"
+            },
+            "service24h": {
+              "description": "emart24: 24시간 매장만 조회할지 여부",
+              "type": "boolean"
+            },
+            "pageIdx": {
+              "description": "oliveyoung: 매장 결과 페이지 번호 (기본값: 1)",
+              "type": "number"
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "daiso",
+                "daiso_jp",
+                "gs25",
+                "seveneleven",
+                "cu",
+                "emart24",
+                "oliveyoung"
+              ],
+              "description": "조회할 서비스"
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "type": "string"
+            },
+            "searchParams": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "location": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "totalCount": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "filteredCount": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "count": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "stores": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "address": {
+                        "type": "string"
+                      },
+                      "hours": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "latitude": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "longitude": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "brand": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "address",
+                      "hours",
+                      "url",
+                      "latitude",
+                      "longitude",
+                      "brand"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "country": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string",
+                  "const": "JP"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "page": {
+              "anyOf": [
+                {},
+                {
+                  "type": "number"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "hasNext": {
+              "anyOf": [
+                {},
+                {
+                  "type": "boolean"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "note": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "check_inventory",
+        "title": "상품 재고 조회",
+        "description": "실제 매장 재고 확인. 다이소는 operation=by_name이면 query, by_id이면 productId를 입력합니다. 그 외 서비스는 keyword 또는 해당 상품 코드를 입력합니다. storeQuery는 다이소 위치, storeLimit은 매장 수(pageSize와 같은 값), productLimit은 후보 수이며 실제 조회 상품은 selectedProduct 하나입니다. 실패나 미확인 수량은 품절이 아닙니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "productId": {
+              "description": "daiso/by_id: 제품 ID. 상품명만 알면 먼저 daiso_search_products로 상품의 id를 확인하세요.",
+              "type": "string"
+            },
+            "storeQuery": {
+              "description": "daiso/by_id: 매장 검색어 (매장명 또는 주소, 예: 안산 중앙역) · daiso/by_name: 역명, 동네, 매장명 같은 대강의 위치",
+              "type": "string"
+            },
+            "latitude": {
+              "description": "daiso/by_id: 위도 (기본값: 서울 시청 37.5665) · daiso/by_name: 위도 (생략 시 서울 시청 37.5665) · gs25: 위도 (선택, 미입력 시 storeKeyword 지오코딩 시도) · cu: 위도 (없으면 storeKeyword 기반으로 좌표 추정 시도) · emart24: 위도 (선택) · oliveyoung: 위도 (기본값: 서울 시청 37.5665)",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "description": "위도 (기본값: 서울 시청 37.5665)",
+                  "type": "number"
+                }
+              ]
+            },
+            "longitude": {
+              "description": "daiso/by_id: 경도 (기본값: 서울 시청 126.978) · daiso/by_name: 경도 (생략 시 서울 시청 126.978) · gs25: 경도 (선택, 미입력 시 storeKeyword 지오코딩 시도) · cu: 경도 (없으면 storeKeyword 기반으로 좌표 추정 시도) · emart24: 경도 (선택) · oliveyoung: 경도 (기본값: 서울 시청 126.978)",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "description": "경도 (기본값: 서울 시청 126.978)",
+                  "type": "number"
+                }
+              ]
+            },
+            "page": {
+              "description": "daiso/by_id: 페이지 번호 (기본값: 1) · daiso/by_name: 재고 매장 페이지 번호 (기본값: 1) · oliveyoung: 상품 검색 페이지 번호 (기본값: 1)",
+              "anyOf": [
+                {
+                  "description": "페이지 번호 (기본값: 1)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "재고 매장 페이지 번호 (기본값: 1)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "상품 검색 페이지 번호 (기본값: 1)",
+                  "type": "number"
+                }
+              ]
+            },
+            "pageSize": {
+              "description": "daiso/by_id: 페이지당 결과 수 (기본값: 30) · daiso/by_name: 재고 매장 페이지 크기 (기본값: 30)",
+              "anyOf": [
+                {
+                  "description": "페이지당 결과 수 (기본값: 30)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "재고 매장 페이지 크기 (기본값: 30)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                }
+              ]
+            },
+            "query": {
+              "description": "daiso/by_name: 검색할 상품명 또는 키워드",
+              "type": "string"
+            },
+            "productLimit": {
+              "description": "daiso/by_name: 상품 후보 수 (기본값: 5)",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "keyword": {
+              "description": "gs25: 상품 검색어 (예: 오감자, 삼각김밥, 커피) · seveneleven: 상품 검색어 (예: 핫식스, 삼각김밥, 도시락) · cu: 재고를 확인할 상품 검색어 (예: 과자, 커피, 도시락) · emart24: 상품 검색어 (pluCd 미입력 시 필수) · oliveyoung: 재고를 확인할 상품 키워드 (예: 선크림, 립밤, 샴푸)",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "상품 검색어 (예: 오감자, 삼각김밥, 커피)"
+                },
+                {
+                  "type": "string",
+                  "description": "상품 검색어 (예: 핫식스, 삼각김밥, 도시락)"
+                },
+                {
+                  "type": "string",
+                  "description": "재고를 확인할 상품 검색어 (예: 과자, 커피, 도시락)"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string",
+                  "description": "재고를 확인할 상품 키워드 (예: 선크림, 립밤, 샴푸)"
+                }
+              ]
+            },
+            "itemCode": {
+              "description": "gs25: 상품 코드 (gs25_search_products로 조회한 정확한 코드, 제공 시 keyword 검색 건너뜀)",
+              "type": "string"
+            },
+            "storeKeyword": {
+              "description": "gs25: 매장명/주소 키워드 필터 (예: 강남, 안산 중앙역) · seveneleven: 매장/지역 검색 키워드 (예: 안산 중앙역, 강남역, 홍대) · cu: 주변 매장 필터 키워드 (예: 강남, 안산) · emart24: 매장 키워드 필터 (예: 강남) · oliveyoung: 주변 매장 필터 키워드 (예: 명동, 강남). 비우면 주변 매장 전체",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "description": "매장/지역 검색 키워드 (예: 안산 중앙역, 강남역, 홍대)",
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "serviceCode": {
+              "description": "gs25: 서비스 코드 (기본값: 01=GS25)",
+              "type": "string"
+            },
+            "storeLimit": {
+              "description": "gs25: 반환할 매장 수 (기본값: 20) · seveneleven: 반환할 최대 매장 수 (기본값: 20) · cu: 반환할 주변 매장 최대 수 (기본값: 10) · emart24: 조회할 매장 수 (기본값: 10) · oliveyoung: 반환할 주변 매장 최대 수 (기본값: 10)",
+              "anyOf": [
+                {
+                  "description": "반환할 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 최대 매장 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 주변 매장 최대 수 (기본값: 10)",
+                  "type": "number"
+                },
+                {
+                  "description": "조회할 매장 수 (기본값: 10)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 주변 매장 최대 수 (기본값: 10)",
+                  "type": "number"
+                }
+              ]
+            },
+            "timeoutMs": {
+              "description": "gs25: 요청 제한 시간(ms, 기본값: 20000) · seveneleven: 요청 제한 시간(ms, 기본값: 20000) · cu: 요청 제한 시간(ms, 기본값: 15000) · emart24: 요청 제한 시간(ms, 기본값: 15000) · oliveyoung: 개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 20000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 20000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "개별 조회 제한 시간(ms, 기본값: 무료 릴레이 60000 / 직접 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "size": {
+              "description": "cu: 재고 검색 결과 수 (기본값: 20) · oliveyoung: 페이지당 상품 수 (기본값: 20)",
+              "anyOf": [
+                {
+                  "description": "재고 검색 결과 수 (기본값: 20)",
+                  "type": "number"
+                },
+                {
+                  "description": "페이지당 상품 수 (기본값: 20)",
+                  "type": "number"
+                }
+              ]
+            },
+            "offset": {
+              "description": "cu: 재고 검색 시작 오프셋 (기본값: 0)",
+              "type": "number"
+            },
+            "searchSort": {
+              "description": "cu: 재고 정렬 방식 (기본값: recom)",
+              "type": "string"
+            },
+            "pluCd": {
+              "description": "emart24: 상품 PLU 코드 (예: 8800244010504)",
+              "type": "string"
+            },
+            "area1": {
+              "description": "emart24: 시/도 (예: 서울특별시)",
+              "type": "string"
+            },
+            "area2": {
+              "description": "emart24: 구/군 (예: 강남구)",
+              "type": "string"
+            },
+            "service24h": {
+              "description": "emart24: 24시간 매장만 대상으로 조회",
+              "type": "boolean"
+            },
+            "productPage": {
+              "description": "emart24: 상품 검색 페이지 (기본값: 1)",
+              "type": "number"
+            },
+            "productPageSize": {
+              "description": "emart24: 상품 검색 수 (기본값: 10)",
+              "type": "number"
+            },
+            "sort": {
+              "description": "oliveyoung: 정렬 코드 (기본값: 01)",
+              "type": "string"
+            },
+            "includeSoldOut": {
+              "description": "oliveyoung: 품절 상품 포함 여부 (기본값: false)",
+              "type": "boolean"
+            },
+            "stockCheckLimit": {
+              "description": "oliveyoung: 주변 매장별 재고를 보강할 상품 수 (기본값: 5, 최대: 5, 낮출수록 빠름)",
+              "type": "number"
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "daiso",
+                "gs25",
+                "seveneleven",
+                "cu",
+                "emart24",
+                "oliveyoung"
+              ],
+              "description": "조회할 서비스"
+            },
+            "operation": {
+              "description": "조회 작업. 같은 서비스에 작업이 여러 개면 필수입니다.",
+              "type": "string",
+              "enum": [
+                "by_id",
+                "by_name"
+              ]
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "productId": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "keyword": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "itemCode": {
+              "anyOf": [
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {},
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              ]
+            },
+            "location": {
+              "anyOf": [
+                {},
+                {
+                  "description": "재고 조회에 사용한 위치와 위치 해석 출처",
+                  "type": "object",
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    },
+                    "source": {
+                      "type": "string",
+                      "enum": [
+                        "input",
+                        "storeQuery",
+                        "default"
+                      ]
+                    },
+                    "storeName": {
+                      "type": "string"
+                    },
+                    "storeAddress": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "product": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "onlineStock": {
+              "anyOf": [
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "description": "온라인 재고 수량",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              ]
+            },
+            "inventory": {
+              "anyOf": [
+                {},
+                {},
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "storeInventory": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "properties": {
+                    "totalStores": {
+                      "type": "number"
+                    },
+                    "inStockCount": {
+                      "type": "number"
+                    },
+                    "outOfStockCount": {
+                      "type": "number"
+                    },
+                    "unknownStockCount": {
+                      "type": "number"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "stores": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "totalStores",
+                    "inStockCount",
+                    "outOfStockCount",
+                    "page",
+                    "pageSize",
+                    "stores"
+                  ],
+                  "additionalProperties": false,
+                  "description": "매장별 재고 조회 결과"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "query": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string",
+                  "description": "사용자가 입력한 상품 검색어"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "storeQuery": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string",
+                  "description": "사용자가 입력한 위치 키워드"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "summary": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "properties": {
+                    "headline": {
+                      "type": "string"
+                    },
+                    "selectedProduct": {
+                      "type": "string"
+                    },
+                    "storeQuery": {
+                      "type": "string"
+                    },
+                    "inventorySummary": {
+                      "type": "string"
+                    },
+                    "displayLocationHint": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "headline",
+                    "selectedProduct",
+                    "storeQuery",
+                    "inventorySummary",
+                    "displayLocationHint"
+                  ],
+                  "additionalProperties": false,
+                  "description": "사용자에게 바로 보여줄 요약"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "productCandidates": {
+              "anyOf": [
+                {},
+                {
+                  "type": "array",
+                  "items": {},
+                  "description": "검색된 상품 후보 목록"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "selectedProduct": {
+              "anyOf": [
+                {},
+                {
+                  "anyOf": [
+                    {},
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "재고 조회 기준으로 선택한 상품"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "nextSteps": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {},
+                  "description": "후속 도구 호출 안내"
+                },
+                {},
+                {},
+                {},
+                {},
+                {}
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "get_product_details",
+        "title": "상품 상세 조회",
+        "description": "일본 상품 상세는 service=daiso_jp, operation=product, id를 입력합니다. 한국 다이소 가격은 operation=price와 productId/productName, 진열 위치는 operation=display_location과 productId/storeCode를 입력합니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "productId": {
+              "description": "daiso/price: 제품 ID · daiso/display_location: 상품 ID (daiso_search_products로 조회한 상품의 id)",
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string",
+                  "description": "상품 ID (daiso_search_products로 조회한 상품의 id)"
+                }
+              ]
+            },
+            "productName": {
+              "description": "daiso/price: 제품명 (productId가 없을 경우 사용)",
+              "type": "string"
+            },
+            "storeCode": {
+              "description": "daiso/display_location: 매장 코드. storeCode를 모르면 먼저 daiso_check_inventory 결과의 storeInventory.stores[].storeCode를 확인하세요.",
+              "type": "string"
+            },
+            "id": {
+              "description": "daiso_jp/product: id",
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "daiso",
+                "daiso_jp"
+              ],
+              "description": "조회할 서비스"
+            },
+            "operation": {
+              "description": "조회 작업. 같은 서비스에 작업이 여러 개면 필수입니다.",
+              "type": "string",
+              "enum": [
+                "price",
+                "display_location",
+                "product"
+              ]
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "productId": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "productName": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {}
+              ]
+            },
+            "product": {
+              "anyOf": [
+                {},
+                {},
+                {}
+              ]
+            },
+            "price": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "storeCode": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "displayLocation": {
+              "anyOf": [
+                {},
+                {},
+                {}
+              ]
+            },
+            "locations": {
+              "anyOf": [
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {}
+              ]
+            },
+            "country": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string",
+                  "const": "JP"
+                }
+              ]
+            },
+            "id": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "currency": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string",
+                  "const": "JPY"
+                }
+              ]
+            },
+            "url": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "imageUrl": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "onlineAvailable": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "description": "온라인 판매 가능 여부. 매장 재고가 아닙니다.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              ]
+            },
+            "storeInventorySupported": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "type": "boolean",
+                  "const": false
+                }
+              ]
+            },
+            "note": {
+              "anyOf": [
+                {},
+                {},
+                {
+                  "description": "대체 조회와 확인하지 못한 항목 안내",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "find_places",
+        "title": "주변 장소와 영화관 검색",
+        "description": "service=places는 음식점/카페 등 장소 검색, 나머지는 영화관 검색입니다. location/keyword 또는 latitude/longitude를 입력합니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "location": {
+              "description": "places: 지역/역/주소 키워드 (예: 강남역, 성수동)",
+              "type": "string"
+            },
+            "keyword": {
+              "description": "places: 검색어 (예: 라멘, 브런치, 조용한 카페) · megabox: 위치 키워드 (예: 안산 중앙역, 강남역) · dtryx: 극장명 키워드 (예: 모모, 광주) · lottecinema: 위치 키워드 (예: 안산 중앙역, 잠실역) · cgv: 위치 키워드 (예: 안산 중앙역, 강남역)",
+              "type": "string"
+            },
+            "category": {
+              "description": "places: 장소 카테고리. restaurant/food=음식점, cafe=카페, dessert=디저트",
+              "type": "string",
+              "enum": [
+                "restaurant",
+                "cafe",
+                "food",
+                "dessert",
+                "all"
+              ]
+            },
+            "limit": {
+              "description": "places: 반환할 최대 장소 수 (네이버 지역 검색 최대 5) · megabox: 반환할 최대 지점 수 (기본값: 10) · dtryx: 반환할 최대 극장 수 (기본값: 50) · lottecinema: 반환할 최대 지점 수 (기본값: 10) · cgv: 최대 결과 수 (기본값: 30)",
+              "anyOf": [
+                {
+                  "description": "반환할 최대 장소 수 (네이버 지역 검색 최대 5)",
+                  "type": "number"
+                },
+                {
+                  "description": "반환할 최대 지점 수 (기본값: 10)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "반환할 최대 극장 수 (기본값: 50)",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 200
+                },
+                {
+                  "description": "반환할 최대 지점 수 (기본값: 10)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "최대 결과 수 (기본값: 30)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                }
+              ]
+            },
+            "start": {
+              "description": "places: 검색 시작 위치 (기본값: 1)",
+              "type": "number"
+            },
+            "sort": {
+              "description": "places: 정렬 방식. random=유사도순, comment=리뷰순",
+              "type": "string",
+              "enum": [
+                "random",
+                "comment"
+              ]
+            },
+            "timeoutMs": {
+              "description": "places: 요청 제한 시간(ms, 기본값: 10000) · megabox: 요청 제한 시간(ms, 기본값: 15000) · lottecinema: 요청 제한 시간(ms, 기본값: 15000) · cgv: 요청 제한 시간(ms, 기본값: 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 10000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "latitude": {
+              "description": "megabox: 위도 (미입력 시 keyword 해석) · lottecinema: 위도 (좌표 또는 위치 키워드 입력) · cgv: 위도",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                }
+              ]
+            },
+            "longitude": {
+              "description": "megabox: 경도 (미입력 시 keyword 해석) · lottecinema: 경도 (좌표 또는 위치 키워드 입력) · cgv: 경도",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                }
+              ]
+            },
+            "playDate": {
+              "description": "megabox: 조회 날짜(YYYYMMDD, 기본값: 오늘) · lottecinema: 조회 날짜(YYYYMMDD, 기본값: 오늘) · cgv: 조회 날짜(YYYYMMDD, 기본값: 오늘)",
+              "type": "string"
+            },
+            "areaCode": {
+              "description": "megabox: 지역 코드 (미입력 시 위치로 결정)",
+              "type": "string"
+            },
+            "region": {
+              "description": "dtryx: 광역 지역명 (예: 서울, 경기, 부산)",
+              "type": "string"
+            },
+            "brandCode": {
+              "description": "dtryx: 브랜드 코드 (indieart, etc, spacedog 중 하나)",
+              "type": "string"
+            },
+            "regionCode": {
+              "description": "cgv: 지역 코드 (예: 01 서울)",
+              "type": "string"
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "places",
+                "megabox",
+                "dtryx",
+                "lottecinema",
+                "cgv"
+              ],
+              "description": "조회할 서비스"
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "provider": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "searchMode": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "query": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "category": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "location": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "totalCount": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "count": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {},
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "places": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {},
+                {},
+                {}
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "keyword": {
+              "anyOf": [
+                {},
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {},
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              ]
+            },
+            "theaters": {
+              "anyOf": [
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "get_showtimes",
+        "title": "영화와 상영 시간표 조회",
+        "description": "operation=movies는 상영 영화, seats는 메가박스/디트릭스/롯데시네마 잔여석, timetable은 CGV 시간표와 잔여석입니다. playDate는 YYYYMMDD, 각 서비스의 theaterId/theaterCode/cinemaCode를 사용합니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "playDate": {
+              "description": "megabox/movies: 조회 날짜(YYYYMMDD, 기본값: 오늘) · megabox/seats: 조회 날짜(YYYYMMDD, 기본값: 오늘) · dtryx/seats: 조회 날짜(YYYYMMDD 또는 YYYY-MM-DD, 기본값: 오늘) · lottecinema/movies: 조회 날짜(YYYYMMDD, 기본값: 오늘) · lottecinema/seats: 조회 날짜(YYYYMMDD, 기본값: 오늘) · cgv/movies: 조회 날짜(YYYYMMDD, 기본값: 오늘) · cgv/timetable: 조회 날짜(YYYYMMDD, 기본값: 오늘)",
+              "type": "string"
+            },
+            "theaterId": {
+              "description": "megabox/movies: 메가박스 지점 번호 (예: 1372) · megabox/seats: 메가박스 지점 번호 (예: 1372) · lottecinema/movies: 롯데시네마 지점 ID (예: 1016) · lottecinema/seats: 롯데시네마 지점 ID (예: 1016)",
+              "type": "string"
+            },
+            "movieId": {
+              "description": "megabox/movies: 메가박스 영화 번호 (예: 25104500) · megabox/seats: 메가박스 영화 번호 (예: 25104500) · lottecinema/movies: 롯데시네마 대표 영화 코드 (예: 23816) · lottecinema/seats: 롯데시네마 대표 영화 코드 (예: 23816)",
+              "type": "string"
+            },
+            "keyword": {
+              "description": "megabox/movies: 위치 키워드 (예: 안산 중앙역, 강남역) · megabox/seats: 위치 키워드 (예: 안산 중앙역, 강남역) · dtryx/movies: 극장명 키워드 (예: 모모, 라이카) · dtryx/seats: 극장명 키워드 (예: 모모, 광주) · lottecinema/movies: 위치 키워드 (예: 안산 중앙역, 잠실역) · lottecinema/seats: 위치 키워드 (예: 안산 중앙역, 잠실역) · cgv/movies: 위치 키워드 (예: 안산 중앙역, 강남역) · cgv/timetable: 위치 키워드 (예: 안산 중앙역, 강남역)",
+              "type": "string"
+            },
+            "latitude": {
+              "description": "megabox/movies: 위도 · megabox/seats: 위도 · lottecinema/movies: 위도 · lottecinema/seats: 위도 · cgv/movies: 위도 · cgv/timetable: 위도",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                }
+              ]
+            },
+            "longitude": {
+              "description": "megabox/movies: 경도 · megabox/seats: 경도 · lottecinema/movies: 경도 · lottecinema/seats: 경도 · cgv/movies: 경도 · cgv/timetable: 경도",
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                }
+              ]
+            },
+            "areaCode": {
+              "description": "megabox/movies: 지역 코드 (미입력 시 위치로 결정) · megabox/seats: 지역 코드 (미입력 시 위치로 결정)",
+              "type": "string"
+            },
+            "timeoutMs": {
+              "description": "megabox/movies: 요청 제한 시간(ms, 기본값: 15000) · megabox/seats: 요청 제한 시간(ms, 기본값: 15000) · dtryx/movies: 요청 제한 시간(ms, 기본값: 15000) · dtryx/seats: 요청 제한 시간(ms, 기본값: 15000) · lottecinema/movies: 요청 제한 시간(ms, 기본값: 15000) · lottecinema/seats: 요청 제한 시간(ms, 기본값: 15000) · cgv/movies: 요청 제한 시간(ms, 기본값: 15000) · cgv/timetable: 요청 제한 시간(ms, 기본값: 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 60000
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "limit": {
+              "description": "megabox/seats: 반환할 최대 회차 수 (기본값: 50) · dtryx/seats: 반환할 최대 회차 수 (기본값: 50) · lottecinema/seats: 반환할 최대 회차 수 (기본값: 50) · cgv/timetable: 최대 결과 수 (기본값: 50)",
+              "anyOf": [
+                {
+                  "description": "반환할 최대 회차 수 (기본값: 50)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "반환할 최대 회차 수 (기본값: 50)",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 200
+                },
+                {
+                  "description": "반환할 최대 회차 수 (기본값: 50)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "description": "최대 결과 수 (기본값: 50)",
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                }
+              ]
+            },
+            "cinemaCode": {
+              "description": "dtryx/movies: 극장 코드 (예: 000067) · dtryx/seats: 극장 코드 (예: 000067)",
+              "type": "string"
+            },
+            "brandCode": {
+              "description": "dtryx/movies: 브랜드 코드. 카탈로그에 없는 극장 코드를 직접 조회할 때 함께 지정합니다. · dtryx/seats: 브랜드 코드. 카탈로그에 없는 극장 코드를 직접 조회할 때 함께 지정합니다.",
+              "type": "string"
+            },
+            "includePlayDates": {
+              "description": "dtryx/movies: 예매 가능한 상영 날짜 목록 포함 여부 (기본값: false)",
+              "type": "boolean"
+            },
+            "region": {
+              "description": "dtryx/seats: 광역 지역명으로 조회 범위를 좁힙니다 (예: 서울, 경기)",
+              "type": "string"
+            },
+            "movieName": {
+              "description": "dtryx/seats: 영화명 부분 일치 필터 (예: 경멸)",
+              "type": "string"
+            },
+            "theaterCode": {
+              "description": "cgv/movies: CGV 극장 코드 (예: 0056) · cgv/timetable: CGV 극장 코드 (예: 0056)",
+              "type": "string"
+            },
+            "movieCode": {
+              "description": "cgv/timetable: CGV 영화 코드",
+              "type": "string"
+            },
+            "service": {
+              "type": "string",
+              "enum": [
+                "megabox",
+                "dtryx",
+                "lottecinema",
+                "cgv"
+              ],
+              "description": "조회할 서비스"
+            },
+            "operation": {
+              "description": "조회 작업. 같은 서비스에 작업이 여러 개면 필수입니다.",
+              "type": "string",
+              "enum": [
+                "movies",
+                "seats",
+                "timetable"
+              ]
+            }
+          },
+          "required": [
+            "service"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "playDate": {
+              "type": "string"
+            },
+            "theaterCode": {
+              "type": "string"
+            },
+            "count": {
+              "type": "number"
+            },
+            "movies": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {}
+              ]
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "movieCode": {
+              "anyOf": [
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                },
+                {},
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "showtimes": {
+              "anyOf": [
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "seats": {
+              "anyOf": [
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                },
+                {},
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "get_fuel_info",
+        "title": "유가와 주유소 조회",
+        "description": "오피넷 정보. operation=average 평균유가, lowest 최저가 주유소, around 주변 주유소, detail 주유소 상세. 각 작업의 지역/좌표/주유소 ID 조건을 입력합니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "timeoutMs": {
+              "description": "average: 요청 제한 시간(ms) · lowest: 요청 제한 시간(ms) · around: 요청 제한 시간(ms) · detail: 요청 제한 시간(ms)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms)",
+                  "type": "number"
+                }
+              ]
+            },
+            "fuelCode": {
+              "description": "lowest: 유종 코드: B027 휘발유, D047 경유, B034 고급휘발유, C004 실내등유, K015 자동차부탄 · around: 유종 코드",
+              "anyOf": [
+                {
+                  "description": "유종 코드: B027 휘발유, D047 경유, B034 고급휘발유, C004 실내등유, K015 자동차부탄",
+                  "type": "string",
+                  "enum": [
+                    "B027",
+                    "D047",
+                    "B034",
+                    "C004",
+                    "K015"
+                  ]
+                },
+                {
+                  "description": "유종 코드",
+                  "type": "string",
+                  "enum": [
+                    "B027",
+                    "D047",
+                    "B034",
+                    "C004",
+                    "K015"
+                  ]
+                }
+              ]
+            },
+            "areaCode": {
+              "description": "lowest: 오피넷 지역 코드. 미입력 시 전국 기준",
+              "type": "string"
+            },
+            "count": {
+              "description": "lowest: 최저가 결과 수(1~20)",
+              "type": "number"
+            },
+            "x": {
+              "description": "around: 기준 위치 X좌표(KATEC)",
+              "type": "number"
+            },
+            "y": {
+              "description": "around: 기준 위치 Y좌표(KATEC)",
+              "type": "number"
+            },
+            "latitude": {
+              "description": "around: 위도(WGS84)",
+              "type": "number"
+            },
+            "longitude": {
+              "description": "around: 경도(WGS84)",
+              "type": "number"
+            },
+            "location": {
+              "description": "around: 장소/주소 키워드. 예: 강남역, 서울역",
+              "type": "string"
+            },
+            "radiusMeters": {
+              "description": "around: 검색 반경 m(100~5000)",
+              "type": "number"
+            },
+            "sort": {
+              "description": "around: 정렬 기준",
+              "type": "string",
+              "enum": [
+                "price",
+                "distance"
+              ]
+            },
+            "stationId": {
+              "description": "detail: 오피넷 주유소 ID",
+              "type": "string"
+            },
+            "operation": {
+              "type": "string",
+              "enum": [
+                "average",
+                "lowest",
+                "around",
+                "detail"
+              ],
+              "description": "조회 작업. 같은 서비스에 작업이 여러 개면 필수입니다."
+            }
+          },
+          "required": [
+            "operation"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {},
+          "description": "도구 실행 결과(JSON 객체)"
+        }
+      },
+      {
+        "name": "get_catalog",
+        "title": "인기 검색어와 기획전",
+        "description": "세븐일레븐 공개 카탈로그. operation=popwords 인기 검색어, snapshot 기획전/이슈 목록입니다. operation은 필수입니다. includeIssues/includeExhibition/limit은 snapshot 전용이며 popwords에는 label만 지정합니다. 실시간 재고를 의미하지 않습니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "label": {
+              "description": "popwords: 조회 라벨 (기본값: home)",
+              "type": "string"
+            },
+            "timeoutMs": {
+              "description": "popwords: 요청 제한 시간(ms, 기본값: 15000) · snapshot: 요청 제한 시간(ms, 기본값: 15000)",
+              "anyOf": [
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                },
+                {
+                  "description": "요청 제한 시간(ms, 기본값: 15000)",
+                  "type": "number"
+                }
+              ]
+            },
+            "includeIssues": {
+              "description": "snapshot: 이슈 상품 포함 여부 (기본값: true)",
+              "type": "boolean"
+            },
+            "includeExhibition": {
+              "description": "snapshot: 기획전 포함 여부 (기본값: true)",
+              "type": "boolean"
+            },
+            "limit": {
+              "description": "snapshot: 각 목록 최대 반환 수 (기본값: 20)",
+              "type": "number"
+            },
+            "operation": {
+              "type": "string",
+              "enum": [
+                "popwords",
+                "snapshot"
+              ],
+              "description": "조회 작업. 같은 서비스에 작업이 여러 개면 필수입니다."
+            }
+          },
+          "required": [
+            "operation"
+          ],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "label": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {}
+              ]
+            },
+            "keywords": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {}
+              ]
+            },
+            "count": {
+              "type": "number"
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            },
+            "pages": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "properties": {
+                    "totalCount": {
+                      "type": "number"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "totalCount",
+                    "items"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "issues": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "properties": {
+                    "totalCount": {
+                      "type": "number"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "totalCount",
+                    "items"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "exhibitions": {
+              "anyOf": [
+                {},
+                {
+                  "type": "object",
+                  "properties": {
+                    "totalCount": {
+                      "type": "number"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {}
+                    }
+                  },
+                  "required": [
+                    "totalCount",
+                    "items"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "compare_products",
+        "title": "상품 비교",
+        "description": "기존 서비스 상품 가격 후보를 비교합니다.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "description": "compare_products: 비교할 상품 검색어",
+              "type": "string"
+            },
+            "limit": {
+              "description": "compare_products: 서비스별 최대 결과 수",
+              "type": "number"
+            },
+            "services": {
+              "description": "compare_products: 쉼표로 구분한 서비스 목록(daiso,gs25,seveneleven,emart24)",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "type": "string"
+            },
+            "services": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "serviceCount": {
+              "type": "number"
+            },
+            "resultCount": {
+              "type": "number"
+            },
+            "bestPrice": {
+              "anyOf": [
+                {}
+              ]
+            },
+            "results": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "errors": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {}
+                }
+              ]
+            },
+            "note": {
+              "type": "string"
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            }
+          },
+          "additionalProperties": {}
+        }
+      },
+      {
+        "name": "submit_request",
+        "title": "요청 제출",
+        "description": "요청을 제출합니다. 현재 requestType=developer만 지원하며 request에 개발자에게 전달할 오류/개선/기능/문서 요청을 입력합니다. 미래 요청 유형도 이 도구에서 확장합니다. 사용자 요청이 있을 때만 제출하고 인증값/개인정보는 넣지 마세요.",
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "requestType": {
+              "default": "developer",
+              "description": "현재 지원 유형: developer",
+              "type": "string",
+              "const": "developer"
+            },
+            "request": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "default": "other",
+                  "description": "요청 유형",
+                  "type": "string",
+                  "enum": [
+                    "bug",
+                    "improvement",
+                    "feature",
+                    "docs",
+                    "other"
+                  ]
+                },
+                "severity": {
+                  "default": "medium",
+                  "description": "영향도",
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ]
+                },
+                "title": {
+                  "type": "string",
+                  "description": "짧은 제목"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "요청 상세 설명"
+                },
+                "service": {
+                  "description": "관련 서비스 ID 또는 영역",
+                  "type": "string"
+                },
+                "toolName": {
+                  "description": "관련 MCP 도구 이름",
+                  "type": "string"
+                },
+                "reproduction": {
+                  "description": "재현 방법",
+                  "type": "string"
+                },
+                "expected": {
+                  "description": "기대 결과",
+                  "type": "string"
+                },
+                "actual": {
+                  "description": "실제 결과",
+                  "type": "string"
+                },
+                "source": {
+                  "default": "mcp",
+                  "description": "요청 출처",
+                  "type": "string",
+                  "enum": [
+                    "mcp",
+                    "chatgpt",
+                    "claude",
+                    "cli",
+                    "api",
+                    "other"
+                  ]
+                },
+                "userContext": {
+                  "description": "추가 컨텍스트 JSON",
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/__schema0"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "description"
+              ],
+              "additionalProperties": false,
+              "description": "제출할 요청 내용"
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false,
+          "definitions": {
+            "__schema0": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/__schema0"
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/__schema0"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "severity": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "service": {
+              "type": "string"
+            },
+            "toolName": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "standard": {
+              "description": "서비스 공통 상품/매장/영화관 정규화 결과"
+            }
+          },
+          "additionalProperties": {}
+        }
+      }
+    ]
+  },
+  "jsonrpc": "2.0",
+  "id": "schema-fix"
+}

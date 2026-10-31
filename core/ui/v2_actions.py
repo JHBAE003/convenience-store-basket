@@ -95,6 +95,7 @@ def apply_substitute(item_id, option, original, metadata, max_extra, tolerance, 
         return
     st.session_state.cart=[replace(i,label=row.product_name) if i.item_id==item_id else i for i in st.session_state.cart]
     st.session_state.links=[link for link in st.session_state.links if link.item_id!=item_id]
-    st.session_state.links.append(CatalogLink(item_id,row.brand,row.barcode,row.product_code,row.product_name))
+    from core.services.catalog import catalog_link_for
+    st.session_state.links.append(catalog_link_for(row,item_id))
     clear_comparison()
     st.toast('대체품으로 변경했습니다. 선택 브랜드의 매장 재고를 다시 비교해 주세요.',icon=':material/check:')

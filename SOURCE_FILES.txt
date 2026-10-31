@@ -1,24 +1,158 @@
-중간 과제 원본에서 이식한 파일과 원본 SHA256
-models.py  sha256=0fa230862442a3304e76cc9ac374845fac5a52344a63cd0164853357b0133d42
-config.py  sha256=56e7a9a25c53457afa75579e31e7efc851bffe173c2201a50cb8eafc64d3af61
-data\__init__.py  sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-data\base_adapter.py  sha256=b5211b42be2eb76f00bf25b8c21daca7b63aa260667ca97c742461329f6a2393
-data\composite_inventory_adapter.py  sha256=eb474f3e4791a2c1088e21415190a98821712971e62e20d5dea656202165db64
-data\csv_adapter.py  sha256=8746e660ce1d43e5c2029a6ba0a72dbdfa8986a8e6d41263c6c806d11945ad4f
-data\data_manager.py  sha256=ed0ffef926d12f68cdc283a0470de5b142fef1addd1da007cb3838542398a07a
-data\live_mcp_adapter.py  sha256=332272a2e055fd7c730820d8e5e79ed299ce43e326ed917b3a3660f5692ed598
-data\mcp_client.py  sha256=1d5a6e90845cf32df5cafc5e4aa9049f06281ac732fe3874ccd7336b33e7670d
-data\promotion_manager.py  sha256=a27ab079f1a8c9a7efee84fb479701a94777906cedc92fdcfeb18a444d6f1020
-scrapers\__init__.py  sha256=8e88bf4e226b442dc0d67b69ae15285e003be5723b98dde5c9ea050dba7cb4e8
-scrapers\emart24_scraper.py  sha256=fe8761f7091f0a348623fef5c83251244e22df9e4f0548f199822caa51de4277
-scrapers\gs25_price_scraper.py  sha256=22a77f2794865debf12d67f7dba5279ffa778a262a168e74a2edef103a97dee3
-scrapers\public_event_scraper.py  sha256=8f856a9843480c35d3554ebcc5767da93c06063754157decf3eaaf91c6b18d48
-services\__init__.py  sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-services\distance.py  sha256=cc01239b088fa169b8ee62eddd37343ee81a69721b8195d69a5c47d2a7df72e1
-services\geocoding.py  sha256=dac71c5edfb4140709433f9df0a03a78402073251e14e2c59ad6a620edf9f2c8
-services\integration_service.py  sha256=90fc180043c5fb3cb7ca0233ca9a2b70fe63a192c308c4edcfc82a0230facedb
-services\product_matching.py  sha256=cfc2a4f69613f3fedab7479205169d0773ae1aa51ec9afba4b00d77a98f51591
-services\promotion.py  sha256=7afec78faa0037f20f45ac2ca015dd0472bdf2fdc74aab388252d5c674902e04
-services\recommendation.py  sha256=19e7c5cf01af6df7e717b3d638a9ff465b0c0e77b4afa44fc10a26772f45f2f7
-services\search.py  sha256=f7a6bd0cbf39620dd52720c7107097cf36f34859843a73da28cb2e74c8fad3d8
-services\store_matching.py  sha256=f0fab1752248c610f5a079e7add361d9ff16c88438a3a0ab42f576ee663449d2
+.design/brief.md
+.gitignore
+.streamlit/config.toml
+README.md
+SOURCE_FILES.txt
+assets/products/6921211104292.jpg
+assets/products/8801007021652.jpg
+assets/products/8801007171210.jpg
+assets/products/8801007178233.png
+assets/products/8801056193010.png
+assets/products/8801062451210.jpg
+assets/products/8801062451258.jpg
+assets/products/8801062451739.png
+assets/products/8801094112707.png
+assets/products/8801094202606.png
+assets/products/8801382135036.png
+assets/products/8809274510893.png
+assets/screenshots/live-fix-results.png
+assets/screenshots/product-list.png
+assets/screenshots/product-search.png
+assets/screenshots/v2-mobile.png
+assets/screenshots/v2-split.png
+assets/screenshots/v21-comparison.png
+assets/screenshots/v21-mobile.png
+assets/screenshots/v21-product.png
+assets/screenshots/v21-purchase.png
+core/__init__.py
+core/cart_models.py
+core/config.py
+core/data/__init__.py
+core/data/base_adapter.py
+core/data/composite_inventory_adapter.py
+core/data/csv_adapter.py
+core/data/data_manager.py
+core/data/live_mcp_adapter.py
+core/data/mcp_client.py
+core/data/promotion_manager.py
+core/models.py
+core/scrapers/__init__.py
+core/scrapers/emart24_scraper.py
+core/scrapers/event_metadata.py
+core/scrapers/gs25_price_scraper.py
+core/scrapers/public_event_scraper.py
+core/services/__init__.py
+core/services/basket.py
+core/services/basket_recommendation.py
+core/services/budget_optimizer.py
+core/services/cart_linking.py
+core/services/cart_pricing.py
+core/services/catalog.py
+core/services/distance.py
+core/services/exporting.py
+core/services/geocoding.py
+core/services/integration_service.py
+core/services/observations.py
+core/services/product_list.py
+core/services/product_matching.py
+core/services/promotion.py
+core/services/quantity_suggestions.py
+core/services/query_service.py
+core/services/recommendation.py
+core/services/search.py
+core/services/split_purchase.py
+core/services/store_matching.py
+core/services/substitutions.py
+core/services/v2_common.py
+core/ui/__init__.py
+core/ui/evidence.py
+core/ui/product_browser.py
+core/ui/product_images.py
+core/ui/v2_actions.py
+core/ui/v2_panels.py
+docs/fix-live-2026-10-31-cu-emart.md
+docs/fix-live-2026-10-31-gs-seven.md
+docs/fix-live-2026-10-31-price.md
+docs/fix-live-2026-10-31.md
+docs/plans/2026-10-31-v2.1.md
+docs/plans/2026-10-31-v2.md
+docs/research/convenience-relay.md
+docs/research/fix-live-gs-seven-probes.json
+docs/research/fix-live-offline-test-result.txt
+docs/research/fix-live-preservation.json
+docs/research/fix-live-tools-list.json
+docs/research/fix-live-ui-errors.json
+docs/research/fix-live-ui-metrics-final.csv
+docs/research/fix-live-ui-metrics.csv
+docs/research/fix-pepsi-manufacturer-reference.json
+docs/research/fix-price-cu-form-contract.json
+docs/research/fix-price-cu-search-contract.json
+docs/research/fix-seven-direct-probes.json
+docs/research/limited-live-probes.json
+docs/research/mcp-tools.md
+docs/research/promotion-public-probes.json
+docs/research/service-reference.md
+docs/research/seven-source-paths.json
+docs/research/tools-list.txt
+docs/v2-source-manifest.json
+docs/v2-verification.md
+docs/v2.1-check-results.json
+docs/v2.1-inventory-check.md
+docs/v2.1-matching.md
+docs/v2.1-preservation.json
+docs/v2.1-promotions-check.md
+docs/v2.1-verification.md
+progress.md
+requirements.txt
+sample_data/catalog_links.csv
+sample_data/demo_products.csv
+sample_data/photo_catalog.json
+sample_data/substitute_catalog.csv
+sample_data/v2_demo_products.csv
+scripts/run_offline_tests.py
+streamlit_app.py
+tests/__init__.py
+tests/live_fixtures.py
+tests/test_app.py
+tests/test_basket.py
+tests/test_budget_optimizer.py
+tests/test_cart_pricing.py
+tests/test_catalog.py
+tests/test_composite_inventory_adapter.py
+tests/test_data_manager.py
+tests/test_deferred_promotion_catalog.py
+tests/test_exporting.py
+tests/test_fix_cart_linking.py
+tests/test_fix_cu_emart_replay.py
+tests/test_fix_live_contracts.py
+tests/test_fix_live_ui.py
+tests/test_fix_live_visibility.py
+tests/test_fix_official_store_cache.py
+tests/test_live_adapter.py
+tests/test_live_price_recovery.py
+tests/test_manual_pepsi_mapping.py
+tests/test_product_browser.py
+tests/test_product_list.py
+tests/test_promotion.py
+tests/test_quantity_suggestions.py
+tests/test_query_service.py
+tests/test_services.py
+tests/test_seven_direct_recovery.py
+tests/test_split_purchase.py
+tests/test_substitutions.py
+tests/test_v21_evidence.py
+tests/test_v21_inventory.py
+tests/test_v21_inventory_review.py
+tests/test_v21_matching.py
+tests/test_v21_promotions.py
+tests/test_v21_review.py
+tests/test_v21_substitute_ui.py
+tests/test_v2_app.py
+tests/test_v2_regressions.py
+v2.1 실행.bat
+검증 기록.md
+기말 과제 기획서.docx
+기획서.md
+로컬 실행.bat
+프로그래밍 단계와 개발 계획.docx
+프로그래밍 단계와 개발 계획.md

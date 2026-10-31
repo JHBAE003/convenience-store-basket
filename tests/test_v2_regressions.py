@@ -14,6 +14,7 @@ from core.services.catalog import load_catalog
 from core.services.product_list import product_key
 from core.services.substitutions import SubstituteProduct, find_substitutes
 from core.ui import v2_actions
+from tests.live_fixtures import verified_offer
 
 
 APP = Path(__file__).resolve().parents[1] / 'streamlit_app.py'
@@ -29,6 +30,7 @@ def live_row(name, barcode, **changes):
         promotion_updated_at=observed, price_source='독립 모의 제공자',
         stock_source='독립 모의 제공자', promotion_source='독립 모의 제공자',
         price_data_status='LIVE', stock_data_status='LIVE', promotion_data_status='LIVE',
+        **verified_offer(),
     )
     return replace(row, **changes)
 
@@ -69,9 +71,14 @@ class V2RegressionAppTests(unittest.TestCase):
             rows = list(alternatives) if keyword == '대체후보' else [original]
             return rows, [DataLoadResult('CU', rows, 'LIVE', '독립 모의 조회 성공')]
 
-        provider = patch('core.data.data_manager.DataManager.search_all', side_effect=search)
-        provider.start()
-        self.addCleanup(provider.stop)
+        def selected(link, *args, **kwargs):
+            rows = [original] if link.barcode == original.barcode else list(alternatives)
+            return rows, [DataLoadResult('CU', rows, 'LIVE', '독립 모의 선택 재고 조회 성공')]
+
+        for method, callback in (('search_products', search), ('search_selected', selected)):
+            provider = patch(f'core.data.data_manager.DataManager.{method}', side_effect=callback)
+            provider.start()
+            self.addCleanup(provider.stop)
         at = self.app()
         at.text_input(key='live_keyword').set_value('원상품').run()
         at.button(key='search_live').click().run()
@@ -125,6 +132,8 @@ class V2RegressionAppTests(unittest.TestCase):
         at = self.open_live_alternatives(original, [candidate_a, candidate_b], candidate_a)
         self.assertFalse(self.approval(at).value)
         self.approval(at).set_value(True).run()
+        self.assertFalse(self.has_substitute_apply(at))
+        at.button(key='v21_sub_check_stock').click().run()
         self.assertTrue(self.has_substitute_apply(at))
 
         changes = [('candidate', lambda: at.selectbox(key='v2_sub_candidate').set_value(product_key(candidate_b))),
@@ -141,6 +150,8 @@ class V2RegressionAppTests(unittest.TestCase):
                 self.assertFalse(at.session_state['v2_sub_approved'])
                 self.assertFalse(self.has_substitute_apply(at))
                 self.approval(at).set_value(True).run()
+                self.assertFalse(self.has_substitute_apply(at))
+                at.button(key='v21_sub_check_stock').click().run()
                 self.assertTrue(self.has_substitute_apply(at))
         at.button(key='v2_sub_apply_0').click().run()
         self.assertEqual(len(at.exception), 0)
@@ -159,6 +170,7 @@ class V2RegressionAppTests(unittest.TestCase):
             with self.subTest(evidence=name):
                 at = self.open_live_alternatives(original, rows, candidate)
                 self.approval(at).set_value(True).run()
+                at.button(key='v21_sub_check_stock').click().run()
                 self.assertEqual(len(at.exception), 0)
                 self.assertEqual(len(at.session_state['v2_alt_rows']), len(rows))
                 self.assertEqual(self.has_substitute_apply(at), allowed)

@@ -1,0 +1,18 @@
+2026-10-31 한국 시간 / 기말 과제 v2.1
+
+python scripts/run_offline_tests.py
+Ran 294 tests in 110.702s
+OK
+모의 응답이 없는 외부 HTTP 시도: 0회 (실제 연결은 차단됨)
+
+python -m compileall -q core tests scripts streamlit_app.py
+통과
+
+python -m pip check
+No broken requirements found.
+
+원본 v2 SHA256 대조: 소스 98개, 변경 0개.
+가상환경·.git 복사 없음. 8504 실행 서버 health: ok.
+
+실제 브랜드 요청은 별도 fix-live-ui-metrics-final.csv와 조사 문서에 기록.
+본 자동 검사 성공은 외부 서비스 현재 성공의 대체 근거로 사용하지 않음.

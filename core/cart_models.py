@@ -20,6 +20,11 @@ class CatalogLink:
     barcode: str
     product_code: str
     product_name: str
+    manufacturer: str = ''
+    volume: str = ''
+    flavor: str = ''
+    pack_count: str = ''
+    identifier_source: str = ''
 
 
 @dataclass

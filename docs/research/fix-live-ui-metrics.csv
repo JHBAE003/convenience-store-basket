@@ -1,0 +1,10 @@
+﻿브랜드,조회 구분,HTTP 요청 수,응답 시간(ms),성공,보조 경로 사용,오류 종류
+이마트24,상품,1,903.3,True,False,
+세븐일레븐,상품,1,1035.87,True,False,
+GS25,상품,1,1668.18,True,False,
+CU,상품,1,2249.56,True,False,
+CU,재고 주,1,2269.72,True,False,
+GS25,재고 주,1,1621.68,True,False,
+세븐일레븐,재고 주,1,2656.13,False,False,McpRequestError
+세븐일레븐,재고 보조,2,2309.29,False,True,LiveDataError
+이마트24,재고 주,1,2114.84,True,False,

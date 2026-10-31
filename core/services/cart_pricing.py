@@ -1,6 +1,6 @@
 from core.cart_models import CartItem, LineEvaluation
 from core.models import StoreProduct
-from .promotion import calculate_purchase_cost, normalize_promotion
+from .promotion import calculate_purchase_cost, normalize_promotion, promotion_applicability
 from datetime import datetime
 
 
@@ -11,7 +11,12 @@ def evaluate_line(item: CartItem, record: StoreProduct | None) -> LineEvaluation
     stale=False
     if record.data_source=='LIVE':
         try:
-            observed=datetime.fromisoformat((record.stock_updated_at or record.updated_at).replace('Z','+00:00')).astimezone()
+            raw = record.stock_source_updated_at or record.source_updated_at or record.stock_updated_at
+            if not raw and not record.received_at:
+                raw = record.updated_at  # Legacy fixtures explicitly carry their observation here.
+            observed=datetime.fromisoformat(raw.replace('Z','+00:00'))
+            if observed.tzinfo is None:
+                raise ValueError('재고 원본 관측 시각의 시간대 미확인')
             age=(datetime.now().astimezone()-observed).total_seconds()
             stale=not -300<=age<=300
         except (ValueError,TypeError):
@@ -29,14 +34,17 @@ def evaluate_line(item: CartItem, record: StoreProduct | None) -> LineEvaluation
     promo=normalize_promotion(record.promotion)
     if record.price <= 0:
         reasons.append('가격 미확인')
-    elif not record.promotion_known or promo not in ('','1+1','2+1'):
+    elif not promotion_applicability(record)[0] or promo not in ('','1+1','2+1'):
         reference=record.price*item.quantity
         state='REFERENCE'
-        reasons.append('행사 미확인 또는 기본 지원 밖의 행사: 일반가 참고액')
-    elif record.price_data_status in ('CACHE','ERROR') or record.promotion_data_status in ('CACHE','ERROR'):
+        reasons.append(promotion_applicability(record)[1] + ': 일반가 참고액')
+    elif (record.price_data_status in ('CACHE','ERROR','REFERENCE','PARTIAL')
+          or record.promotion_data_status in ('CACHE','ERROR','REFERENCE','PARTIAL')
+          or (record.data_source == 'LIVE'
+              and (record.price_data_status != 'LIVE' or record.promotion_data_status != 'LIVE'))):
         reference=calculate_purchase_cost(record.price,promo,item.quantity,stock_known=False).payable
         state='REFERENCE'
-        reasons.append('저장되었거나 오류가 있는 가격·행사 자료: 참고액')
+        reasons.append('현재 매장에서 확인되지 않은 가격·행사 자료: 참고액')
     else:
         payable=calculate_purchase_cost(record.price,promo,item.quantity,stock_known=False).payable
         state='CONFIRMED' if payable is not None else 'UNKNOWN'

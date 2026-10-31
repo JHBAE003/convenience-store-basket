@@ -1,0 +1,37 @@
+[
+  {
+    "brand": "세븐일레븐",
+    "status": "ERROR",
+    "message": "실시간 재고를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    "details": {
+      "paths": [
+        {
+          "path": "주",
+          "error_type": "McpRequestError",
+          "details": {
+            "error": {
+              "code": "CONVENIENCE_RELAY_FAILED",
+              "message": "편의점 릴레이 요청에 실패했습니다."
+            },
+            "diagnostics": {
+              "code": "CONVENIENCE_RELAY_FAILED",
+              "message": "편의점 릴레이 요청에 실패했습니다.",
+              "status": 502,
+              "retryable": true,
+              "operation": "inventory",
+              "upstreamStatus": 502,
+              "hint": "일시적인 외부 서비스 오류입니다. 잠시 후 재시도해주세요."
+            }
+          }
+        },
+        {
+          "path": "보조",
+          "error_type": "LiveDataError",
+          "details": {
+            "message": "세븐일레븐 공개 API 서버 오류(HTTP 502)"
+          }
+        }
+      ]
+    }
+  }
+]

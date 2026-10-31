@@ -1,17 +1,22 @@
 [theme]
 base = "light"
-primaryColor = "#166448"
-backgroundColor = "#FCFCF9"
-secondaryBackgroundColor = "#F0F3ED"
-textColor = "#202D25"
-borderColor = "#DCE3D8"
-font = "sans-serif"
+primaryColor = "#116149"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F6F5"
+textColor = "#202B29"
+borderColor = "#D9E1DE"
+font = '"Malgun Gothic", "Apple SD Gothic Neo", sans-serif'
 baseFontSize = 16
-baseRadius = "0.75rem"
+baseRadius = "0.5rem"
 buttonRadius = "0.5rem"
 headingFontWeights = 650
-headingFontSizes = ["2rem", "1.6rem", "1.25rem"]
+headingFontSizes = ["1.9rem", "1.45rem", "1.15rem"]
+paddingTop = "2rem"
+paddingBottom = "3rem"
+showWidgetBorder = true
+showSidebarBorder = true
 
 [theme.sidebar]
-backgroundColor = "#F0F3ED"
+backgroundColor = "#F4F6F5"
 secondaryBackgroundColor = "#FFFFFF"
+paddingTop = "1.5rem"

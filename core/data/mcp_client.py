@@ -12,7 +12,9 @@ from core.config import LIVE_MCP_ENDPOINT
 
 
 class McpRequestError(RuntimeError):
-    pass
+    def __init__(self, message: str, details: dict | None = None):
+        super().__init__(message)
+        self.details = details or {}
 
 
 class McpClient:
@@ -24,6 +26,7 @@ class McpClient:
                                      "User-Agent": "ConvenienceStoreCompare/1.0 (read-only)"})
         self.timeout, self.retries, self.min_interval = timeout, retries, min_interval
         self._last_request = 0.0
+        self.request_count = 0
 
     def call(self, tool: str, arguments: dict[str, Any]) -> dict[str, Any]:
         body = {"jsonrpc": "2.0", "id": str(uuid.uuid4()), "method": "tools/call",
@@ -33,10 +36,14 @@ class McpClient:
             if pause > 0:
                 time.sleep(pause)
             try:
+                self.request_count += 1
                 response = self.session.post(self.endpoint, json=body, timeout=self.timeout)
                 self._last_request = time.monotonic()
                 if response.status_code == 429:
-                    raise McpRequestError("MCP 호출 제한(HTTP 429)")
+                    raise McpRequestError("MCP 호출 제한(HTTP 429)", {
+                        "error": {"code": "RATE_LIMITED", "message": "호출 제한으로 잠시 후 다시 확인해야 합니다."},
+                        "diagnostics": {"status": 429, "retryable": False},
+                    })
                 if response.status_code >= 500 and attempt < self.retries:
                     time.sleep(0.5 * (attempt + 1))
                     continue
@@ -49,13 +56,33 @@ class McpClient:
                         continue
                     raise
                 if message.get("error"):
-                    raise McpRequestError(str(message["error"].get("message", message["error"])))
+                    error = message["error"]
+                    explanation = error.get("message", error) if isinstance(error, dict) else error
+                    raise McpRequestError(str(explanation), {"error": error})
                 result = message.get("result")
                 if not isinstance(result, dict):
                     raise McpRequestError("MCP 응답에 result 객체가 없습니다.")
                 if result.get("isError"):
-                    details = " ".join(str(x.get("text", "")) for x in result.get("content", []) if isinstance(x, dict))
-                    raise McpRequestError(details or "MCP 도구 실행 실패")
+                    details = self._repair_text(result.get("structuredContent") or {})
+                    if not details:
+                        for block in result.get("content", []):
+                            if isinstance(block, dict) and block.get("type") == "text":
+                                try:
+                                    details = self._repair_text(json.loads(block.get("text", "")))
+                                    break
+                                except (ValueError, TypeError):
+                                    continue
+                    if not details:
+                        details = {"content": self._repair_text(result.get("content", []))}
+                    if isinstance(details, list):
+                        errors = details
+                        first = next((item for item in errors if isinstance(item, dict)), {})
+                        details = {"error": {"code": "INVALID_ARGUMENTS", "message": first.get("message", "조회 조건을 해석할 수 없습니다.")},
+                                   "validation_errors": errors,
+                                   "content": self._repair_text(result.get("content", []))}
+                    error = details.get("error") if isinstance(details, dict) else None
+                    message = error.get("message") if isinstance(error, dict) else "MCP 도구 실행 실패"
+                    raise McpRequestError(str(message), details if isinstance(details, dict) else {})
                 structured = result.get("structuredContent")
                 if isinstance(structured, dict):
                     structured = self._repair_text(structured)
@@ -68,7 +95,7 @@ class McpClient:
                         status = diagnostics.get("upstreamStatus") or diagnostics.get("status")
                         message = error.get("message", error) if isinstance(error, dict) else error
                         suffix = f" (upstream HTTP {status})" if status else ""
-                        raise McpRequestError(f"{message}{suffix}")
+                        raise McpRequestError(f"{message}{suffix}", structured)
                     return structured
                 for block in result.get("content", []):
                     if isinstance(block, dict) and block.get("type") == "text":

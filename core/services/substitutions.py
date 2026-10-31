@@ -111,7 +111,7 @@ def _located_store(row: StoreProduct) -> bool:
 
 
 def _observation_time(row: StoreProduct) -> datetime:
-    observed = _parse_time(row.stock_updated_at or row.updated_at)
+    observed = _parse_time(row.stock_source_updated_at or row.source_updated_at or row.stock_updated_at or row.updated_at)
     if observed is None:
         return datetime.min.replace(tzinfo=timezone.utc)
     return observed.replace(tzinfo=timezone.utc) if observed.tzinfo is None else observed.astimezone(timezone.utc)
@@ -123,7 +123,11 @@ def _facts(row: StoreProduct) -> tuple:
             row.price_data_status, row.stock_data_status, row.promotion_data_status,
             row.price_source, row.stock_source, row.promotion_source,
             row.price_updated_at, row.stock_updated_at, row.promotion_updated_at,
-            row.latitude, row.longitude, row.address, row.store_code)
+            row.latitude, row.longitude, row.address, row.store_code,
+            row.source_updated_at, row.stock_source_updated_at,
+            row.promotion_start_date, row.promotion_end_date, row.promotion_buy_quantity, row.promotion_gift_quantity,
+            row.promotion_member_condition, row.promotion_card_condition, row.promotion_cross_gift,
+            row.promotion_conditions_verified)
 
 
 def _latest(rows: list[StoreProduct]) -> StoreProduct | None:

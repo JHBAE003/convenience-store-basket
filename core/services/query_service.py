@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from core.cart_models import CartItem, CatalogLink, QuerySnapshot
 from core.models import DataLoadResult
-from core.config import TEST_DATA_PATH
+from core.config import TEST_DATA_PATH, INVENTORY_CACHE_TTL_SECONDS
 from core.data.data_manager import DataManager
 from core.data.promotion_manager import PromotionManager
 
@@ -12,9 +12,9 @@ from core.data.promotion_manager import PromotionManager
 def new_session_manager(mode='TEST', test_csv=None):
     directory=TemporaryDirectory(prefix='basket_')
     root=Path(directory.name)
-    promotion=PromotionManager(cache_path=root/'promotions.json')
+    promotion=PromotionManager(cache_path=root/'promotions.json',defer_catalog=True)
     manager=DataManager(test_csv or TEST_DATA_PATH,mode,cache_path=root/'inventory.json',
-                        cache_ttl_seconds=300,promotion_manager=promotion)
+                        cache_ttl_seconds=INVENTORY_CACHE_TTL_SECONDS,promotion_manager=promotion)
     return manager,directory
 
 
@@ -34,10 +34,15 @@ def fetch_snapshot(cart:list[CartItem],links:list[CatalogLink],manager:DataManag
         item_statuses=[]
         item_links=[link for link in links if link.item_id==item.item_id and link.brand in brands]
         for link in item_links:
-            key=(link.brand,link.product_name)
+            key=(link.brand,link.barcode,link.product_code,link.product_name)
             if key not in queried:
-                queried[key]=manager.search_all(link.product_name,user_lat,user_lng,[link.brand],mode,
-                                                 include_unpriced=True,force_refresh=force_refresh)
+                # Mock/구형 호출자는 기존 진입점을 사용한다. 실제 v2.1 관리자는 선택한 코드로 조회한다.
+                if callable(getattr(type(manager), 'search_selected', None)):
+                    queried[key]=manager.search_selected(link,user_lat,user_lng,mode,
+                                                        include_unpriced=True,force_refresh=force_refresh)
+                else:
+                    queried[key]=manager.search_all(link.product_name,user_lat,user_lng,[link.brand],mode,
+                                                   include_unpriced=True,force_refresh=force_refresh)
                 rows,query_statuses=queried[key]
                 status_by_brand={s.brand:s.source for s in query_statuses}
                 for row in rows:
@@ -45,9 +50,43 @@ def fetch_snapshot(cart:list[CartItem],links:list[CatalogLink],manager:DataManag
                     records.append(replace(row,data_source=source if source in ('PARTIAL','CACHE','ERROR') else row.data_source))
                 statuses.extend(query_statuses)
             item_statuses.extend(queried[key][1])
-        if not item_links:
-            item_statuses.append(DataLoadResult('',[],'ERROR',f'{item.label}: 선택 브랜드에 확인된 상품 대응이 없습니다.'))
-            statuses.extend(item_statuses)
+        linked_brands={link.brand for link in item_links}
+        for brand in brands:
+            if brand not in linked_brands:
+                status=DataLoadResult(brand,[],'UNLINKED',f'{item.label}: 같은 상품 연결이 없어 아직 조회하지 않았습니다.')
+                item_statuses.append(status)
+                statuses.append(status)
         by_item[item.item_id]=item_statuses
     return QuerySnapshot(records,statuses,by_item,context_key(cart,user_lat,user_lng,brands,mode),start,
                          datetime.now().astimezone().isoformat(timespec='seconds'))
+
+
+def add_promotion_observations(snapshot,manager):
+    """이미 받은 재고에 행사 목록만 추가한다. 재고 재요청/원본 시각 변경은 없다."""
+    from core.services.integration_service import integrate_records
+    prices=[]
+    messages=[]
+    for brand,name in dict.fromkeys((r.brand,r.product_name) for r in snapshot.records):
+        try:
+            prices.extend(manager.promotion_manager.search(brand,name,allow_catalog_fetch=True))
+            status=manager.promotion_manager.status_for(brand,name)
+            if status.get('status') in ('PARTIAL','UNKNOWN','ERROR'):
+                messages.append(f'{brand}: '+status.get('message','행사 조건 미확인'))
+        except Exception:
+            messages.append(f'{brand}: 행사 정보를 확인하지 못했습니다.')
+    return replace(snapshot,records=integrate_records(snapshot.records,prices)),list(dict.fromkeys(messages))
+
+
+def retry_failed_brands(snapshot,cart,links,manager,lat,lng,brands,mode):
+    """실패한 브랜드만 재조회하고 다른 브랜드의 응답·자료 시각은 보존한다."""
+    failed={s.brand for s in snapshot.statuses if s.source in ('ERROR','CACHE')}
+    selected=[brand for brand in brands if brand in failed]
+    if not selected:
+        return snapshot,[]
+    fresh=fetch_snapshot(cart,links,manager,lat,lng,selected,mode,force_refresh=True)
+    kept=[replace(row,app_cache_used=True) for row in snapshot.records if row.brand not in failed]
+    statuses=[s for s in snapshot.statuses if s.brand not in failed]+fresh.statuses
+    by_item={item.item_id:[s for s in snapshot.statuses_by_item.get(item.item_id,[]) if s.brand not in failed]
+                         +fresh.statuses_by_item.get(item.item_id,[]) for item in cart}
+    return replace(snapshot,records=kept+fresh.records,statuses=statuses,statuses_by_item=by_item,
+                   completed_at=fresh.completed_at),selected

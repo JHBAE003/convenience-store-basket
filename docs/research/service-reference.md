@@ -1,0 +1,1056 @@
+# DAISO MCP 서비스 레퍼런스
+
+실제 브라우저 도구가 있으면 /browse/ HTML을 그 도구로 여세요. 웹 읽기(open/WebFetch)는 [웹 조회 시작](https://mcp.aka.page/browse/read) 화면의 글자 선택 링크를 응답의 실제 링크 ID로 click합니다. 새 검색 URL을 조립하지 않고 상품·매장 지역·실제 재고 링크를 선택합니다. 접근 오류 시 사용 가능한 브라우저로 전환할 수 있으나 새 브라우저를 계속 실행하지 마세요. Crawled가 과거인 수집본은 현재 재고 확인이 아닙니다. 응답 생성 시각도 함께 확인하세요. 이전 HTML이면 같은 조건의 새 응답 링크를 최대2번 선택합니다. `TimeoutError`만 같은 실제 링크를 한 번 재확인하고 계속 실패하면 미확인으로 보고하세요. 새 주소도 기존 API 캐시를 사용하며 원본 갱신을 보장하지 않습니다.
+
+README 하단에 있던 기능, REST API, 개발, 아키텍처 설명을 분리한 문서입니다.
+
+## 설치 없이 첫 조회
+
+**ChatGPT 및 웹 읽기 에이전트는 문서에 표시된 실제 링크 ID로 아래 시작 링크를 click하세요.** 설치·API 키·MCP 연결 설정 없이 화면의 상품·지역 링크로 조회합니다. 새 URL을 조립하거나 터미널로 우회하지 마세요. click이 없는 도구는 실제 링크를 열되 같은 동작을 보장하지 않습니다.
+
+[WebFetch로 상품·매장·재고 조회 시작](https://mcp.aka.page/browse/read)
+
+시작 화면에서 수납박스·핫식스 예제 또는 글자 입력 링크를 선택하세요.
+
+웹 읽기 도구에서는 위 응답의 실제 링크 ID를 선택해 조회하세요. URL 접근 오류가 나오면 실제 오류를 보고하고 상품 없음이나 재고 0으로 해석하지 마세요.
+
+모든 후속 웹 GET도 `/browse/`를 사용하세요. 자동 HTML이며 쿼리 문자열이나 format 지정은 필요 없습니다. 상품 검색 결과의 실제 ID로 재고를 조회하고 검색 성공만으로 매장 재고를 단정하지 않습니다. 이미지는 응답 imageUrl과 카드의 원본 Markdown만 사용하고 이미지 검색으로 대체하지 않습니다.
+
+현재 안내는 [버전 안내](https://mcp.aka.page/guide/2026-10-27.3), 다음 버전도 따라가려면 [항상 최신 안내](https://mcp.aka.page/guide/latest)를 여세요. 이 상세 레퍼런스를 끝까지 읽기 전에 첫 조회를 실행하세요.
+
+이미 연결된 MCP 도구가 있는 환경만 `search_products`에 `service=daiso`, `query=수납박스`를 전달합니다. 서버는 https://mcp.aka.page 이며 Streamable HTTP, 인증 없음입니다. 실제로 실행한 도구·URL·오류만 보고하고 실행하지 않은 요청의 성공·실패를 만들지 않습니다.
+
+### 구형 도구 레퍼런스의 범위
+
+아래 서비스별 MCP 이름은 하위호환용 **deprecated 별칭** 레퍼런스입니다. 새 연동의 호출 예제로 사용하지 마세요. 현재 공개 MCP 도구는 정확히 10개이며 [통합 도구와 구형 매핑](mcp-tools.md)을 사용합니다. REST와 CLI 계약은 유지합니다.
+
+### 웹 조회 경로 구성
+
+`/browse/daiso/products/핫식스/pageSize/3`처럼 주요 검색어 뒤에 부가 조건을 이름/값 쌍으로 붙입니다. 상품 상세는 `/browse/daiso/product/{실제ID}`, 지역 재고는 `/browse/daiso/inventory/{실제ID}/{사용자지역}`입니다. 주요 검색어 없이 필터만 쓰면 `/browse/query/daiso/stores/sido/서울/gugun/마포구`처럼 구성합니다. 각 값은 한 번 URL 인코딩하며 응답의 후속 링크를 우선합니다. [전체 지원 웹 조회](https://mcp.aka.page/browse)에서 다른 서비스 경로를 확인합니다.
+
+아래 `/api/`와 JSON 모델은 기존 개발자 연동 계약입니다. 웹 읽기 전용 에이전트는 이 JSON 주소를 실행하지 않습니다. 기존 HTML 쿼리 주소도 하위호환으로 유지합니다.
+
+### MCP 표준 응답 모델
+
+MCP 도구 응답은 각 서비스의 원본 필드를 유지하면서, 클라이언트가 공통 UI를 만들 수 있도록 `standard` 필드를 함께 제공합니다.
+
+- `standard.products`: 상품/영화 목록을 `code`, `name`, `price`, `imageUrl`, `raw` 형태로 정규화합니다.
+- `standard.stores`: 매장 목록을 `code`, `name`, `address`, `distanceMeters`, `raw` 형태로 정규화합니다.
+- `standard.theaters`: 영화관 목록을 `code`, `name`, `address`, `distanceMeters`, `raw` 형태로 정규화합니다.
+- `standard.places`: 음식점/카페 같은 장소 목록을 `name`, `address`, `raw` 중심으로 정규화합니다.
+
+### 통합 상품 가격 비교
+
+여러 리테일/편의점 상품 검색 결과를 묶어 같은 상품의 판매처별 가격 후보를 비교합니다.
+
+```bash
+npx daiso compare 콜라 --limit 3 --json
+```
+
+REST:
+
+```text
+GET /api/compare/products?keyword=콜라&limit=3
+```
+
+지원 서비스는 `daiso`, `gs25`, `seveneleven`, `emart24`입니다. GS25처럼 상품 검색 응답에 가격이 없는 서비스는 후보에는 포함되지만 최저가 계산에서는 제외됩니다.
+
+### 오피넷 유가 정보
+
+한국석유공사 오피넷 유가정보 API로 전국 평균 유가, 지역별 최저가 주유소, 반경 내 주유소, 주유소 상세정보를 조회합니다.
+
+MCP 도구:
+
+```text
+opinet_get_average_prices
+opinet_get_lowest_price_stations
+opinet_search_stations_around
+opinet_get_station_detail
+```
+
+REST:
+
+```text
+GET /api/opinet/average
+GET /api/opinet/lowest?fuelCode=B027&areaCode=0113&count=5
+GET /api/opinet/stations/around?lat=37.4979&lng=127.0276&radiusMeters=3000&fuelCode=B027&sort=price
+GET /api/opinet/stations/around?location=강남역&radiusMeters=3000&fuelCode=B027&sort=price
+GET /api/opinet/stations/around?x=314681.8&y=544837&radiusMeters=3000&fuelCode=B027&sort=price
+GET /api/opinet/station?id=A0010207
+```
+
+오피넷 API 키는 `OPINET_API_KEY` 환경 변수 또는 Cloudflare Worker Secret으로 설정합니다. 키 발급은 오피넷 웹사이트의 `유가관련정보 > 유가정보 API > 인증키 발급`에서 진행합니다. 반경 검색은 `lat/lng`, `location`, KATEC `x/y`를 모두 지원하며, `location` 검색에는 `KAKAO_REST_API_KEY`를 설정합니다. 역명·상호명은 네이버 지역 검색으로 보완합니다. 자세한 설정은 [무료 위치 검색 가이드](./free-location-search.md)를 확인하세요.
+
+운영 제약 및 캐싱 정책:
+
+- 오피넷 무료 API는 한국석유공사 공공데이터 활용 가이드 기준 **1일 1,500 call** 한도를 기준으로 운영합니다.
+- 모든 오피넷 응답에는 `source: "한국석유공사 오피넷"`과 `fetchedAt`을 포함합니다.
+- Cloudflare Edge Cache로 동일 GET 요청의 원본 오피넷 호출을 줄입니다.
+- `GET /api/opinet/average`: 60분 캐시, 30분 stale-while-revalidate
+- `GET /api/opinet/lowest`: 30분 캐시, 10분 stale-while-revalidate
+- `GET /api/opinet/stations/around`: 20분 캐시, 5분 stale-while-revalidate
+- `GET /api/opinet/station`: 60분 캐시, 10분 stale-while-revalidate
+- 주소·장소명 변환은 카카오 주소/키워드 검색을 사용합니다. 직접 좌표를 입력하면 위치 변환 API를 호출하지 않습니다.
+- 호출 한도에 자주 도달하면 운영자가 담당 기관인 한국석유공사/오피넷에 문의해 추가 할당량 또는 별도 이용 조건을 협의할 예정입니다.
+
+### 개발자 요청 제출
+
+AI 에이전트가 MCP 기능 오류, 개선 요청, 신규 기능 요청, 문서 문제를 바로 개발자에게 전달할 수 있습니다. 요청은 Supabase `agent_requests` 테이블에 저장됩니다.
+
+MCP 도구:
+
+```text
+submit_developer_request
+```
+
+REST:
+
+```text
+POST /api/feedback/requests
+GET /api/feedback/requests?type=bug&title=제목&description=설명
+```
+
+로컬 실행이나 배포 환경에는 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`를 설정하세요. 테이블 스키마는 [supabase-agent-requests.sql](./supabase-agent-requests.sql)에 있습니다.
+
+### 무료 위치 검색
+
+주소·역명·상호명을 좌표로 바꾸는 기능은 카카오맵 무료 API를 사용합니다. Google Geocoding과 Zyte는 호출하지 않습니다. 카카오 무료 쿼터 대상 확인, 환경 변수와 실패 시 동작은 [무료 위치 검색 가이드](./free-location-search.md)에 있습니다.
+
+## 기능
+
+### daiso_search_products
+
+다이소 제품을 검색합니다.
+
+| 파라미터   | 필수 | 설명                          |
+| :--------- | :--: | :---------------------------- |
+| `query`    |  O   | 검색할 제품명 또는 키워드     |
+| `page`     |      | 페이지 번호 (기본값: 1)       |
+| `pageSize` |      | 페이지당 결과 수 (기본값: 30) |
+
+<br>
+
+### daiso_find_stores
+
+다이소 매장을 검색합니다.
+
+| 파라미터  | 필수 | 설명                      |
+| :-------- | :--: | :------------------------ |
+| `keyword` |      | 매장명 또는 주소 키워드   |
+| `sido`    |      | 시/도 (예: 서울, 경기)    |
+| `gugun`   |      | 구/군 (예: 강남구)        |
+| `dong`    |      | 동 (예: 역삼동)           |
+| `limit`   |      | 최대 매장 수 (기본값: 50) |
+
+<br>
+
+### daiso_check_inventory
+
+특정 제품의 매장별 재고를 확인합니다.
+
+| 파라미터     | 필수 | 설명                          |
+| :----------- | :--: | :---------------------------- |
+| `productId`  |  O   | 제품 ID                       |
+| `storeQuery` |      | 매장 검색어 (예: 안산 중앙역) |
+| `latitude`   |      | 위도 (기본값: 서울 시청)      |
+| `longitude`  |      | 경도 (기본값: 서울 시청)      |
+| `page`       |      | 페이지 번호 (기본값: 1)       |
+| `pageSize`   |      | 페이지당 결과 수 (기본값: 30) |
+
+`daiso_check_inventory`는 `storeCode` 없이 호출할 수 있습니다. `storeCode`는 재고 결과의 각 매장에서 확인한 뒤 `daiso_get_display_location`에 전달합니다.
+
+<br>
+
+### daiso_get_price_info
+
+제품의 가격 정보를 조회합니다.
+
+| 파라미터      | 필수 | 설명                                |
+| :------------ | :--: | :---------------------------------- |
+| `productId`   |      | 제품 ID                             |
+| `productName` |      | 제품명 (productId가 없을 경우 사용) |
+
+<br>
+
+### daiso_get_display_location
+
+다이소 매장 내 상품의 진열 위치(구역/층)를 조회합니다.
+
+| 파라미터    | 필수 | 설명                                     |
+| :---------- | :--: | :--------------------------------------- |
+| `productId` |  O   | 상품 ID (daiso_search_products로 조회)   |
+| `storeCode` |  O   | 매장 코드 (daiso_check_inventory로 조회) |
+
+<br>
+
+### cu_find_nearby_stores
+
+위치 기반으로 주변 CU 매장을 조회합니다.
+
+| 파라미터    | 필수 | 설명                                |
+| :---------- | :--: | :---------------------------------- |
+| `latitude`  |      | 위도 (기본값: 서울 시청)            |
+| `longitude` |      | 경도 (기본값: 서울 시청)            |
+| `keyword`   |      | 매장명/지역 키워드 (예: 강남, 안산) |
+| `limit`     |      | 최대 결과 수 (기본값: 20)           |
+
+<br>
+
+### cu_check_inventory
+
+상품 키워드로 CU 재고를 조회하고 주변 매장 정보를 함께 반환합니다.
+
+| 파라미터       | 필수 | 설명                         |
+| :------------- | :--: | :--------------------------- |
+| `keyword`      |  O   | 재고를 확인할 상품 키워드    |
+| `latitude`     |      | 위도 (기본값: 서울 시청)     |
+| `longitude`    |      | 경도 (기본값: 서울 시청)     |
+| `storeKeyword` |      | 주변 매장 필터 키워드        |
+| `size`         |      | 검색 결과 수 (기본값: 20)    |
+| `offset`       |      | 검색 시작 오프셋 (기본값: 0) |
+| `searchSort`   |      | 정렬 방식 (기본값: `recom`)  |
+| `storeLimit`   |      | 매장 결과 수 (기본값: 10)    |
+
+<br>
+
+### emart24_find_nearby_stores
+
+키워드/지역 조건으로 이마트24 매장을 조회합니다.
+
+| 파라미터     | 필수 | 설명                                    |
+| :----------- | :--: | :-------------------------------------- |
+| `keyword`    |      | 매장명/지역 키워드                      |
+| `area1`      |      | 시/도 (예: 서울특별시)                  |
+| `area2`      |      | 구/군 (예: 강남구)                      |
+| `latitude`   |      | 위도 (선택)                             |
+| `longitude`  |      | 경도 (선택)                             |
+| `service24h` |      | 24시간 매장만 조회 여부 (기본값: false) |
+| `limit`      |      | 최대 결과 수 (기본값: 20)               |
+
+<br>
+
+### emart24_search_products
+
+키워드로 이마트24 상품 목록을 조회합니다.
+
+| 파라미터        | 필수 | 설명                              |
+| :-------------- | :--: | :-------------------------------- |
+| `keyword`       |  O   | 상품 검색어                       |
+| `page`          |      | 페이지 번호 (기본값: 1)           |
+| `pageSize`      |      | 페이지당 결과 수 (기본값: 10)     |
+| `sortType`      |      | 정렬 기준 (기본값: `SALE`)        |
+| `saleProductYn` |      | 행사 상품 여부 필터 (기본값: `N`) |
+
+<br>
+
+### emart24_check_inventory
+
+PLU 코드 기준으로 매장별 재고를 조회합니다.
+
+| 파라미터   | 필수 | 설명                     |
+| :--------- | :--: | :----------------------- |
+| `pluCd`    |  O   | 상품 PLU 코드            |
+| `bizNoArr` |  O   | 쉼표 구분 매장 코드 목록 |
+
+<br>
+
+### oliveyoung_find_nearby_stores
+
+Zyte API 기반으로 내 주변 올리브영 매장을 조회합니다.
+
+| 파라미터    | 필수 | 설명                                |
+| :---------- | :--: | :---------------------------------- |
+| `latitude`  |      | 위도 (기본값: 서울 시청)            |
+| `longitude` |      | 경도 (기본값: 서울 시청)            |
+| `keyword`   |      | 매장명/지역 키워드 (예: 명동, 강남) |
+| `pageIdx`   |      | 페이지 번호 (기본값: 1)             |
+| `limit`     |      | 최대 결과 수 (기본값: 20)           |
+
+<br>
+
+### oliveyoung_check_inventory
+
+Zyte API 기반으로 올리브영 상품 재고를 조회하고 주변 매장 정보를 함께 반환합니다. 상위 상품에는 `storeInventory`가 붙으며 매장별 수량/상태를 함께 제공합니다.
+
+| 파라미터         | 필수 | 설명                           |
+| :--------------- | :--: | :----------------------------- |
+| `keyword`        |  O   | 재고를 확인할 상품 키워드      |
+| `latitude`       |      | 위도 (기본값: 서울 시청)       |
+| `longitude`      |      | 경도 (기본값: 서울 시청)       |
+| `storeKeyword`   |      | 주변 매장 검색 키워드          |
+| `page`           |      | 페이지 번호 (기본값: 1)        |
+| `size`           |      | 페이지당 상품 수 (기본값: 20)  |
+| `includeSoldOut` |      | 품절 포함 여부 (기본값: false) |
+
+주의:
+올리브영은 상품 검색 응답과 매장별 수량 응답이 분리되어 있습니다. `storeInventory.stores[]`가 있으면 그 안의 `stockLabel`, `remainQuantity`, `stockStatus`를 우선 해석합니다.
+
+<br>
+
+### megabox_find_nearby_theaters
+
+사용자 좌표 또는 위치 키워드 기준으로 메가박스 주변 지점을 거리순으로 조회합니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도 (기본값: 서울 시청)           |
+| `longitude` |      | 경도 (기본값: 서울 시청)           |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `areaCode`  |      | 지역 코드 (기본값: 11, 서울)       |
+| `limit`     |      | 최대 결과 수 (기본값: 10)          |
+
+<br>
+
+### megabox_list_now_showing
+
+날짜/지점 조건으로 메가박스 영화 및 상영 회차 목록을 조회합니다. `theaterId`가 없고 `keyword`/좌표가 있으면 가장 가까운 지점을 먼저 선택합니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID (예: 1372)                 |
+| `movieId`   |      | 영화 ID (예: 25104500)             |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도                               |
+| `longitude` |      | 경도                               |
+| `areaCode`  |      | 지역 코드 (기본값: 11, 서울)       |
+
+<br>
+
+### megabox_get_remaining_seats
+
+영화/지점/날짜 조건으로 회차별 남은 좌석 수를 조회합니다. `theaterId`가 없고 `keyword`/좌표가 있으면 가장 가까운 지점을 먼저 선택합니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID                            |
+| `movieId`   |      | 영화 ID                            |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도                               |
+| `longitude` |      | 경도                               |
+| `areaCode`  |      | 지역 코드 (기본값: 11, 서울)       |
+| `limit`     |      | 최대 결과 수 (기본값: 50)          |
+
+<br>
+
+### lottecinema_find_nearby_theaters
+
+위치 키워드 또는 사용자 좌표 기준으로 롯데시네마 주변 지점을 거리순으로 조회합니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도 (기본값: 서울 시청)           |
+| `longitude` |      | 경도 (기본값: 서울 시청)           |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `limit`     |      | 최대 결과 수 (기본값: 10)          |
+
+<br>
+
+### lottecinema_list_now_showing
+
+날짜/지점/영화 조건으로 롯데시네마 영화 및 상영 회차 목록을 조회합니다. `theaterId`가 없으면 위치 키워드 기준 최근접 지점을 선택할 수 있습니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID (예: 1016)                 |
+| `movieId`   |      | 대표 영화 코드 (예: 23816)         |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도                               |
+| `longitude` |      | 경도                               |
+
+<br>
+
+### lottecinema_get_remaining_seats
+
+영화/지점/날짜 조건으로 회차별 남은 좌석 수를 조회합니다. `theaterId`가 없으면 위치 키워드 기준 최근접 지점을 선택할 수 있습니다.
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID                            |
+| `movieId`   |      | 대표 영화 코드                     |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`  |      | 위도                               |
+| `longitude` |      | 경도                               |
+| `limit`     |      | 최대 결과 수 (기본값: 50)          |
+
+<br>
+
+### cgv_find_theaters
+
+지역 코드 또는 위치 키워드 기준으로 CGV 극장 목록을 조회합니다.
+
+| 파라미터     | 필수 | 설명                               |
+| :----------- | :--: | :--------------------------------- |
+| `playDate`   |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `regionCode` |      | 지역 코드 (예: 01 서울)            |
+| `keyword`    |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`   |      | 위도                               |
+| `longitude`  |      | 경도                               |
+| `limit`      |      | 최대 결과 수 (기본값: 30)          |
+| `timeoutMs`  |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+<br>
+
+### cgv_search_movies
+
+날짜/극장 조건으로 CGV 영화 목록을 조회합니다. `theaterCode`가 없으면 위치 키워드 기준 최근접 극장을 선택할 수 있습니다.
+
+| 파라미터      | 필수 | 설명                               |
+| :------------ | :--: | :--------------------------------- |
+| `playDate`    |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterCode` |      | CGV 극장 코드 (예: 0056)           |
+| `keyword`     |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`    |      | 위도                               |
+| `longitude`   |      | 경도                               |
+| `timeoutMs`   |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+<br>
+
+### cgv_get_timetable
+
+날짜/극장/영화 조건으로 CGV 상영 시간표를 조회합니다. `theaterCode`가 없으면 위치 키워드 기준 최근접 극장을 선택할 수 있습니다. 잔여 좌석은 각 회차의 `remainingSeats` 필드로 함께 제공합니다.
+
+| 파라미터      | 필수 | 설명                               |
+| :------------ | :--: | :--------------------------------- |
+| `playDate`    |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterCode` |      | CGV 극장 코드 (예: 0056)           |
+| `movieCode`   |      | CGV 영화 코드                      |
+| `keyword`     |      | 위치 키워드 (예: 안산 중앙역)      |
+| `latitude`    |      | 위도                               |
+| `longitude`   |      | 경도                               |
+| `limit`       |      | 최대 결과 수 (기본값: 50)          |
+| `timeoutMs`   |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+<br>
+
+### 올리브영 REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 올리브영 REST 응답을 캐싱합니다.
+
+- `GET /api/oliveyoung/stores`: 24시간 TTL
+- `GET /api/oliveyoung/inventory`: 10분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### 메가박스 REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 메가박스 REST 응답을 캐싱합니다.
+
+- `GET /api/megabox/theaters`: 24시간 TTL
+- `GET /api/megabox/movies`: 10분 TTL
+- `GET /api/megabox/seats`: 3분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### CGV REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 CGV REST 응답을 캐싱합니다.
+
+- `GET /api/cgv/theaters`: 24시간 TTL
+- `GET /api/cgv/movies`: 10분 TTL
+- `GET /api/cgv/timetable`: 3분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### 롯데시네마 REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 롯데시네마 REST 응답을 캐싱합니다.
+
+- `GET /api/lottecinema/theaters`: 24시간 TTL
+- `GET /api/lottecinema/movies`: 10분 TTL
+- `GET /api/lottecinema/seats`: 3분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### 다이소 REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 다이소 REST 응답을 캐싱합니다.
+
+- `GET /api/daiso/products`: 30분 TTL
+- `GET /api/daiso/products/:id`: 1시간 TTL
+- `GET /api/daiso/stores`: 24시간 TTL
+- `GET /api/daiso/inventory`: 10분 TTL
+- `GET /api/daiso/display-location`: 10분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### CU REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 CU REST 응답을 캐싱합니다.
+
+- `GET /api/cu/stores`: 24시간 TTL
+- `GET /api/cu/inventory`: 10분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+### 이마트24 REST 캐싱 정책
+
+Cloudflare Edge Cache API(`caches.default`)를 사용해 이마트24 REST 응답을 캐싱합니다.
+
+- `GET /api/emart24/stores`: 30분 TTL
+- `GET /api/emart24/products`: 10분 TTL
+- `GET /api/emart24/inventory`: 5분 TTL
+- 공통: `stale-while-revalidate` 적용, 오류 응답(4xx/5xx)은 캐시하지 않음
+
+<br>
+
+---
+
+<br>
+
+## REST API
+
+MCP를 지원하지 않는 서비스를 위한 GET 기반 REST API입니다.
+
+### 엔드포인트
+
+| 엔드포인트                        | 설명                                |
+| :-------------------------------- | :---------------------------------- |
+| `GET /prompt`                     | API 사용법 설명 페이지 (에이전트용) |
+| `GET /api/daiso/products`         | 제품 검색                           |
+| `GET /api/daiso/products/:id`     | 제품 상세 정보                      |
+| `GET /api/daiso/stores`           | 매장 검색                           |
+| `GET /api/daiso/inventory`        | 재고 확인                           |
+| `GET /api/daiso/display-location` | 진열 위치 조회                      |
+| `GET /api/cu/stores`              | CU 매장 검색                        |
+| `GET /api/cu/inventory`           | CU 재고 확인                        |
+| `GET /api/emart24/stores`         | 이마트24 매장 검색                  |
+| `GET /api/emart24/products`       | 이마트24 상품 검색                  |
+| `GET /api/emart24/inventory`      | 이마트24 재고 확인                  |
+| `GET /api/oliveyoung/stores`      | 올리브영 매장 검색                  |
+| `GET /api/oliveyoung/inventory`   | 올리브영 재고 확인                  |
+| `GET /api/megabox/theaters`       | 메가박스 주변 지점 조회             |
+| `GET /api/megabox/movies`         | 메가박스 영화/회차 목록 조회        |
+| `GET /api/megabox/seats`          | 메가박스 잔여 좌석 조회             |
+| `GET /api/lottecinema/theaters`   | 롯데시네마 주변 지점 조회           |
+| `GET /api/lottecinema/movies`     | 롯데시네마 영화/회차 목록 조회      |
+| `GET /api/lottecinema/seats`      | 롯데시네마 잔여 좌석 조회           |
+| `GET /api/cgv/theaters`           | CGV 극장 목록 조회                  |
+| `GET /api/cgv/movies`             | CGV 영화 목록 조회                  |
+| `GET /api/cgv/timetable`          | CGV 상영 시간표 조회                |
+| `GET /api/rate-limit/stats`       | 인증된 일일 호출 제한 운영 통계     |
+
+### 호출 제한 운영 통계
+
+`GET /api/rate-limit/stats` 요청은 `HEALTH_CHECK_SECRET`을 `Authorization: Bearer` 또는 `x-health-check-key` 헤더로 전달해 인증합니다. `from`과 `to`는 둘 다 생략하거나 함께 제공해야 합니다. `service`에는 `oliveyoung`, `cgv`, `cu`, `gs25`, `lottemart`만 사용할 수 있습니다. 날짜를 생략하면 현재 KST 일자를 포함한 최근 7일을 조회합니다. 차단 이벤트는 30일 동안 보관합니다. 보관 범위 안에서 KST 달력 날짜 기준 최대 30일을 요청할 수 있습니다. 응답은 전체, 일별, 서비스별 차단 요청 수와 고유 차단 주체 수 집계만 반환하며 원본 호출 주체나 IP를 노출하지 않습니다.
+
+Worker가 생성한 `DAILY_RATE_LIMIT_EXCEEDED` 결정 중 원장 커밋에 성공한 경우만 정확한 집계 범위에 포함됩니다. Cloudflare 또는 네트워크 계층의 429와 클라이언트 전송 결과, 연결 종료 결과는 이 범위에 포함되지 않습니다. 원장 쓰기에 실패하면 요청을 fail-open 처리하고 애플리케이션 429를 반환하지 않습니다. 통계는 이 기능의 배포 시점부터 수집하며 이전 429는 소급 집계하지 않습니다.
+
+### 제품 검색
+
+```
+GET /api/daiso/products?q={검색어}&page={페이지}&pageSize={개수}
+```
+
+| 파라미터   | 필수 | 설명                          |
+| :--------- | :--: | :---------------------------- |
+| `q`        |  O   | 검색 키워드                   |
+| `page`     |      | 페이지 번호 (기본값: 1)       |
+| `pageSize` |      | 페이지당 결과 수 (기본값: 30) |
+
+### 매장 검색
+
+```
+GET /api/daiso/stores?keyword={키워드}&sido={시도}&limit={개수}
+```
+
+| 파라미터  | 필수 | 설명                                                |
+| :-------- | :--: | :-------------------------------------------------- |
+| `keyword` |  △   | 매장명/주소 키워드 (keyword 또는 sido 중 하나 필수) |
+| `sido`    |  △   | 시/도                                               |
+| `gugun`   |      | 구/군                                               |
+| `dong`    |      | 동                                                  |
+| `limit`   |      | 최대 결과 수 (기본값: 50)                           |
+
+### 재고 확인
+
+```
+GET /api/daiso/inventory?productId={제품ID}&lat={위도}&lng={경도}
+```
+
+| 파라미터    | 필수 | 설명                          |
+| :---------- | :--: | :---------------------------- |
+| `productId` |  O   | 제품 ID                       |
+| `lat`       |      | 위도 (기본값: 37.5665)        |
+| `lng`       |      | 경도 (기본값: 126.978)        |
+| `keyword`   |      | 매장 검색어                   |
+| `page`      |      | 페이지 번호 (기본값: 1)       |
+| `pageSize`  |      | 페이지당 결과 수 (기본값: 30) |
+
+### 올리브영 매장 검색
+
+```
+GET /api/oliveyoung/stores?keyword={키워드}&lat={위도}&lng={경도}
+```
+
+| 파라미터  | 필수 | 설명                                |
+| :-------- | :--: | :---------------------------------- |
+| `keyword` |      | 매장명/지역 키워드 (예: 명동, 강남) |
+| `lat`     |      | 위도 (기본값: 37.5665)              |
+| `lng`     |      | 경도 (기본값: 126.978)              |
+| `pageIdx` |      | 페이지 번호 (기본값: 1)             |
+| `limit`   |      | 최대 결과 수 (기본값: 20)           |
+
+### CU 매장 검색
+
+```
+GET /api/cu/stores?keyword={키워드}&lat={위도}&lng={경도}
+```
+
+| 파라미터  | 필수 | 설명                                |
+| :-------- | :--: | :---------------------------------- |
+| `keyword` |      | 매장명/지역 키워드 (예: 강남, 안산) |
+| `lat`     |      | 위도 (기본값: 37.5665)              |
+| `lng`     |      | 경도 (기본값: 126.978)              |
+| `limit`   |      | 최대 결과 수 (기본값: 20)           |
+
+### CU 재고 확인
+
+```
+GET /api/cu/inventory?keyword={검색어}&lat={위도}&lng={경도}
+```
+
+| 파라미터       | 필수 | 설명                            |
+| :------------- | :--: | :------------------------------ |
+| `keyword`      |  O   | 검색 키워드 (예: 과자, 컵라면)  |
+| `lat`          |      | 위도 (기본값: 37.5665)          |
+| `lng`          |      | 경도 (기본값: 126.978)          |
+| `storeKeyword` |      | 주변 매장 필터 키워드           |
+| `size`         |      | 검색 결과 수 (기본값: 20)       |
+| `offset`       |      | 검색 시작 오프셋 (기본값: 0)    |
+| `searchSort`   |      | 정렬 방식 (기본값: `recom`)     |
+| `storeLimit`   |      | 매장 결과 수 (기본값: 10)       |
+| `storeCheck`   |      | `false`이면 주변 매장 조회 생략 |
+
+### 올리브영 재고 확인
+
+```
+GET /api/oliveyoung/inventory?keyword={검색어}&lat={위도}&lng={경도}
+```
+
+| 파라미터         | 필수 | 설명                           |
+| :--------------- | :--: | :----------------------------- |
+| `keyword`        |  O   | 검색 키워드 (예: 선크림, 립밤) |
+| `lat`            |      | 위도 (기본값: 37.5665)         |
+| `lng`            |      | 경도 (기본값: 126.978)         |
+| `storeKeyword`   |      | 주변 매장 필터 키워드          |
+| `page`           |      | 페이지 번호 (기본값: 1)        |
+| `size`           |      | 페이지당 결과 수 (기본값: 20)  |
+| `sort`           |      | 정렬 코드 (기본값: 01)         |
+| `includeSoldOut` |      | 품절 포함 여부 (기본값: false) |
+
+응답의 `inventory.products[]`에는 `inStock`, `stockStatus`, `stockSource`, `storeInventory`가 포함될 수 있습니다. `stockSource=nearby_store`이면 `inStock`는 주변 매장 기준 결과입니다.
+
+### 메가박스 주변 지점 조회
+
+```
+GET /api/megabox/theaters?keyword={위치키워드}&lat={위도}&lng={경도}&playDate={YYYYMMDD}&areaCode={지역코드}
+```
+
+| 파라미터   | 필수 | 설명                               |
+| :--------- | :--: | :--------------------------------- |
+| `keyword`  |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`      |      | 위도 (기본값: 37.5665)             |
+| `lng`      |      | 경도 (기본값: 126.978)             |
+| `playDate` |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `areaCode` |      | 지역 코드 (기본값: 11, 서울)       |
+| `limit`    |      | 최대 결과 수 (기본값: 10)          |
+
+### 메가박스 영화/회차 목록 조회
+
+```
+GET /api/megabox/movies?playDate={YYYYMMDD}&theaterId={지점ID}&movieId={영화ID}&keyword={위치키워드}
+```
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID (예: 1372)                 |
+| `movieId`   |      | 영화 ID (예: 25104500)             |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`       |      | 위도                               |
+| `lng`       |      | 경도                               |
+| `areaCode`  |      | 지역 코드 (기본값: 11, 서울)       |
+
+### 메가박스 잔여 좌석 조회
+
+```
+GET /api/megabox/seats?playDate={YYYYMMDD}&theaterId={지점ID}&movieId={영화ID}&keyword={위치키워드}
+```
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID                            |
+| `movieId`   |      | 영화 ID                            |
+| `keyword`   |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`       |      | 위도                               |
+| `lng`       |      | 경도                               |
+| `areaCode`  |      | 지역 코드 (기본값: 11, 서울)       |
+| `limit`     |      | 최대 결과 수 (기본값: 50)          |
+
+### 롯데시네마 주변 지점 조회
+
+```
+GET /api/lottecinema/theaters?keyword={위치키워드}&playDate={YYYYMMDD}
+```
+
+| 파라미터   | 필수 | 설명                               |
+| :--------- | :--: | :--------------------------------- |
+| `keyword`  |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`      |      | 위도 (keyword가 없을 때 기본값)    |
+| `lng`      |      | 경도 (keyword가 없을 때 기본값)    |
+| `playDate` |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `limit`    |      | 최대 결과 수 (기본값: 10)          |
+
+### 롯데시네마 영화/회차 목록 조회
+
+```
+GET /api/lottecinema/movies?playDate={YYYYMMDD}&theaterId={지점ID}&movieId={영화ID}
+```
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID (예: 1016)                 |
+| `movieId`   |      | 대표 영화 코드 (예: 23816)         |
+| `keyword`   |      | 위치 키워드 (theaterId가 없을 때)  |
+| `lat`       |      | 위도 (theaterId가 없을 때)         |
+| `lng`       |      | 경도 (theaterId가 없을 때)         |
+
+### 롯데시네마 잔여 좌석 조회
+
+```
+GET /api/lottecinema/seats?playDate={YYYYMMDD}&theaterId={지점ID}&movieId={영화ID}
+```
+
+| 파라미터    | 필수 | 설명                               |
+| :---------- | :--: | :--------------------------------- |
+| `playDate`  |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterId` |      | 지점 ID                            |
+| `movieId`   |      | 대표 영화 코드                     |
+| `keyword`   |      | 위치 키워드 (theaterId가 없을 때)  |
+| `lat`       |      | 위도 (theaterId가 없을 때)         |
+| `lng`       |      | 경도 (theaterId가 없을 때)         |
+| `limit`     |      | 최대 결과 수 (기본값: 50)          |
+
+### CGV 극장 목록 조회
+
+```
+GET /api/cgv/theaters?playDate={YYYYMMDD}&regionCode={지역코드}&keyword={위치키워드}
+```
+
+| 파라미터     | 필수 | 설명                               |
+| :----------- | :--: | :--------------------------------- |
+| `playDate`   |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `regionCode` |      | 지역 코드 (예: 01 서울)            |
+| `keyword`    |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`        |      | 위도                               |
+| `lng`        |      | 경도                               |
+| `limit`      |      | 최대 결과 수 (기본값: 30)          |
+| `timeoutMs`  |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+### CGV 영화 목록 조회
+
+```
+GET /api/cgv/movies?playDate={YYYYMMDD}&theaterCode={극장코드}&keyword={위치키워드}
+```
+
+| 파라미터      | 필수 | 설명                               |
+| :------------ | :--: | :--------------------------------- |
+| `playDate`    |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterCode` |      | CGV 극장 코드 (예: 0056)           |
+| `keyword`     |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`         |      | 위도                               |
+| `lng`         |      | 경도                               |
+| `timeoutMs`   |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+### CGV 시간표 조회
+
+```
+GET /api/cgv/timetable?playDate={YYYYMMDD}&theaterCode={극장코드}&movieCode={영화코드}&keyword={위치키워드}
+```
+
+| 파라미터      | 필수 | 설명                               |
+| :------------ | :--: | :--------------------------------- |
+| `playDate`    |      | 조회 날짜 (YYYYMMDD, 기본값: 오늘) |
+| `theaterCode` |      | CGV 극장 코드 (예: 0056)           |
+| `movieCode`   |      | CGV 영화 코드                      |
+| `keyword`     |      | 위치 키워드 (예: 안산 중앙역)      |
+| `lat`         |      | 위도                               |
+| `lng`         |      | 경도                               |
+| `limit`       |      | 최대 결과 수 (기본값: 50)          |
+| `timeoutMs`   |      | 요청 제한 시간(ms, 기본값: 15000)  |
+
+### 응답 형식
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "meta": { "total": 100, "page": 1, "pageSize": 30 }
+}
+```
+
+<br>
+
+---
+
+<br>
+
+## 사용 예시
+
+웹 읽기(open/WebFetch)는 아래 경로로 실행합니다. `{...}`는 앞선 실제 응답 또는 사용자가 알려 준 조건으로 바꾸고 각 값을 한 번 URL 인코딩합니다. 모든 결과는 자동 HTML입니다.
+
+| 사용자 요청                    | 웹 조회 경로                                                           |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| 수납박스 검색                  | `/browse/daiso/products/수납박스/pageSize/3`                           |
+| 선택한 상품의 안산 중앙역 재고 | `/browse/daiso/inventory/{실제상품ID}/안산중앙역`                      |
+| 강남역 다이소 매장             | `/browse/daiso/stores/강남역`                                          |
+| 선택한 매장의 진열 위치        | `/browse/daiso/display-location/{실제상품ID}/{재고응답의storeCode}`    |
+| 명동 올리브영 매장             | `/browse/oliveyoung/stores/명동`                                       |
+| 강남 CU 과자 재고              | `/browse/cu/inventory/과자/강남`                                       |
+| 잠실 롯데시네마 극장           | `/browse/lottecinema/theaters/잠실`                                    |
+| 선택한 CGV 극장 시간표         | `/browse/cgv/timetable/playDate/{YYYYMMDD}/theaterCode/{실제극장코드}` |
+
+이미 연결된 MCP 도구가 있으면 웹 GET 대신 [공개 통합 도구](mcp-tools.md)를 사용합니다. 예를 들어 상품 검색은 `search_products(service=daiso, query=수납박스)`, 실제 상품 ID로 재고 조회는 `check_inventory(service=daiso, operation=by_id, productId=실제ID, keyword=사용자지역)`입니다. 위 상세 레퍼런스의 deprecated 별칭을 새 호출 예제로 사용하지 않습니다.
+
+<br>
+
+---
+
+<br>
+
+## 개발
+
+공개 서버에 연결하는 사용자는 이 절의 설치·배포 작업이 필요하지 않습니다.
+개발 환경과 무료 조회 정책은 [CONTRIBUTING.md](../CONTRIBUTING.md)를 참고하세요.
+Zyte 유료 호출은 비활성화되어 있으며 `ZYTE_API_KEY`를 설정해도 활성화되지 않습니다.
+
+```bash
+# Node 버전 맞추기
+nvm use
+
+# 설치
+npm ci
+
+# 환경 변수 설정
+cp .env.example .env
+# 서비스별 환경 변수는 CONTRIBUTING.md와 운영 정책을 참고
+
+# 품질 검사 (포맷/린트/타입/테스트)
+npm run check
+
+# 로컬 개발 서버
+npm run dev
+
+# 배포
+npm run deploy
+```
+
+## npm 퍼블리싱
+
+```bash
+# npm 로그인
+npm login
+
+# 배포 산출물/메타 검증
+npm run release:dry-run
+
+# 퍼블리시 (공개 패키지)
+npm run publish:public
+```
+
+기여 가이드는 [CONTRIBUTING.md](../CONTRIBUTING.md)에서 확인할 수 있습니다.
+
+<br>
+
+---
+
+<br>
+
+## 아키텍처
+
+| 항목       | 기술                         |
+| :--------- | :--------------------------- |
+| 런타임     | Cloudflare Workers           |
+| 프레임워크 | Hono + TypeScript            |
+| 프로토콜   | MCP (Model Context Protocol) |
+| 전송       | SSE (Server-Sent Events)     |
+
+<br>
+
+---
+
+<br>
+
+## 프로젝트 구조
+
+```
+daiso-mcp/
+├── src/
+│   ├── index.ts              # MCP 서버 진입점
+│   ├── core/                 # 핵심 모듈
+│   │   ├── types.ts          # 공통 타입
+│   │   ├── interfaces.ts     # ServiceProvider 인터페이스
+│   │   └── registry.ts       # ServiceRegistry
+│   ├── services/             # 서비스 프로바이더
+│   │   ├── daiso/            # 다이소 서비스
+│   │   ├── cu/               # CU 서비스
+│   │   ├── oliveyoung/       # 올리브영 서비스 (Zyte API)
+│   │   ├── megabox/          # 메가박스 서비스
+│   │   ├── lottecinema/      # 롯데시네마 서비스
+│   │   └── cgv/              # CGV 서비스
+│   ├── api/                  # REST API (MCP 미지원 서비스용)
+│   │   ├── handlers.ts       # 다이소/CU/올리브영 API 핸들러
+│   │   ├── megaboxHandlers.ts # 메가박스 API 핸들러
+│   │   ├── lottecinemaHandlers.ts # 롯데시네마 API 핸들러
+│   │   ├── cgvHandlers.ts    # CGV API 핸들러
+│   │   └── routes/           # 서비스별 API 라우트
+│   ├── pages/                # 정적 페이지
+│   │   └── prompt.ts         # 에이전트용 프롬프트 페이지
+│   └── utils/                # 유틸리티
+├── wrangler.toml             # Cloudflare Workers 설정
+└── package.json
+```
+
+<br>
+
+---
+
+<br>
+
+## 확장 가능한 아키텍처
+
+이 프로젝트는 **플러그인 기반 아키텍처**로 설계되어 새로운 서비스를 쉽게 추가할 수 있습니다.
+
+### 핵심 컴포넌트
+
+| 컴포넌트           | 역할                                   |
+| :----------------- | :------------------------------------- |
+| `ServiceProvider`  | 모든 서비스가 구현해야 하는 인터페이스 |
+| `ServiceRegistry`  | 서비스 등록 및 MCP 서버 연결 관리      |
+| `ToolRegistration` | 도구 메타데이터와 핸들러 정의          |
+
+### 새 서비스 추가 방법
+
+예: CU 편의점 서비스 추가
+
+```typescript
+// 1. src/services/cu/index.ts 생성
+import type { ServiceProvider } from '../../core/interfaces.js';
+
+class CuService implements ServiceProvider {
+  readonly metadata = {
+    id: 'cu',
+    name: 'CU 편의점',
+    version: '1.0.0',
+  };
+
+  getTools() {
+    return [/* cu_search_products, cu_find_stores 등 */];
+  }
+}
+
+export function createCuService(): ServiceProvider {
+  return new CuService();
+}
+```
+
+```typescript
+// 2. src/index.ts에 한 줄 추가
+import { createCuService } from './services/cu/index.js';
+
+registry.registerAll([createDaisoService, createCuService]);
+```
+
+## 분석 문서
+
+### 공통 가이드
+
+- [GS25 정상 로그인·직접 인증 복구 운영 절차](./gs25-auth-recovery-runbook.md)
+- [서비스 레퍼런스](./service-reference.md)
+- [스크래핑 플레이북](./scraping-playbook.md)
+- [mitmproxy 가이드](./mitmproxy-guide.md)
+- [AI 지시문](./ai-instruction.md)
+
+### 다이소
+
+- [다이소 네트워크 분석 결과](./daiso-network-analysis-result.md)
+- [다이소 Playwright 네트워크 분석](./daiso-playwright-network-analysis.md)
+- [다이소 리플레이 세션 테스트 HTML](./daiso-replay-session-test.html)
+- [다이소 테스트 리플레이 스크립트](./daiso-test-replay.ts)
+
+### CU
+
+- [CU 네트워크 분석 결과](./cu-network-analysis-result.md)
+- [CU 앱 요청 캡처 가이드](./cu-app-request-capture-guide.md)
+- [CU 앱 스크래핑 리플레이 가이드](./cu-app-scraping-replay-guide.md)
+
+### 이마트24
+
+- [이마트24 네트워크 분석 결과](./emart24-network-analysis-result.md)
+- [이마트24 앱 스크래핑 준비 가이드](./emart24-app-scraping-preparation-guide.md)
+- [이마트24 앱 스크래핑 리플레이 가이드](./emart24-app-scraping-replay-guide.md)
+
+### 롯데마트 과거 분석
+
+롯데마트 지원은 중단했습니다. 기존 REST 경로는 `410 SERVICE_RETIRED`, 기존 CLI 명령은 지원 중단 오류를 반환합니다.
+
+- [롯데마트 모바일 도와센터 스크래핑 리플레이 계획](./lottemart-mobile-scraping-replay-plan.md)
+
+### 공통
+
+- [OpenAPI Actions facade 리팩토링 배경](./openapi-actions-facade.md)
+
+### 올리브영
+
+- [올리브영 네트워크 분석 결과](./oliveyoung-network-analysis-result.md)
+- [올리브영 Playwright MCP 온보딩](./oliveyoung-playwright-mcp-onboarding.md)
+- [올리브영 Playwright 네트워크 분석](./oliveyoung-playwright-network-analysis.md)
+- [올리브영 Lightpanda 검증](./oliveyoung-lightpanda-validation.md)
+- [올리브영 리플레이 세션 테스트 스크립트](./oliveyoung-replay-session-test.ts)
+- [올리브영 Zyte 대역폭 테스트](./oliveyoung-zyte-bandwidth-test.ts)
+- [올리브영 Zyte 리플레이 테스트](./oliveyoung-zyte-replay-test.ts)
+
+### 영화관
+
+- [CGV 네트워크 분석 결과](./cgv-network-analysis-result.md)
+- [메가박스 네트워크 분석 결과](./megabox-network-analysis-result.md)
+- [롯데시네마 네트워크 분석 결과](./lottecinema-network-analysis-result.md)
+
+### GS25
+
+- [GS25 API 리플레이 방법론 (최종)](./gs25-final-replay-methodology.md)
+- [GS25 네트워크 분석 결과 (아카이브)](./archive/gs25-network-analysis-result.md)
+- [GS25 안드로이드 우회 캡처 가이드 (아카이브)](./archive/gs25-android-bypass-capture-guide.md)
+- [GS25 앱 캡처 시도 로그 (2026-03-08, 아카이브)](./archive/gs25-app-capture-attempt-log-20260308.md)
+- [GS25 앱 스크래핑 준비 가이드 (아카이브)](./archive/gs25-app-scraping-preparation-guide.md)
+- [GS25 세션 인계 문서 (2026-03-09, 아카이브)](./archive/gs25-session-handoff-20260309.md)
+
+## 신규 MCP 기능 추가 시 유의사항
+
+새로운 서비스나 도구를 추가할 때는 구현만 끝내지 말고 아래 반영 범위를 함께 확인해야 합니다.
+
+- `MCP`: `src/index.ts` 서비스 등록, 루트 서비스/도구 목록, 관련 테스트 반영
+- `HTTPS`: GET API 핸들러/라우트, 프롬프트 페이지(`src/pages/prompt.ts`), 앱 통합 테스트 반영
+- `CLI`: `src/cli.ts`, `src/cliHelp.ts`, CLI 테스트 반영
+- `AI instruction`: [ai-instruction.md](./ai-instruction.md) 사용 규칙/워크플로우 반영
+- `README`: 지원 서비스 설명, 예시, 문서 링크 반영
+- `OpenAPI`: 기본 `/openapi.json` facade 스펙, `/openapi-full.json` 전체 스펙, 관련 테스트 반영
+
+기능 추가 후 최소 검증 기준:
+
+- `npm run typecheck`
+- `npm test`

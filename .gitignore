@@ -6,3 +6,5 @@ __pycache__/
 live_cache.json
 promotions_cache.json
 .문서작업/
+user_data/
+.runtime/

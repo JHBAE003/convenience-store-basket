@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import requests
 
 from core.models import StoreProduct
+from core.scrapers.event_metadata import checked_now, event_metadata
 
 
 class _CuProducts(HTMLParser):
@@ -99,20 +100,25 @@ class CuPromotionScraper:
     PAGE = BASE + "/event/plus.do?category=event&depth2=1&sf=N"
     AJAX = BASE + "/event/plusAjax.do"
 
-    def __init__(self, session: requests.Session | None = None, timeout: int = 12):
+    def __init__(self, session: requests.Session | None = None, timeout: int = 12,
+                 max_pages: int | None = None):
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "ConvenienceStoreCompare/1.0 (read-only)"})
         self.timeout = timeout
+        self.max_pages = 30 if max_pages is None else max(1, int(max_pages))
+        self.last_collection_complete = True
 
     def search(self, keyword: str) -> list[StoreProduct]:
         q = _normalise(keyword)
-        now = datetime.now().astimezone().isoformat(timespec="seconds")
+        now = checked_now()
         result = {}
+        self.last_collection_complete = True
+        # The public AJAX call also succeeds without a landing-page request.
+        # Referer is retained; no login/cookie bootstrap is needed for this list.
         for page, (depth, promo) in enumerate(((23, "1+1"), (24, "2+1"))):
             if page:
                 time.sleep(0.15)
-            self.session.get(self.PAGE, timeout=self.timeout).raise_for_status()
-            for page_no in range(1, 31):
+            for page_no in range(1, self.max_pages + 1):
                 if page_no > 1:
                     time.sleep(0.12)
                 response = self.session.post(self.AJAX, data={
@@ -127,6 +133,8 @@ class CuPromotionScraper:
                 parser.feed(html)
                 if not parser.items:
                     break
+                if page_no == self.max_pages and 'prodListBtn' in html:
+                    self.last_collection_complete = False
                 for card in parser.items:
                     name = card["name"].strip()
                     if not name or (q and q not in _normalise(name)):
@@ -138,9 +146,14 @@ class CuPromotionScraper:
                     code_match = re.search(r"/(\d{8,14})\.(?:jpg|jpeg|png|webp)", image, re.I)
                     code = code_match.group(1) if code_match else ""
                     row = _promotion_row("CU", name, code, price, promo, image, now, "CU 공식 행사 페이지")
+                    row.promotion_source_url = self.PAGE
+                    row.raw_payload["collection_complete"] = self.last_collection_complete
                     result[(code or _normalise(name), promo)] = row
                 if "prodListBtn" not in html:
                     break
+        if not self.last_collection_complete:
+            for row in result.values():
+                row.raw_payload['collection_complete'] = False
         return list(result.values())
 
 
@@ -151,22 +164,26 @@ class SevenElevenPromotionScraper:
     TABS = ((1, "1+1"), (2, "2+1"), (3, "덤증정"), (4, "할인"))
     MAX_PAGES_PER_TAB = 10
 
-    def __init__(self, session: requests.Session | None = None, timeout: int = 12):
+    def __init__(self, session: requests.Session | None = None, timeout: int = 12,
+                 max_pages: int | None = None):
         self.session = session or requests.Session()
         self.session.headers.update({"User-Agent": "ConvenienceStoreCompare/1.0 (read-only)"})
         self.timeout = timeout
+        self.max_pages = self.MAX_PAGES_PER_TAB if max_pages is None else max(1, int(max_pages))
+        self.last_collection_complete = True
 
     def search(self, keyword: str) -> list[StoreProduct]:
         q = _normalise(keyword)
-        now = datetime.now().astimezone().isoformat(timespec="seconds")
+        now = checked_now()
         result = {}
+        self.last_collection_complete = True
         for index, (tab, promo) in enumerate(self.TABS):
             if index:
                 time.sleep(0.15)
             # The public page itself posts directly to this endpoint. A very
             # large intPageSize is capped by the server, so use its normal
             # paging size and avoid four redundant landing-page requests.
-            for page_no in range(1, self.MAX_PAGES_PER_TAB + 1):
+            for page_no in range(1, self.max_pages + 1):
                 if page_no > 1:
                     time.sleep(0.12)
                 page = self.session.post(self.AJAX, data={
@@ -181,6 +198,8 @@ class SevenElevenPromotionScraper:
                 parser.feed(page.content.decode("utf-8", "replace"))
                 if not parser.items:
                     break
+                if page_no == self.max_pages:
+                    self.last_collection_complete = False
                 for card in parser.items:
                     name = card["name"].strip()
                     if not name or (q and q not in _normalise(name)):
@@ -192,18 +211,27 @@ class SevenElevenPromotionScraper:
                     code = card["code"]
                     row = _promotion_row("세븐일레븐", name, code, price, promo, image, now,
                                          "세븐일레븐 공식 행사 페이지")
+                    row.promotion_source_url = self.PAGE
+                    row.raw_payload["collection_complete"] = self.last_collection_complete
                     result[(code or _normalise(name), promo)] = row
+        if not self.last_collection_complete:
+            for row in result.values():
+                row.raw_payload['collection_complete'] = False
         return list(result.values())
 
 
 def _promotion_row(brand, name, code, price, promo, image, now, source):
-    return StoreProduct(brand=brand, store_name="", address="", product_name=name,
-                        barcode=code if re.fullmatch(r"\d{8,14}", code or "") else "",
+    row = StoreProduct(brand=brand, store_name="", address="", product_name=name,
+                        # An image/card number is not documented as a common GTIN.
+                        barcode="",
                         product_code=code or "", price=price, promotion=promo,
                         promotion_known=True, stock=0, stock_known=False,
-                        data_source="LIVE", updated_at=now, price_updated_at=now,
+                        data_source="LIVE", updated_at=now,
                         price_source=source, promotion_source=source,
-                        price_data_status="LIVE", promotion_data_status="LIVE", image_url=image)
+                        price_data_status="REFERENCE", promotion_data_status="LIVE", image_url=image,
+                        **event_metadata(promo, now, ""))
+    row.raw_payload['identifier_source'] = 'official_image_asset' if brand == 'CU' else 'official_product_card'
+    return row
 
 
 def _normalise(value: str) -> str:

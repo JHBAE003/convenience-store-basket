@@ -6,11 +6,11 @@ from pathlib import Path
 
 from core.config import BASE_DIR
 from core.models import StoreProduct
-from core.services.product_matching import normalize_product_name, same_product
+from core.services.product_matching import normalize_product_name, same_product, product_signature
 
 
-def product_key(row: StoreProduct) -> tuple[str, str, str, str]:
-    return row.brand, row.barcode, row.product_code, row.product_name
+def product_key(row: StoreProduct) -> tuple:
+    return row.brand, row.barcode, row.product_code, row.product_name, product_signature(row)
 
 
 def product_token(row: StoreProduct) -> str:
@@ -25,6 +25,12 @@ def load_photo_catalog(path: Path | None = None) -> list[StoreProduct]:
         barcode=item['barcode'], product_code=item['product_code'], price=item['price'],
         image_url=item['image_url'], updated_at=item['observed_at'], data_source='CATALOG',
         stock_known=False, promotion_known=False, price_source=item['source_url'],
+        manufacturer=item.get('manufacturer', ''), volume=item.get('volume', ''),
+        flavor=item.get('flavor', ''), pack_count=item.get('pack_count', ''),
+        price_data_status='REFERENCE',
+        raw_payload={'identifier_source': item.get('identifier_source', 'official_image_asset'),
+                     'catalog_only': True, 'image_path': item.get('image_path', ''),
+                     'source_url': item['source_url'], 'catalog_checked_at': item['observed_at']},
     ) for item in data]
 
 

@@ -10,7 +10,20 @@ DEFAULT_MODE = "TEST"
 
 LIVE_MCP_ENDPOINT = os.getenv("CONVENIENCE_MCP_ENDPOINT", "https://mcp.aka.page/")
 REQUEST_TIMEOUT_SECONDS = 12
-LIVE_CACHE_TTL_SECONDS = 30 * 60
+def _seconds(name: str, default: int) -> int:
+    try:
+        return max(1, int(os.getenv(name, str(default))))
+    except ValueError:
+        return default
+
+
+# Application caches only. The relay may serve its own older cached response.
+INVENTORY_CACHE_TTL_SECONDS = _seconds("CONVENIENCE_INVENTORY_CACHE_SECONDS", 60)
+PRODUCT_CACHE_TTL_SECONDS = _seconds("CONVENIENCE_PRODUCT_CACHE_SECONDS", 900)
+STORE_CACHE_TTL_SECONDS = _seconds("CONVENIENCE_STORE_CACHE_SECONDS", 1800)
+PROMOTION_CACHE_TTL_SECONDS = _seconds("CONVENIENCE_PROMOTION_TTL_SECONDS", 21600)
+FAILURE_COOLDOWN_SECONDS = _seconds("CONVENIENCE_FAILURE_COOLDOWN_SECONDS", 3)
+LIVE_CACHE_TTL_SECONDS = INVENTORY_CACHE_TTL_SECONDS
 
 BRANDS = ["GS25", "CU", "세븐일레븐", "이마트24"]
 

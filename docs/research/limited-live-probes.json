@@ -1,0 +1,1355 @@
+[
+  {
+    "brand": "GS25",
+    "tool": "search_products",
+    "args": {
+      "service": "gs25",
+      "keyword": "신라면",
+      "timeoutMs": 8000,
+      "limit": 3
+    },
+    "elapsed_ms": 1635.0,
+    "status": "ok",
+    "response": {
+      "keyword": "신라면",
+      "count": 3,
+      "products": [
+        {
+          "itemCode": "8801043014830",
+          "itemName": "농심)신라면(5입)",
+          "shortItemName": "농심)신라면5입",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260622_415503.jpg",
+          "rating": 4.9,
+          "stockCheckEnabled": false
+        },
+        {
+          "itemCode": "8801043014809",
+          "itemName": "농심)신라면(봉지)",
+          "shortItemName": "신라면(봉지)",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260522_403942.jpg",
+          "rating": 4.8,
+          "stockCheckEnabled": false
+        },
+        {
+          "itemCode": "8801043017022",
+          "itemName": "농심)신라면툼바큰사발(대컵)",
+          "shortItemName": "신라면툼바큰",
+          "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240923_278938.jpg",
+          "rating": 4.8,
+          "stockCheckEnabled": false
+        }
+      ],
+      "note": "재고 확인 시 itemCode를 gs25_check_inventory에 전달하면 정확한 상품 재고를 조회할 수 있습니다.",
+      "standard": {
+        "products": [
+          {
+            "code": "8801043014830",
+            "name": "농심)신라면(5입)",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260622_415503.jpg",
+            "raw": {
+              "itemCode": "8801043014830",
+              "itemName": "농심)신라면(5입)",
+              "shortItemName": "농심)신라면5입",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260622_415503.jpg",
+              "rating": 4.9,
+              "stockCheckEnabled": false
+            }
+          },
+          {
+            "code": "8801043014809",
+            "name": "농심)신라면(봉지)",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260522_403942.jpg",
+            "raw": {
+              "itemCode": "8801043014809",
+              "itemName": "농심)신라면(봉지)",
+              "shortItemName": "신라면(봉지)",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20260522_403942.jpg",
+              "rating": 4.8,
+              "stockCheckEnabled": false
+            }
+          },
+          {
+            "code": "8801043017022",
+            "name": "농심)신라면툼바큰사발(대컵)",
+            "price": null,
+            "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240923_278938.jpg",
+            "raw": {
+              "itemCode": "8801043017022",
+              "itemName": "농심)신라면툼바큰사발(대컵)",
+              "shortItemName": "신라면툼바큰",
+              "imageUrl": "https://image.woodongs.com/imgsvr/wdlvyItem/BGD_20240923_278938.jpg",
+              "rating": 4.8,
+              "stockCheckEnabled": false
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "세븐일레븐",
+    "tool": "search_products",
+    "args": {
+      "service": "seveneleven",
+      "query": "신라면",
+      "size": 3,
+      "timeoutMs": 8000
+    },
+    "elapsed_ms": 1006.0,
+    "status": "error",
+    "error": "{\"error\":{\"code\":\"CONVENIENCE_RELAY_FAILED\",\"message\":\"í¸ìì  ë¦´ë ì´ ìì²­ì ì¤í¨íìµëë¤.\"},\"diagnostics\":{\"code\":\"CONVENIENCE_RELAY_FAILED\",\"message\":\"í¸ìì  ë¦´ë ì´ ìì²­ì ì¤í¨íìµëë¤.\",\"status\":502,\"retryable\":true,\"operation\":\"products\",\"upstreamStatus\":502,\"hint\":\"ì¼ìì ì¸ ì¸ë¶ ìë¹ì¤ ì¤ë¥ìëë¤. ì ì í ì¬ìëí´ì£¼ì¸ì.\"}}"
+  },
+  {
+    "brand": "이마트24",
+    "tool": "search_products",
+    "args": {
+      "service": "emart24",
+      "keyword": "신라면",
+      "timeoutMs": 8000,
+      "page": 1,
+      "pageSize": 3
+    },
+    "elapsed_ms": 880.6,
+    "status": "ok",
+    "response": {
+      "keyword": "신라면",
+      "page": 1,
+      "pageSize": 3,
+      "sortType": "SALE",
+      "saleProductYn": "N",
+      "totalCount": 22,
+      "count": 3,
+      "products": [
+        {
+          "pluCd": "8801043017022",
+          "goodsName": "농심)신라면툼바큰사발",
+          "originPrice": 0,
+          "viewPrice": 1900,
+          "category": "",
+          "kind": ""
+        },
+        {
+          "pluCd": "8801043018951",
+          "goodsName": "농심)신라면툼바봉지",
+          "originPrice": 0,
+          "viewPrice": 1500,
+          "category": "",
+          "kind": ""
+        },
+        {
+          "pluCd": "8801043019002",
+          "goodsName": "농심)신라면툼바봉지*4입",
+          "originPrice": 0,
+          "viewPrice": 6000,
+          "category": "",
+          "kind": ""
+        }
+      ],
+      "standard": {
+        "products": [
+          {
+            "code": "8801043017022",
+            "name": "농심)신라면툼바큰사발",
+            "price": 1900,
+            "imageUrl": null,
+            "raw": {
+              "pluCd": "8801043017022",
+              "goodsName": "농심)신라면툼바큰사발",
+              "originPrice": 0,
+              "viewPrice": 1900,
+              "category": "",
+              "kind": ""
+            }
+          },
+          {
+            "code": "8801043018951",
+            "name": "농심)신라면툼바봉지",
+            "price": 1500,
+            "imageUrl": null,
+            "raw": {
+              "pluCd": "8801043018951",
+              "goodsName": "농심)신라면툼바봉지",
+              "originPrice": 0,
+              "viewPrice": 1500,
+              "category": "",
+              "kind": ""
+            }
+          },
+          {
+            "code": "8801043019002",
+            "name": "농심)신라면툼바봉지*4입",
+            "price": 6000,
+            "imageUrl": null,
+            "raw": {
+              "pluCd": "8801043019002",
+              "goodsName": "농심)신라면툼바봉지*4입",
+              "originPrice": 0,
+              "viewPrice": 6000,
+              "category": "",
+              "kind": ""
+            }
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "CU",
+    "tool": "check_inventory",
+    "args": {
+      "service": "cu",
+      "keyword": "신라면",
+      "timeoutMs": 8000,
+      "latitude": 37.5665,
+      "longitude": 126.978,
+      "size": 3,
+      "storeLimit": 3
+    },
+    "elapsed_ms": 3147.5,
+    "status": "ok",
+    "response": {
+      "keyword": "신라면",
+      "searchOptions": {
+        "size": 3,
+        "offset": 0,
+        "searchSort": "recom",
+        "storeKeyword": ""
+      },
+      "location": {
+        "latitude": 37.5665,
+        "longitude": 126.978
+      },
+      "nearbyStores": {
+        "available": true,
+        "unavailableReason": null,
+        "totalCount": 57,
+        "count": 3,
+        "stockItemCode": "8801043014809",
+        "selectionReason": "first_candidate",
+        "stockItemName": "농심)신라면",
+        "stores": [
+          {
+            "storeCode": "37321",
+            "storeName": "한국프레스센터점",
+            "phone": "",
+            "address": "서울특별시 중구 세종대로 124 한국프레스센터 (태평로1가) 한국프레스센터",
+            "latitude": 37.567396,
+            "longitude": 126.977832,
+            "distanceM": 101,
+            "stock": 7,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "32937",
+            "storeName": "코리아나호텔점",
+            "phone": "02-730-5328",
+            "address": "서울특별시 중구 세종대로 135, 코리아나호텔  (태평로1가)",
+            "latitude": 37.568323,
+            "longitude": 126.976609,
+            "distanceM": 237,
+            "stock": 10,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "48270",
+            "storeName": "을지타워점",
+            "phone": "010-9830-1317",
+            "address": "서울특별시 중구 을지로 29 더존을지타워 (을지로1가) 더존을지타워",
+            "latitude": 37.566479,
+            "longitude": 126.981105,
+            "distanceM": 274,
+            "stock": 8,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          }
+        ]
+      },
+      "inventory": {
+        "available": true,
+        "unavailableReason": null,
+        "totalCount": 20,
+        "count": 3,
+        "spellModifyYn": "N",
+        "items": [
+          {
+            "itemCode": "8801043014809",
+            "onItemNo": "2022030013125",
+            "itemName": "농심)신라면",
+            "price": 1000,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043015981",
+            "onItemNo": "2022030013137",
+            "itemName": "농심)신라면큰사발컵",
+            "price": 1600,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043041447",
+            "onItemNo": "2022030013161",
+            "itemName": "농심)신라면블랙컵",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "brand": "GS25",
+    "tool": "check_inventory",
+    "request_count": 1,
+    "elapsed_ms": 1567.8,
+    "status": "error",
+    "error": "MCP 도구 실행 실패",
+    "error_details": {}
+  },
+  {
+    "brand": "이마트24",
+    "tool": "check_inventory",
+    "request_count": 1,
+    "elapsed_ms": 3502.5,
+    "status": "ok",
+    "response": {
+      "keyword": "",
+      "pluCd": "8801043017022",
+      "productCandidates": [],
+      "selectionReason": "explicit_code",
+      "location": {
+        "latitude": 37.5665,
+        "longitude": 126.978
+      },
+      "storeFilters": {
+        "storeKeyword": "",
+        "appliedStoreKeyword": "",
+        "area1": "서울특별시",
+        "area2": "중구",
+        "service24h": false,
+        "storeLimit": 20,
+        "directBizNos": []
+      },
+      "nearbyStores": {
+        "totalCount": 44,
+        "stores": [
+          {
+            "storeCode": "05765",
+            "storeName": "을지로부영점",
+            "address": "서울특별시 중구 을지로 29",
+            "addressDetail": "",
+            "phone": "",
+            "latitude": 37.5664884462972,
+            "longitude": 126.981025044659,
+            "openTime": "0700",
+            "closeTime": "2300",
+            "openDate": "2100.12.31",
+            "endDate": "2100.12.31",
+            "service24h": false,
+            "distanceM": 267
+          },
+          {
+            "storeCode": "03012",
+            "storeName": "서울조선호텔점",
+            "address": "서울특별시 중구 소공로 106",
+            "addressDetail": "지하1층",
+            "phone": "07088602424",
+            "latitude": 37.5644841324893,
+            "longitude": 126.980184460247,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2017.05.31",
+            "endDate": "9999.12.31",
+            "service24h": true,
+            "distanceM": 295
+          },
+          {
+            "storeCode": "01240",
+            "storeName": "중구소공점",
+            "address": "서울특별시 중구 소공로 100-1",
+            "addressDetail": "1층",
+            "phone": "027764991",
+            "latitude": 37.5637773285922,
+            "longitude": 126.979816113982,
+            "openTime": "0700",
+            "closeTime": "0000",
+            "openDate": "2015.10.01",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 342
+          },
+          {
+            "storeCode": "23563",
+            "storeName": "S을지로입구역점",
+            "address": "서울특별시 중구 을지로 54-1",
+            "addressDetail": "B1-61",
+            "phone": "0237891273",
+            "latitude": 37.5659110563238,
+            "longitude": 126.983839187466,
+            "openTime": "0700",
+            "closeTime": "2300",
+            "openDate": "2022.03.28",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 519
+          },
+          {
+            "storeCode": "21616",
+            "storeName": "한국은행점",
+            "address": "서울특별시 중구 남대문로5길 9",
+            "addressDetail": "",
+            "phone": "027577174",
+            "latitude": 37.5617442432919,
+            "longitude": 126.978862530774,
+            "openTime": "0700",
+            "closeTime": "0100",
+            "openDate": "2021.01.14",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 534
+          },
+          {
+            "storeCode": "29362",
+            "storeName": "신세계본점",
+            "address": "서울특별시 중구 소공로 63",
+            "addressDetail": "15층",
+            "phone": "023188827",
+            "latitude": 37.560919019936,
+            "longitude": 126.980979034083,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2025.05.26",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 674
+          },
+          {
+            "storeCode": "28783",
+            "storeName": "퍼시픽타워점",
+            "address": "서울특별시 중구 세종대로9길 41",
+            "addressDetail": "지하1층 B3호",
+            "phone": "",
+            "latitude": 37.5613582316301,
+            "longitude": 126.97299628821,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2025.01.07",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 722
+          },
+          {
+            "storeCode": "24554",
+            "storeName": "명동중앙로점",
+            "address": "서울특별시 중구 명동8길 21-7",
+            "addressDetail": "지하1층",
+            "phone": "027799788",
+            "latitude": 37.5629157785479,
+            "longitude": 126.985167943232,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2022.10.24",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 747
+          },
+          {
+            "storeCode": "28988",
+            "storeName": "을지로기업은행점",
+            "address": "서울특별시 중구 을지로 79",
+            "addressDetail": "19층",
+            "phone": "",
+            "latitude": 37.5664935315447,
+            "longitude": 126.986565470789,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2025.02.21",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 755
+          },
+          {
+            "storeCode": "26276",
+            "storeName": "서소문순화빌딩점",
+            "address": "서울특별시 중구 서소문로 89",
+            "addressDetail": "2층 203호",
+            "phone": "",
+            "latitude": 37.5625944236177,
+            "longitude": 126.970827459784,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2023.07.20",
+            "endDate": "9999.12.31",
+            "service24h": true,
+            "distanceM": 767
+          },
+          {
+            "storeCode": "25721",
+            "storeName": "SMART이마트본사점",
+            "address": "서울특별시 중구 세종대로7길 37",
+            "addressDetail": "17층 일부(순화동)",
+            "phone": "",
+            "latitude": 37.5607512032557,
+            "longitude": 126.972489681085,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2023.05.02",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 803
+          },
+          {
+            "storeCode": "08087",
+            "storeName": "self위워크을지로점",
+            "address": "서울특별시 중구 삼일대로 343",
+            "addressDetail": "",
+            "phone": "",
+            "latitude": 37.5651004556362,
+            "longitude": 126.986959615068,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2020.05.30",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 805
+          },
+          {
+            "storeCode": "29485",
+            "storeName": "메리츠화재사옥점",
+            "address": "서울특별시 중구 칠패로 28",
+            "addressDetail": "",
+            "phone": "",
+            "latitude": 37.5592510458885,
+            "longitude": 126.97211628887,
+            "openTime": "0630",
+            "closeTime": "2230",
+            "openDate": "2025.07.07",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 958
+          },
+          {
+            "storeCode": "02335",
+            "storeName": "중구명동점",
+            "address": "서울특별시 중구 퇴계로14길 29(남산동1가)",
+            "addressDetail": "그랜드 필드",
+            "phone": "027550575",
+            "latitude": 37.5591939658366,
+            "longitude": 126.983978490389,
+            "openTime": "0700",
+            "closeTime": "0100",
+            "openDate": "2016.11.16",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 968
+          },
+          {
+            "storeCode": "00087",
+            "storeName": "중림점",
+            "address": "서울특별시 중구 청파로 464(중림동)",
+            "addressDetail": "브라운스톤",
+            "phone": "023625335",
+            "latitude": 37.5608187887289,
+            "longitude": 126.968225883547,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2008.02.16",
+            "endDate": "9999.12.31",
+            "service24h": true,
+            "distanceM": 1068
+          },
+          {
+            "storeCode": "05010",
+            "storeName": "충무로앰버서더호텔점",
+            "address": "서울특별시 중구 삼일대로 300",
+            "addressDetail": "",
+            "phone": "0269161500",
+            "latitude": 37.5615064355734,
+            "longitude": 126.989295876044,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2018.09.30",
+            "endDate": "9999.12.31",
+            "service24h": true,
+            "distanceM": 1140
+          },
+          {
+            "storeCode": "21540",
+            "storeName": "을지로3가점",
+            "address": "서울특별시 중구 을지로14길 21",
+            "addressDetail": "",
+            "phone": "0269161500",
+            "latitude": 37.5652613866207,
+            "longitude": 126.99221593401,
+            "openTime": "0600",
+            "closeTime": "0000",
+            "openDate": "2020.12.28",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 1261
+          },
+          {
+            "storeCode": "08088",
+            "storeName": "self위워크서울스퀘어점",
+            "address": "서울특별시 중구 한강대로 416",
+            "addressDetail": "",
+            "phone": "",
+            "latitude": 37.555503632236,
+            "longitude": 126.973751343837,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2020.03.30",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 1279
+          },
+          {
+            "storeCode": "28790",
+            "storeName": "R충무로스타점",
+            "address": "서울특별시 중구 퇴계로 184",
+            "addressDetail": "101호",
+            "phone": "",
+            "latitude": 37.5608484867732,
+            "longitude": 126.992226692653,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2024.12.31",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 1403
+          },
+          {
+            "storeCode": "29378",
+            "storeName": "호텔더보타닉세운명동점",
+            "address": "서울특별시 중구 을지로19길 23-1",
+            "addressDetail": "",
+            "phone": "",
+            "latitude": 37.5675435505343,
+            "longitude": 126.994348114162,
+            "openTime": "0000",
+            "closeTime": "0000",
+            "openDate": "2025.06.16",
+            "endDate": "9999.12.31",
+            "service24h": false,
+            "distanceM": 1446
+          }
+        ]
+      },
+      "inventory": {
+        "goodsInfo": {
+          "viewPrice": 1900,
+          "originPrice": null,
+          "salePrice": null,
+          "salePercent": null,
+          "alcPriority": null,
+          "storeCd": null,
+          "goodsNm": "농심)신라면툼바큰사발",
+          "pluCd": "8801043017022"
+        },
+        "count": 9,
+        "stores": [
+          {
+            "bizNo": "01240",
+            "bizQty": 18,
+            "storeName": "중구소공점",
+            "address": "서울특별시 중구 소공로 100-1 1층",
+            "phone": "02-776-4991",
+            "distanceM": 342
+          },
+          {
+            "bizNo": "23563",
+            "bizQty": 18,
+            "storeName": "S을지로입구역점",
+            "address": "서울특별시 중구 을지로 54-1 B1-61",
+            "phone": "02-3789-1273",
+            "distanceM": 519
+          },
+          {
+            "bizNo": "24554",
+            "bizQty": 22,
+            "storeName": "명동중앙로점",
+            "address": "서울특별시 중구 명동8길 21-7 지하1층",
+            "phone": "02-779-9788",
+            "distanceM": 747
+          },
+          {
+            "bizNo": "26276",
+            "bizQty": 7,
+            "storeName": "서소문순화빌딩점",
+            "address": "서울특별시 중구 서소문로 89 2층 203호",
+            "phone": "02-6916-1500",
+            "distanceM": 767
+          },
+          {
+            "bizNo": "28783",
+            "bizQty": 0,
+            "storeName": "퍼시픽타워점",
+            "address": "서울특별시 중구 세종대로9길 41 지하1층 B3호",
+            "phone": "02-6916-1500",
+            "distanceM": 722
+          },
+          {
+            "bizNo": "28790",
+            "bizQty": 9,
+            "storeName": "R충무로스타점",
+            "address": "서울특별시 중구 퇴계로 184 101호",
+            "phone": "02-6916-1500",
+            "distanceM": 1403
+          },
+          {
+            "bizNo": "28988",
+            "bizQty": 0,
+            "storeName": "을지로기업은행점",
+            "address": "서울특별시 중구 을지로 79 19층",
+            "phone": "02-6916-1500",
+            "distanceM": 755
+          },
+          {
+            "bizNo": "29378",
+            "bizQty": 39,
+            "storeName": "호텔더보타닉세운명동점",
+            "address": "서울특별시 중구 을지로19길 23-1 ",
+            "phone": "02-6916-1500",
+            "distanceM": 1446
+          },
+          {
+            "bizNo": "29485",
+            "bizQty": 0,
+            "storeName": "메리츠화재사옥점",
+            "address": "서울특별시 중구 칠패로 28 ",
+            "phone": "02-6916-1500",
+            "distanceM": 958
+          }
+        ]
+      }
+    },
+    "parsed_rows": 9
+  },
+  {
+    "brand": "CU",
+    "tool": "check_inventory",
+    "request_count": 1,
+    "elapsed_ms": 3351.3,
+    "status": "ok",
+    "response": {
+      "keyword": "농심)신라면",
+      "searchOptions": {
+        "size": 20,
+        "offset": 0,
+        "searchSort": "recom",
+        "storeKeyword": ""
+      },
+      "location": {
+        "latitude": 37.5665,
+        "longitude": 126.978
+      },
+      "nearbyStores": {
+        "available": true,
+        "unavailableReason": null,
+        "totalCount": 57,
+        "count": 20,
+        "stockItemCode": "8801043014809",
+        "selectionReason": "exact_match",
+        "stockItemName": "농심)신라면",
+        "stores": [
+          {
+            "storeCode": "37321",
+            "storeName": "한국프레스센터점",
+            "phone": "",
+            "address": "서울특별시 중구 세종대로 124 한국프레스센터 (태평로1가) 한국프레스센터",
+            "latitude": 37.567396,
+            "longitude": 126.977832,
+            "distanceM": 101,
+            "stock": 7,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "32937",
+            "storeName": "코리아나호텔점",
+            "phone": "02-730-5328",
+            "address": "서울특별시 중구 세종대로 135, 코리아나호텔  (태평로1가)",
+            "latitude": 37.568323,
+            "longitude": 126.976609,
+            "distanceM": 237,
+            "stock": 10,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "48270",
+            "storeName": "을지타워점",
+            "phone": "010-9830-1317",
+            "address": "서울특별시 중구 을지로 29 더존을지타워 (을지로1가) 더존을지타워",
+            "latitude": 37.566479,
+            "longitude": 126.981105,
+            "distanceM": 274,
+            "stock": 8,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "42327",
+            "storeName": "중구세종대로점",
+            "phone": "027363044",
+            "address": "서울특별시 중구 세종대로 135-9",
+            "latitude": 37.568807,
+            "longitude": 126.97633,
+            "distanceM": 296,
+            "stock": 12,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "46624",
+            "storeName": "청계광장점",
+            "phone": "",
+            "address": "서울특별시 종로구 무교로 37 (서린동)",
+            "latitude": 37.569407,
+            "longitude": 126.979119,
+            "distanceM": 338,
+            "stock": 10,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "45897",
+            "storeName": "한국은행점",
+            "phone": "",
+            "address": "서울특별시 중구 남대문로 39 한국은행건물 (남대문로3가) 한국은행건물",
+            "latitude": 37.562566,
+            "longitude": 126.979788,
+            "distanceM": 465,
+            "stock": 30,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "18732",
+            "storeName": "종로1가점",
+            "phone": "0220755537",
+            "address": "서울특별시 종로구 종로 19 (종로1가) 외 1필지 르메이에르종로타운1 1층 109호",
+            "latitude": 37.570451,
+            "longitude": 126.979806,
+            "distanceM": 467,
+            "stock": 13,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "25156",
+            "storeName": "광화문광장점",
+            "phone": "027250275",
+            "address": "서울특별시 종로구 새문안로 103-1, (신문로1가)",
+            "latitude": 37.570482,
+            "longitude": 126.97616,
+            "distanceM": 472,
+            "stock": 5,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "35491",
+            "storeName": "내외빌딩점",
+            "phone": "023184051",
+            "address": "서울특별시 중구 을지로 51 (을지로2가) 내외빌딩 B1층",
+            "latitude": 37.566504,
+            "longitude": 126.983727,
+            "distanceM": 505,
+            "stock": 7,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "46488",
+            "storeName": "영풍문고종각종로본점",
+            "phone": "023995600",
+            "address": "서울특별시 종로구 청계천로 41 영풍빌딩 (서린동) 영풍빌딩",
+            "latitude": 37.56975,
+            "longitude": 126.982237,
+            "distanceM": 520,
+            "stock": 6,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "24481",
+            "storeName": "페럼타워점",
+            "phone": "0263538988",
+            "address": "서울특별시 중구 을지로5길 19, (수하동)",
+            "latitude": 37.56708,
+            "longitude": 126.983927,
+            "distanceM": 526,
+            "stock": 15,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "48813",
+            "storeName": "광화문점",
+            "phone": "",
+            "address": "서울특별시 종로구 새문안로 89 1층",
+            "latitude": 37.570363,
+            "longitude": 126.974495,
+            "distanceM": 529,
+            "stock": 32,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "34057",
+            "storeName": "중구해성점",
+            "phone": "02-310-9201",
+            "address": "서울특별시 중구 세종대로12길 12 호텔그레이스리서울",
+            "latitude": 37.561806,
+            "longitude": 126.97659,
+            "distanceM": 537,
+            "stock": 21,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "42142",
+            "storeName": "명동타임워크점",
+            "phone": "",
+            "address": "서울특별시 중구 남대문로 78 명동토투앤,엠버서더호텔 (명동1가) 명동토투앤,엠버서더호텔",
+            "latitude": 37.564056,
+            "longitude": 126.983356,
+            "distanceM": 545,
+            "stock": 46,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "34254",
+            "storeName": "서소문삼성점",
+            "phone": "",
+            "address": "서울특별시 중구 세종대로11길 26 (서소문동)",
+            "latitude": 37.562323,
+            "longitude": 126.974596,
+            "distanceM": 553,
+            "stock": 24,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "35209",
+            "storeName": "콘코디언점",
+            "phone": "0267440124",
+            "address": "서울특별시 종로구 새문안로 76, (신문로1가, 콘코디언빌딩)",
+            "latitude": 37.569724,
+            "longitude": 126.973054,
+            "distanceM": 564,
+            "stock": 5,
+            "deliveryYn": true,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "39785",
+            "storeName": "부영태평점",
+            "phone": "",
+            "address": "서울특별시 중구 세종대로 55, (태평로2가) 부영태평빌딩",
+            "latitude": 37.561524,
+            "longitude": 126.974992,
+            "distanceM": 614,
+            "stock": 3,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "44170",
+            "storeName": "씨네큐브점",
+            "phone": "",
+            "address": "서울특별시 종로구 새문안로 68 흥국생명빌딩 (신문로1가)",
+            "latitude": 37.569718,
+            "longitude": 126.972253,
+            "distanceM": 620,
+            "stock": 5,
+            "deliveryYn": true,
+            "pickupYn": true,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "56072",
+            "storeName": "삼정아트테라스점",
+            "phone": "",
+            "address": "서울 중구 서소문로 89-20",
+            "latitude": 37.563245862566156,
+            "longitude": 126.9720206300028,
+            "distanceM": 639,
+            "stock": 7,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          },
+          {
+            "storeCode": "25912",
+            "storeName": "부영사옥점",
+            "phone": "0237745646",
+            "address": "서울특별시 중구 세종대로9길 42, 부영빌딩  (서소문동)",
+            "latitude": 37.561541,
+            "longitude": 126.973725,
+            "distanceM": 668,
+            "stock": 17,
+            "deliveryYn": false,
+            "pickupYn": false,
+            "reserveYn": false
+          }
+        ]
+      },
+      "inventory": {
+        "available": true,
+        "unavailableReason": null,
+        "totalCount": 23,
+        "count": 20,
+        "spellModifyYn": "N",
+        "items": [
+          {
+            "itemCode": "8801043014809",
+            "onItemNo": "2022030013125",
+            "itemName": "농심)신라면",
+            "price": 1000,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043015981",
+            "onItemNo": "2022030013137",
+            "itemName": "농심)신라면큰사발컵",
+            "price": 1600,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043041447",
+            "onItemNo": "2022030013161",
+            "itemName": "농심)신라면블랙컵",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043056489",
+            "onItemNo": "2022040017001",
+            "itemName": "농심)신라면건면컵",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043069649",
+            "onItemNo": "2023080031881",
+            "itemName": "농심)신라면더레드봉지",
+            "price": 1500,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043070881",
+            "onItemNo": "2023120035596",
+            "itemName": "농심)신라면더레드큰사발",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043041577",
+            "onItemNo": "2022040017191",
+            "itemName": "농심)신라면블랙",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043047722",
+            "onItemNo": "",
+            "itemName": "농심)신라면건면",
+            "price": 1300,
+            "pickupYn": false,
+            "deliveryYn": false,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043017022",
+            "onItemNo": "2024090043346",
+            "itemName": "농심)신라면툼바큰사발면",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043015714",
+            "onItemNo": "2022040017272",
+            "itemName": "농심)신라면소컵",
+            "price": 1350,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043062435",
+            "onItemNo": "2026050065506",
+            "itemName": "농심)신라면로제큰사발",
+            "price": 1900,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043018951",
+            "onItemNo": "2024120045736",
+            "itemName": "농심)신라면툼바봉지",
+            "price": 1500,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043019002",
+            "onItemNo": "2026070066656",
+            "itemName": "농심)신라면툼바4입",
+            "price": 6000,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043065368",
+            "onItemNo": "2026060066054",
+            "itemName": "농심)신라면로제봉지",
+            "price": 1500,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043056953",
+            "onItemNo": "2026010058686",
+            "itemName": "농심)신라면골드봉지",
+            "price": 1500,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043053785",
+            "onItemNo": "2025120057764",
+            "itemName": "농심)신라면햄버거컵",
+            "price": 1300,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043065382",
+            "onItemNo": "2026060066053",
+            "itemName": "농심)신라면로제4입",
+            "price": 6000,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043061575",
+            "onItemNo": "2022040019087",
+            "itemName": "농심)신라면볶음면",
+            "price": 1250,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043053532",
+            "onItemNo": "2025120057766",
+            "itemName": "농심)신라면스파이시퀸컵",
+            "price": 1300,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          },
+          {
+            "itemCode": "8801043052764",
+            "onItemNo": "2025120057765",
+            "itemName": "농심)신라면슈퍼스타컵",
+            "price": 1300,
+            "pickupYn": true,
+            "deliveryYn": true,
+            "reserveYn": false
+          }
+        ]
+      }
+    },
+    "parsed_rows": 20
+  },
+  {
+    "brand": "이마트24",
+    "tool": "find_stores",
+    "request_count": 1,
+    "elapsed_ms": 975.1,
+    "status": "ok",
+    "response": {
+      "location": {
+        "latitude": 37.5665,
+        "longitude": 126.978
+      },
+      "keyword": "",
+      "appliedKeyword": "",
+      "area1": "서울특별시",
+      "area2": "중구",
+      "service24h": false,
+      "totalCount": 44,
+      "count": 3,
+      "stores": [
+        {
+          "storeCode": "05765",
+          "storeName": "을지로부영점",
+          "address": "서울특별시 중구 을지로 29",
+          "addressDetail": "",
+          "phone": "",
+          "latitude": 37.5664884462972,
+          "longitude": 126.981025044659,
+          "openTime": "0700",
+          "closeTime": "2300",
+          "openDate": "2100.12.31",
+          "endDate": "2100.12.31",
+          "service24h": false,
+          "distanceM": 267
+        },
+        {
+          "storeCode": "03012",
+          "storeName": "서울조선호텔점",
+          "address": "서울특별시 중구 소공로 106",
+          "addressDetail": "지하1층",
+          "phone": "07088602424",
+          "latitude": 37.5644841324893,
+          "longitude": 126.980184460247,
+          "openTime": "0000",
+          "closeTime": "0000",
+          "openDate": "2017.05.31",
+          "endDate": "9999.12.31",
+          "service24h": true,
+          "distanceM": 295
+        },
+        {
+          "storeCode": "01240",
+          "storeName": "중구소공점",
+          "address": "서울특별시 중구 소공로 100-1",
+          "addressDetail": "1층",
+          "phone": "027764991",
+          "latitude": 37.5637773285922,
+          "longitude": 126.979816113982,
+          "openTime": "0700",
+          "closeTime": "0000",
+          "openDate": "2015.10.01",
+          "endDate": "9999.12.31",
+          "service24h": false,
+          "distanceM": 342
+        }
+      ],
+      "standard": {
+        "stores": [
+          {
+            "code": "05765",
+            "name": "을지로부영점",
+            "address": "서울특별시 중구 을지로 29",
+            "distanceMeters": 267,
+            "raw": {
+              "storeCode": "05765",
+              "storeName": "을지로부영점",
+              "address": "서울특별시 중구 을지로 29",
+              "addressDetail": "",
+              "phone": "",
+              "latitude": 37.5664884462972,
+              "longitude": 126.981025044659,
+              "openTime": "0700",
+              "closeTime": "2300",
+              "openDate": "2100.12.31",
+              "endDate": "2100.12.31",
+              "service24h": false,
+              "distanceM": 267
+            }
+          },
+          {
+            "code": "03012",
+            "name": "서울조선호텔점",
+            "address": "서울특별시 중구 소공로 106",
+            "distanceMeters": 295,
+            "raw": {
+              "storeCode": "03012",
+              "storeName": "서울조선호텔점",
+              "address": "서울특별시 중구 소공로 106",
+              "addressDetail": "지하1층",
+              "phone": "07088602424",
+              "latitude": 37.5644841324893,
+              "longitude": 126.980184460247,
+              "openTime": "0000",
+              "closeTime": "0000",
+              "openDate": "2017.05.31",
+              "endDate": "9999.12.31",
+              "service24h": true,
+              "distanceM": 295
+            }
+          },
+          {
+            "code": "01240",
+            "name": "중구소공점",
+            "address": "서울특별시 중구 소공로 100-1",
+            "distanceMeters": 342,
+            "raw": {
+              "storeCode": "01240",
+              "storeName": "중구소공점",
+              "address": "서울특별시 중구 소공로 100-1",
+              "addressDetail": "1층",
+              "phone": "027764991",
+              "latitude": 37.5637773285922,
+              "longitude": 126.979816113982,
+              "openTime": "0700",
+              "closeTime": "0000",
+              "openDate": "2015.10.01",
+              "endDate": "9999.12.31",
+              "service24h": false,
+              "distanceM": 342
+            }
+          }
+        ]
+      }
+    }
+  }
+]

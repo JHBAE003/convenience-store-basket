@@ -1,0 +1,14 @@
+{
+  "tests": 211,
+  "elapsed_seconds": 47.65,
+  "exit_code": 0,
+  "unmocked_http_attempts": 0,
+  "compileall": "passed",
+  "pip_check": "passed",
+  "original_source_files": 98,
+  "original_source_changes": 0,
+  "launcher": "v2.1 실행.bat",
+  "port": 8504,
+  "github_uploaded": false,
+  "deployed": false
+}

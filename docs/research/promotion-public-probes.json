@@ -1,0 +1,119 @@
+[
+  {
+    "brand": "CU",
+    "method": "GET",
+    "url": "https://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N",
+    "status": 200,
+    "seconds": 0.297,
+    "bytes": 32697,
+    "final_url": "https://cu.bgfretail.com/event/plus.do?category=event&depth2=1&sf=N",
+    "date_candidates": [
+      "?ver=20260206\"></script> <!-- 2019-05-23 -->\r",
+      "le.min.js\"></script> --> <!-- 2022-02-18 -->\r",
+      "?ver=20260206\"></script> <!-- 2022-02-18 -->\r",
+      "?ver=20260206\"></script> <!-- 2022-02-18 -->\r",
+      "\t$('#searchCondition').val(val);\r",
+      "<input id=\"searchCondition\" name=\"searchCondition\" type=\"hidden\" value=\"\"/>\t<!-- 메인 카테",
+      "\t$('#searchKeyword').val('');\r",
+      "\t$('#searchCondition').val('');\r"
+    ]
+  },
+  {
+    "brand": "세븐일레븐",
+    "method": "POST",
+    "url": "https://www.7-eleven.co.kr/product/listMoreAjax.asp",
+    "status": 200,
+    "seconds": 1.824,
+    "bytes": 20750,
+    "final_url": "https://www.7-eleven.co.kr/product/listMoreAjax.asp",
+    "date_candidates": []
+  },
+  {
+    "brand": "이마트24",
+    "method": "GET",
+    "url": "https://emart24.co.kr/goods/event",
+    "status": 200,
+    "seconds": 0.429,
+    "bytes": 83030,
+    "final_url": "https://emart24.co.kr/goods/event?search=%EC%BD%9C%EB%9D%BC&category_seq=1&base_category_seq=&align=",
+    "date_candidates": [
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "uction/\">브랜드 가치</a></h2> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->",
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "                         <!-- 2026-08-18 [개선] 추석 선물 특선 메뉴 추가 -->",
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "ent\">이마트24 간편결제</a></h2> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->",
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "rrowOrange.png\" alt=\"\"/> <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 -->",
+      "ature\">이마트24 특징</a></h2> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->",
+      "/model\">가맹모델 소개</a></h2> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->",
+      "                <!-- 2026-05-07 [개선] 홈페이지 컨텐츠 및 ui 수정 :: 메뉴 추가 -->",
+      "age=11¬ino=&amp;recrtpnm=&amp;searchWord0=&amp;searchKey0=CV0&amp;searchKey1=&amp;searchWord1=\">",
+      "Inquiry\">광고문의</a></span> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->",
+      "age=11¬ino=&amp;recrtpnm=&amp;searchWord0=&amp;searchKey0=CV0&amp;searchKey1=&amp;searchWord1=\">",
+      "                <!-- 2025-12-04 [개선] header 분기 처리로 인한 로고 애니메이션 적용 -->",
+      "                    <!-- 2025-11-26 [개선] 홈페이지 로고 롤링 기능 재적용 :: 기존 로고, 롤링 제거 시 pc/mo 로고 통합",
+      "                    <!-- 2025-11-26 [개선] 홈페이지 로고 롤링 기능 재적용 -->",
+      "text\">브랜드 스토리</span></a> <!-- 2026-01-26 [고도화] 메뉴명 변경 -->",
+      "uction/\">브랜드 가치</a></li> <!-- 2026-01-26 [고도화] 신규 메뉴 추가 -->"
+    ]
+  },
+  {
+    "brand": "CU",
+    "method": "POST",
+    "url": "https://cu.bgfretail.com/event/plusAjax.do",
+    "status": 200,
+    "seconds": 1.638,
+    "cards": 40,
+    "note": "1+1 첫 페이지 구조 확인 1회"
+  },
+  {
+    "brand": "이마트24",
+    "method": "GET",
+    "url": "https://emart24.co.kr/goods/event",
+    "query": "콜라;category_seq=0",
+    "request_count": 1,
+    "seconds": 0.465,
+    "parsed_rows": 19,
+    "implementation": "v2.1"
+  },
+  {
+    "brand": "GS25 공식",
+    "method": "GET",
+    "url": "https://gs25.gsretail.com/gscvs/ko/products/event-goods",
+    "final_url": "https://www.gsretail.com/brand/gs25",
+    "request_calls": 1,
+    "automatic_redirects": 1,
+    "status": 200,
+    "seconds": 0.176,
+    "bytes": 906
+  },
+  {
+    "brand": "GS25 공식",
+    "method": "GET",
+    "scope": "공개 스크립트 3개",
+    "request_calls": 3,
+    "status": 200,
+    "seconds": [
+      0.086,
+      0.382,
+      0.387
+    ],
+    "bytes": [
+      10318,
+      1206755,
+      1345817
+    ]
+  },
+  {
+    "brand": "GS25 제3자",
+    "method": "POST",
+    "url": "https://xn--vf4b15j1pa468argc.com/",
+    "query": "GS25/콜라",
+    "request_calls": 1,
+    "status": 200,
+    "seconds": 0.152,
+    "bytes": 53343
+  }
+]

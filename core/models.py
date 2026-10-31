@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 import re
 from typing import Optional
@@ -36,12 +36,37 @@ class StoreProduct:
     stock_data_status: str = "UNKNOWN"
     promotion_data_status: str = "UNKNOWN"
     promotion_updated_at: str = ""
+    # 수신 시각과 원본이 제공한 시각은 서로 다른 사실이다.
+    received_at: str = ""
+    source_updated_at: str = ""
+    stock_source_updated_at: str = ""
+    app_cache_used: bool = False
+    upstream_cache_status: str = ""
+    raw_payload: dict = field(default_factory=dict)
+    manufacturer: str = ""
+    volume: str = ""
+    flavor: str = ""
+    pack_count: str = ""
+    promotion_start_date: str = ""
+    promotion_end_date: str = ""
+    promotion_buy_quantity: int | None = None
+    promotion_gift_quantity: int | None = None
+    promotion_member_condition: str = "미확인"
+    promotion_card_condition: str = "미확인"
+    promotion_cross_gift: bool | None = None
+    promotion_conditions_verified: bool = False
+    promotion_checked_at: str = ""
+    promotion_source_url: str = ""
 
     @property
     def promotion_unit_price(self) -> Optional[float]:
         promotion = (self.promotion or "").strip().lower()
         if not self.price:
             return None
+        if promotion:
+            from core.services.promotion import promotion_applicability
+            if not promotion_applicability(self)[0]:
+                return None
         # When event data is unavailable, show the regular price as the
         # non-promotional effective price; the event label remains unknown.
         if not self.promotion_known:
@@ -123,6 +148,10 @@ class DataLoadResult:
     source: str
     message: str
     cache_age_seconds: float | None = None
+    request_count: int = 0
+    elapsed_ms: float | None = None
+    fallback_used: bool = False
+    error_details: dict = field(default_factory=dict)
 
 
 @dataclass

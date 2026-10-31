@@ -1,3 +1,4 @@
+from tests.live_fixtures import verified_offer
 import csv
 from dataclasses import FrozenInstanceError, replace
 from datetime import datetime, timedelta, timezone
@@ -107,7 +108,7 @@ class SubstitutionTests(unittest.TestCase):
 
     def test_live_stale_price_promotion_and_stock_cannot_be_recommended(self):
         live = dict(data_source='LIVE', price_data_status='LIVE', promotion_data_status='LIVE',
-                    stock_data_status='LIVE')
+                    stock_data_status='LIVE', **verified_offer())
         original, candidate = replace(self.original, **live), replace(self.candidate, **live)
         self.assertEqual(len(self.find(original=original, candidate=candidate)), 1)
         old = (datetime.now(timezone.utc) - timedelta(minutes=6)).isoformat()
