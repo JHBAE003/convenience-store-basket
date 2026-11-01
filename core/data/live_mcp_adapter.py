@@ -34,6 +34,7 @@ class DaisoMcpAdapter(DataAdapter):
 
     REST = "https://mcp.aka.page"
     MAX_PRODUCTS = 100
+    CANDIDATE_LIMIT = 20
     PRODUCT_WORKERS = 3
 
     def __init__(self, brand: str, session: requests.Session | None = None,
@@ -57,13 +58,16 @@ class DaisoMcpAdapter(DataAdapter):
         """Keep original public data/errors without credentials or session fields."""
         if isinstance(value, dict):
             return {key: DaisoMcpAdapter.safe_payload(item) for key, item in value.items()
-                    if not any(secret in key.casefold().replace("_", "")
-                               for secret in ("authorization", "cookie", "token", "password", "apikey", "secret"))}
+                    if not any(secret in re.sub(r"[^a-z0-9]", "", str(key).casefold())
+                               for secret in ("authorization", "cookie", "token", "password", "apikey", "secret",
+                                              "credential", "sessionid", "sessionkey", "signenc", "csrf", "xsrf"))}
         if isinstance(value, list):
             return [DaisoMcpAdapter.safe_payload(item) for item in value]
         if isinstance(value, str):
-            value = re.sub(r"(?i)bearer\s+[^\s,;\"']+", "Bearer [삭제]", value)
-            value = re.sub(r"(?i)((?:api[_-]?key|(?:access[_-]?|refresh[_-]?)?token|password|secret)\s*[=:]\s*)[^\s&\"',;]+",
+            value = re.sub(r"(?i)\b(bearer|basic)\s+[^\s,;\"']+", r"\1 [삭제]", value)
+            value = re.sub(r"(?i)(https?://)[^/\s?#@]+@", r"\1[삭제]@", value)
+            value = re.sub(r"(?im)((?:set-)?cookie\s*:\s*)[^\r\n]+", r"\1[삭제]", value)
+            value = re.sub(r"(?i)((?:api[_-]?key|(?:access[_-]?|refresh[_-]?)?token|password|secret|sign[_-]?enc|session[_-]?(?:id|key)|csrf|xsrf)\s*[=:]\s*)[^\s&\"',;]+",
                            r"\1[삭제]", value)
         return value
 
@@ -107,6 +111,12 @@ class DaisoMcpAdapter(DataAdapter):
             self.catalog_incomplete = self._parse_int(payload.get("totalCount"), 0) > len(products)
         now = datetime.now().astimezone().isoformat(timespec="seconds")
         source_time = self._source_timestamp(payload, "")
+        # Enforce our requested candidate page even if an upstream ignores it.
+        # Preserve its complete sanitized response once rather than copying it
+        # into every result and amplifying an oversized response quadratically.
+        self.catalog_incomplete = self.catalog_incomplete or len(products) > self.CANDIDATE_LIMIT
+        products = products[:self.CANDIDATE_LIMIT]
+        public_response = self.safe_payload(payload)
         rows = []
         seen = set()
         for product in products:
@@ -127,7 +137,7 @@ class DaisoMcpAdapter(DataAdapter):
                 received_at=now, source_updated_at=source_time,
                 price_source="상품 목록 참고 가격" if price else "미제공",
                 price_data_status="REFERENCE" if price else "UNKNOWN",
-                raw_payload=self.safe_payload({"product": raw, "response": payload}),
+                raw_payload={"product":self.safe_payload(raw), "response":public_response},
             ))
         return rows
 

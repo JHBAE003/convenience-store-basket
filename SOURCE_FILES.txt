@@ -24,6 +24,7 @@ assets/screenshots/v21-comparison.png
 assets/screenshots/v21-mobile.png
 assets/screenshots/v21-product.png
 assets/screenshots/v21-purchase.png
+assets/screenshots/v211-security.png
 core/__init__.py
 core/cart_models.py
 core/config.py
@@ -41,6 +42,7 @@ core/scrapers/emart24_scraper.py
 core/scrapers/event_metadata.py
 core/scrapers/gs25_price_scraper.py
 core/scrapers/public_event_scraper.py
+core/security/csv_cells.py
 core/services/__init__.py
 core/services/basket.py
 core/services/basket_recommendation.py
@@ -94,6 +96,12 @@ docs/research/promotion-public-probes.json
 docs/research/service-reference.md
 docs/research/seven-source-paths.json
 docs/research/tools-list.txt
+docs/security-dependency-review.md
+docs/security-export-review.md
+docs/security-image-review.md
+docs/security/dependency-audit.json
+docs/security/normal-image-check.json
+docs/security/test-results.txt
 docs/v2-source-manifest.json
 docs/v2-verification.md
 docs/v2.1-check-results.json
@@ -101,7 +109,9 @@ docs/v2.1-inventory-check.md
 docs/v2.1-matching.md
 docs/v2.1-preservation.json
 docs/v2.1-promotions-check.md
+docs/v2.1-source-manifest.json
 docs/v2.1-verification.md
+docs/v2.1.1-security.md
 progress.md
 requirements.txt
 sample_data/catalog_links.csv
@@ -109,6 +119,7 @@ sample_data/demo_products.csv
 sample_data/photo_catalog.json
 sample_data/substitute_catalog.csv
 sample_data/v2_demo_products.csv
+scripts/audit_dependencies.py
 scripts/run_offline_tests.py
 streamlit_app.py
 tests/__init__.py
@@ -136,6 +147,11 @@ tests/test_product_list.py
 tests/test_promotion.py
 tests/test_quantity_suggestions.py
 tests/test_query_service.py
+tests/test_security_candidate_budget.py
+tests/test_security_csv_exports.py
+tests/test_security_product_images.py
+tests/test_security_redaction.py
+tests/test_security_ui_downloads.py
 tests/test_services.py
 tests/test_seven_direct_recovery.py
 tests/test_split_purchase.py
@@ -149,7 +165,7 @@ tests/test_v21_review.py
 tests/test_v21_substitute_ui.py
 tests/test_v2_app.py
 tests/test_v2_regressions.py
-v2.1 실행.bat
+v2.1.1 실행.bat
 검증 기록.md
 기말 과제 기획서.docx
 기획서.md

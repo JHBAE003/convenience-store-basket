@@ -13,6 +13,7 @@ from core.services.catalog import catalog_link_for
 from core.services.distance import haversine_km
 from core.ui.product_images import product_photo
 from core.ui.v2_actions import comparison_context, apply_quantities, apply_substitute
+from core.security.csv_cells import csv_cell
 
 
 def _live_observations(rows,statuses):
@@ -100,7 +101,8 @@ def _split(stores,cart,budget,lat,lng):
                     item=labels[item_id]
                     st.write(f'{by_key[key].store_name}: {item.label} {item.quantity}개')
                     rows.append([by_key[key].store_name,item.label,item.quantity])
-                data=StringIO();writer=csv.writer(data);writer.writerow(['매장','상품','수량']);writer.writerows(rows)
+                data=StringIO();writer=csv.writer(data);writer.writerow(['매장','상품','수량'])
+                writer.writerows([[csv_cell(value) for value in row] for row in rows])
                 writer.writerow(['총액',plan.total,'']);writer.writerow(['직선 이동거리(km)',plan.distance_km if plan.distance_km is not None else '미확인',''])
                 st.download_button('구매 목록 CSV 저장',data.getvalue().encode('utf-8-sig'),
                                    file_name=f'구매안_{plan.store_count}개매장.csv',key=f'v2_split_csv_{index}',mime='text/csv')

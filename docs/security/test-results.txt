@@ -1,0 +1,17 @@
+2026-11-01 한국 시간 / 편의점 장바구니 v2.1.1
+
+python scripts/run_offline_tests.py
+Ran 323 tests in 52.204s
+OK
+모의 응답이 없는 외부 HTTP 시도: 0회 (실제 연결은 차단됨)
+
+python -m compileall -q core tests scripts streamlit_app.py
+통과
+
+python -m pip check
+No broken requirements found.
+
+요청 차단 범위: requests.Session.request + urllib3 HTTPConnectionPool.urlopen(HTTPS 상속 포함).
+실제 편의점 재고 공격·인증정보 사용·Excel 수식 실행: 하지 않음.
+별도 정상 공개 이미지 확인: 최대 1회, PNG 35483바이트 수신, TLS 검증 유지.
+브라우저: v2.1.1 시연 장바구니 3종/4개, 확인 범위 12/12, 예산 도우미 확인.

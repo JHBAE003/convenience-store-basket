@@ -1,14 +1,7 @@
 import csv
 import io
 from core.cart_models import QuerySnapshot, StoreEvaluation
-
-
-def _cell(value):
-    if value is None:
-        return ''
-    if isinstance(value,str) and value.startswith(('=','+','-','@','\t','\r')):
-        return "'"+value
-    return value
+from core.security.csv_cells import csv_cell as _cell
 
 
 def comparison_csv(stores:list[StoreEvaluation],snapshot:QuerySnapshot) -> bytes:

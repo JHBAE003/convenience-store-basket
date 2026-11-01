@@ -4,6 +4,7 @@ import sys
 import unittest
 from unittest.mock import patch
 import requests
+from urllib3.connectionpool import HTTPConnectionPool
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -16,7 +17,8 @@ def no_external_http(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    with patch.object(requests.sessions.Session, 'request', side_effect=no_external_http):
+    with patch.object(requests.sessions.Session, 'request', side_effect=no_external_http), \
+         patch.object(HTTPConnectionPool, 'urlopen', side_effect=no_external_http):
         suite = unittest.defaultTestLoader.discover(str(ROOT / 'tests'))
         result = unittest.TextTestRunner(verbosity=1).run(suite)
     print(f'모의 응답이 없는 외부 HTTP 시도: {len(blocked_requests)}회 (실제 연결은 차단됨)')

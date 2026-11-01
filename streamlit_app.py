@@ -25,9 +25,10 @@ from core.ui.v2_actions import clear_comparison
 from core.services.substitutions import load_substitute_catalog
 from core.services.v2_common import apply_current_evidence
 from core.ui.evidence import source_label, render_record_evidence, render_coverage, render_received_observations
+from core.security.csv_cells import csv_safe_frame
 
-st.set_page_config(page_title='편의점 장바구니 v2.1',page_icon=':material/shopping_basket:',layout='wide')
-LIVE_BACKEND_REVISION='v21-live-recovery-20261031-4'
+st.set_page_config(page_title='편의점 장바구니 v2.1.1',page_icon=':material/shopping_basket:',layout='wide')
+LIVE_BACKEND_REVISION='v211-security-20261101-1'
 
 
 def demo_links():
@@ -181,7 +182,7 @@ if 'manager' not in st.session_state:
         st.session_state.user_catalog = []
         st.session_state.user_catalog_error = True
 
-st.title('편의점 장바구니 v2.1')
+st.title('편의점 장바구니 v2.1.1')
 st.write('상품 찾기 → 장바구니 담기 → 매장 비교')
 if st.session_state.get('user_catalog_error'):
     st.warning('저장된 상품 연결표를 읽지 못했습니다. 현재 검색과 직접 선택은 계속 사용할 수 있습니다.')
@@ -457,7 +458,7 @@ with st.expander('매장별 전체 비교와 상세 자료',expanded=False,icon=
                            '직선거리':f'{s.distance_km:.2f}km' if s.distance_km is not None else '미확인','자료 상태':source_label(s.source),
                            '확인 사항':'; '.join(s.reasons) or '모든 상품 필요 수량과 금액 확인'} for s in stores])
     if not display.empty:
-        st.dataframe(display,hide_index=True,width='stretch',alt='매장별 장바구니 가격과 재고 확인 상태 비교표')
+        st.dataframe(csv_safe_frame(display),hide_index=True,width='stretch',alt='매장별 장바구니 가격과 재고 확인 상태 비교표')
         st.download_button('비교 결과 CSV 저장',comparison_csv(stores,snapshot),file_name='장바구니_비교.csv',
                            mime='text/csv',on_click='ignore',icon=':material/download:')
         current_stores={store.store_key:store for store in stores}
@@ -498,7 +499,7 @@ with st.expander('매장별 전체 비교와 상세 자료',expanded=False,icon=
         if metrics:
             labels={'brand':'브랜드','path':'조회 구분','request_count':'HTTP 요청 수',
                     'elapsed_ms':'응답 시간(ms)','success':'성공','fallback_used':'보조 경로 사용','error_type':'오류 종류'}
-            frame=pd.DataFrame(metrics).rename(columns=labels)
+            frame=csv_safe_frame(pd.DataFrame(metrics).rename(columns=labels))
             st.dataframe(frame,hide_index=True,width='stretch',alt='이 세션의 조회 횟수와 응답 시간 기록')
             st.download_button('조회 기록 CSV 저장',frame.to_csv(index=False).encode('utf-8-sig'),
                                file_name='조회_점검_기록.csv',mime='text/csv',on_click='ignore')

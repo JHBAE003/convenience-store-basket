@@ -1,6 +1,7 @@
 """일반 사용자가 읽는 확인 범위와 시각. 누락된 원본 시각을 만들지 않는다."""
 from datetime import datetime, timedelta, timezone
 import streamlit as st
+from core.security.csv_cells import csv_safe_frame
 
 KST = timezone(timedelta(hours=9))
 SOURCE_LABELS = {'LIVE': '조회 완료', 'TEST': '시연 자료', 'CACHE': '저장 자료',
@@ -70,7 +71,7 @@ def render_received_observations(snapshot,lat,lng,radius):
     st.subheader('매장별로 받은 가격과 재고')
     st.caption('재고 응답과 참고 판매가를 보여 줍니다. 원본 시각·현재 점포 가격·행사 조건이 미확인이면 확정 추천은 보류합니다.')
     if rows:
-        st.dataframe(pd.DataFrame(rows),hide_index=True,width='stretch',height=min(420,80+len(rows)*35),
+        st.dataframe(csv_safe_frame(pd.DataFrame(rows)),hide_index=True,width='stretch',height=min(420,80+len(rows)*35),
                      alt='브랜드와 매장별 재고 응답, 참고 가격, 원본 시각과 앱 수신 시각')
         outside=[row for row in rows if row['검색 범위']=='반경 밖']
         if outside:
@@ -88,4 +89,4 @@ def render_received_observations(snapshot,lat,lng,radius):
               else '재고 응답과 가격·행사 확인 상태는 별개입니다.')
         display.append({'브랜드':brand,'조회 상태':' · '.join(labels),'반환 점포 자료':count,'안내':note})
     if display:
-        st.dataframe(pd.DataFrame(display),hide_index=True,width='stretch',alt='선택한 편의점 브랜드별 실제 조회와 상품 미연결 상태')
+        st.dataframe(csv_safe_frame(pd.DataFrame(display)),hide_index=True,width='stretch',alt='선택한 편의점 브랜드별 실제 조회와 상품 미연결 상태')

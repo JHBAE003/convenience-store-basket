@@ -1,8 +1,15 @@
-# 편의점 장바구니 v2.1
+# 편의점 장바구니 v2.1.1
 
 컴퓨팅 실습 기말 과제를 위한 Python·Streamlit 앱입니다. 상품 사진과 이름으로 상품을 찾아 장바구니에 담고, 가까운 편의점의 구매 가능 수량과 결제액을 비교합니다. v2의 예산 조정·두 매장 구매 비교·품절 대체·행사 수량 안내를 유지하면서 수집 요청과 정보 검증을 개선했습니다.
 
-원본 `기말 과제 v2` 폴더는 보존했습니다. 이 폴더는 필요한 소스·자료만 복사한 독립 버전으로 `.git`, 가상환경, 임시 캐시, 로그, 인증정보를 가져오지 않았습니다. GitHub에는 `v2.1` 브랜치로 보관하며, 공개 웹 배포는 하지 않습니다.
+원본 `기말 과제 v2`·`기말 과제 v2.1` 폴더는 보존했습니다. 필요한 소스·자료만 복사한 독립 버전으로 `.git`, 가상환경, 임시 캐시, 로그, 개인 상품 연결표와 인증정보를 가져오지 않았습니다. 보안 업데이트는 GitHub `v2.1.1` 브랜치에 저장하며 기존 v2.1은 유지합니다. 공개 웹 배포는 하지 않습니다.
+
+**2026-11-01 보안 업데이트:** 외부 상품 사진 주소가 내부망으로 연결되는 경로와 구매 목록 CSV의 수식 주입 경로를 수정했습니다. 두 경로는 외부 공급자 응답을 공격자가 조작할 수 있다는 전제가 있으며 낮은 심각도로 평가했습니다. 원본 비교·재현·수정 후 검증은 [v2.1.1 보안 변경 기록](docs/v2.1.1-security.md)에 있습니다.
+
+- 사진은 확인한 호스트의 HTTPS·443과 공인 주소만 허용하며 실제 연결 주소를 고정합니다. 원래 호스트의 TLS 검증은 유지합니다. 새 이미지 호스트나 차단된 사진은 기존 대체 아이콘으로 표시합니다.
+- CSV에서 수식으로 해석될 수 있는 문자열에는 **`[텍스트] `**를 붙입니다. 표의 내장 다운로드에도 적용하며 원본 상품·가격·수량은 바꾸지 않습니다.
+- 오류의 인증정보 제거와 로컬 접속 설정을 보강했습니다. 후보 응답이 요청한 개수를 초과해도 최대 20개만 만들고 일부 확인으로 표시합니다.
+- 설치된 직접·간접 의존성 35개의 정확 버전을 공식 OSV·PyPI 자료로 점검했습니다. 적용되는 알려진 자문은 반환되지 않았으며 새 취약점까지 없다는 뜻은 아닙니다. 기존 9강 실행 환경의 설치 패키지는 변경하지 않았습니다.
 
 ## 버전 선택
 
@@ -12,6 +19,7 @@
 | [v1-stable](https://github.com/JHBAE003/convenience-store-basket/tree/v1-stable) | v1 보관용 | 8502 |
 | [v2](https://github.com/JHBAE003/convenience-store-basket/tree/v2) | 구매 도우미 4종 | 8503 |
 | [v2.1](https://github.com/JHBAE003/convenience-store-basket/tree/v2.1) | 수집·가격 표시·재고 복구 개선 | 8504 |
+| [v2.1.1](https://github.com/JHBAE003/convenience-store-basket/tree/v2.1.1) | 보안 점검·이미지/CSV 방어 보강 | 8505 |
 
 9강 실습은 별도의 [my-streamlit-app](https://github.com/JHBAE003/my-streamlit-app) 저장소와 상위 폴더의 `streamlit_app.py`로 유지합니다.
 
@@ -19,18 +27,18 @@
 
 ## 실행
 
-**`v2.1 실행.bat`를 더블클릭**합니다. 기존 `로컬 실행.bat`도 같은 버전을 실행합니다. 브라우저 주소는 [http://127.0.0.1:8504](http://127.0.0.1:8504)입니다. v2의 8503 포트와 분리했습니다. 종료는 실행 창에서 `Ctrl+C`입니다.
+**`v2.1.1 실행.bat`를 더블클릭**합니다. `로컬 실행.bat`도 같은 버전을 실행합니다. 브라우저 주소는 [http://127.0.0.1:8505](http://127.0.0.1:8505)입니다. 9강의 8501·v2의 8503·v2.1의 8504 포트와 분리했습니다. 종료는 실행 창에서 `Ctrl+C`입니다.
 
 실행 파일은 이 폴더의 `.venv`, 기존 `streamlit_env`, 현재 `python` 순으로 환경을 찾습니다. 라이브러리가 없는 컴퓨터에서는 먼저 다음과 같이 설치하세요.
 
 ```powershell
-cd "C:\Users\jhbae\Desktop\새 폴더\기말 과제 v2.1"
+cd "C:\Users\jhbae\Desktop\새 폴더\기말 과제 v2.1.1"
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address 127.0.0.1 --server.port 8504 --browser.gatherUsageStats false
+.\.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address 127.0.0.1 --server.port 8505 --browser.gatherUsageStats false
 ```
 
-검증 환경은 Python 3.15.2, Streamlit 1.66.1, pandas 3.1.0, requests 2.34.2, Pillow 13.0.0입니다. 현재 환경의 설치된 라이브러리로 검사했으며 다른 컴퓨터의 신규 설치까지 확인한 것은 아닙니다.
+검증 환경은 Python 3.15.2, Streamlit 1.66.1, pandas 3.1.0, requests 2.34.2, Pillow 13.0.0, urllib3 2.8.0입니다. urllib3는 기존 설치된 간접 의존성을 이미지 연결의 직접 의존성으로 명시했습니다. 다른 컴퓨터의 신규 설치까지 확인한 것은 아닙니다.
 
 ## 사용 순서
 
@@ -86,7 +94,7 @@ Design Partner 플러그인과 Streamlit 개발 지침을 적용했습니다. [�
 
 ## 검증과 실제 연동의 한계
 
-최신 전체 자동 검사 **294개 통과**, 모의 응답이 없는 외부 HTTP 시도 **0회**입니다. [조회 복구 검증 기록](docs/fix-live-2026-10-31.md)에 최종 결과가 있습니다. 실제 서비스 점검은 자동 검사와 별도로 기록합니다.
+최신 전체 자동 검사 **323개 통과**, 모의 응답이 없는 외부 HTTP 시도 **0회**입니다. [v2.1.1 보안 변경·검증 기록](docs/v2.1.1-security.md)에 최종 결과가 있습니다. [이전 조회 복구 검증 기록](docs/fix-live-2026-10-31.md)은 당시 관측이며 실제 서비스 점검은 자동 검사와 별도로 기록합니다.
 
 ```powershell
 python scripts/run_offline_tests.py
