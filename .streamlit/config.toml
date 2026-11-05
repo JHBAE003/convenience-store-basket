@@ -3,29 +3,14 @@ address = "127.0.0.1"
 enableCORS = true
 enableXsrfProtection = true
 enableStaticServing = false
-
 [browser]
 gatherUsageStats = false
-
 [theme]
 base = "light"
-primaryColor = "#116149"
+primaryColor = "#17664E"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F4F6F5"
-textColor = "#202B29"
-borderColor = "#D9E1DE"
-font = '"Malgun Gothic", "Apple SD Gothic Neo", sans-serif'
+secondaryBackgroundColor = "#F3F6F4"
+textColor = "#20382F"
+font = "sans-serif"
 baseFontSize = 16
 baseRadius = "0.5rem"
-buttonRadius = "0.5rem"
-headingFontWeights = 650
-headingFontSizes = ["1.9rem", "1.45rem", "1.15rem"]
-paddingTop = "2rem"
-paddingBottom = "3rem"
-showWidgetBorder = true
-showSidebarBorder = true
-
-[theme.sidebar]
-backgroundColor = "#F4F6F5"
-secondaryBackgroundColor = "#FFFFFF"
-paddingTop = "1.5rem"

@@ -1,0 +1,1362 @@
+[
+  {
+    "id": 1,
+    "title": "한 곳 구매가 유리",
+    "description": "가까운 CU에서 모든 상품을 가장 싸게 구매합니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2000,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        1
+      ],
+      [
+        "snack",
+        1
+      ],
+      [
+        "water",
+        1
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "CU A 한 곳, 결제액 1,500원."
+  },
+  {
+    "id": 2,
+    "title": "먼 매장이 더 저렴",
+    "description": "가까운 CU와 먼 GS25의 가격·거리 차이를 비교합니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 1500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 1500,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 800,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 800,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 800,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2200,
+        "stock": 8,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        1
+      ],
+      [
+        "snack",
+        1
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "최저 결제액 GS25 B 1,600원 / 최단 이동 CU A 3,000원."
+  },
+  {
+    "id": 3,
+    "title": "두 곳으로 재고 해결",
+    "description": "우유와 과자를 서로 다른 지점에서 구매해야 합니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 2,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 800,
+        "stock": 2,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        2
+      ],
+      [
+        "snack",
+        2
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "A+B 2곳, 결제액 3,600원. 1곳 구매 불가."
+  },
+  {
+    "id": 4,
+    "title": "세 곳 방문이 필수",
+    "description": "세 품목의 재고가 각각 다른 매장에만 있습니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 1,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 800,
+        "stock": 1,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 500,
+        "stock": 1,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        1
+      ],
+      [
+        "snack",
+        1
+      ],
+      [
+        "water",
+        1
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "A+B+C 3곳, 2,300원. 최대 방문 2곳으로 바꾸면 불가."
+  },
+  {
+    "id": 5,
+    "title": "같은 품목 수량 분할",
+    "description": "우유 5개를 CU 2개와 GS25 3개로 나눕니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 2,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 800,
+        "stock": 3,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        5
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "A 2개+B 3개, 결제액 4,400원. 증정품도 재고에서 차감."
+  },
+  {
+    "id": 6,
+    "title": "행사와 수량의 역전",
+    "description": "우유 2개와 3개의 최저 구매처가 바뀝니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1200,
+        "stock": 12,
+        "promotion": "1+1",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 12,
+        "promotion": "2+1",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        3
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "3개는 B 2,000원. 수량을 2개로 바꾸면 A 1,200원."
+  },
+  {
+    "id": 7,
+    "title": "가격과 이동의 선택",
+    "description": "최저가·최단 이동·균형 기준을 비교합니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1500,
+        "stock": 6,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 700,
+        "stock": 6,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 6,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        2
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 10000,
+      "strict_budget": false,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "최저 B 1,400원 / 최단 A 3,000원. 부담값에 따라 균형 추천 변경."
+  },
+  {
+    "id": 8,
+    "title": "예산·재고 모두 부족",
+    "description": "전체 재고가 부족하고 예산도 낮습니다. 조건을 바꿔 원인을 확인합니다.",
+    "offers": [
+      {
+        "store_id": "A",
+        "product_id": "milk",
+        "price": 1000,
+        "stock": 1,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "A",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "A",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "milk",
+        "price": 800,
+        "stock": 1,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "B",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "B",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "C",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "C",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "milk",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무가당 · 1병"
+      },
+      {
+        "store_id": "D",
+        "product_id": "snack",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "60g · 오리지널 · 1봉"
+      },
+      {
+        "store_id": "D",
+        "product_id": "water",
+        "price": 2500,
+        "stock": 0,
+        "promotion": "",
+        "start": "2026-11-01",
+        "end": "2026-11-30",
+        "conditions_verified": true,
+        "spec": "500ml · 무향 · 1병"
+      }
+    ],
+    "cart": [
+      [
+        "milk",
+        5
+      ]
+    ],
+    "settings": {
+      "origin": [
+        37.5665,
+        126.978
+      ],
+      "brands": [
+        "CU",
+        "GS25",
+        "세븐일레븐",
+        "이마트24"
+      ],
+      "max_stores": 3,
+      "radius_km": 5.0,
+      "route_limit_km": 20.0,
+      "return_home": false,
+      "budget": 100,
+      "strict_budget": true,
+      "distance_weight": 1000,
+      "visit_weight": 500,
+      "as_of": "2026-11-15"
+    },
+    "expected": "확인 재고 2개, 3개 부족. 예산 5,000원으로 올리면 일부 구매안 1,800원."
+  }
+]

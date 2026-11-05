@@ -1,10 +1,21 @@
+# 실행 환경·캐시·인증정보는 보관 버전에 포함하지 않는다.
 .venv/
+.conda/
+venv/
 __pycache__/
 *.py[cod]
 .runtime/
-.streamlit/secrets.toml
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+logs/
+*.log
+.env
+.env.*
+!.env.example
+**/secrets.toml
 live_cache.json
 promotions_cache.json
+inventory_cache.json
 .문서작업/
-user_data/
-.runtime/
