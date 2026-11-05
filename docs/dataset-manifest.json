@@ -1,0 +1,10 @@
+{
+  "data_file": "data/test_dataset.sqlite3",
+  "bytes": 872448,
+  "sha256": "90a77f0b400432e023bce0b1ce4382b5d4a36758ada0d7441db2181fc43742ba",
+  "stores": 24,
+  "products": 300,
+  "offers": 7200,
+  "counts_per_brand": 6,
+  "offers_per_store": 300
+}

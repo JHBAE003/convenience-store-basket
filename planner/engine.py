@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from datetime import date
 from itertools import combinations, permutations
 from math import isfinite
+from functools import lru_cache
 
 from legacy_v211.core.services.distance import haversine_km
 from legacy_v211.core.services.promotion import calculate_purchase_cost
@@ -134,7 +135,7 @@ def rank(plan, mode):
     return (*key,plan.route,plan.signature)
 
 def _validate(products, stores, offers, cart, s):
-    if len(products)>6 or len(stores)>12 or len(cart)>6: raise ValueError('최대 상품 6종·매장 12곳까지 지원합니다.')
+    if len(products)>6 or len(stores)>24 or len(cart)>6: raise ValueError('최대 상품 6종·매장 24곳까지 지원합니다.')
     if len({p.id for p in products})!=len(products) or len({x.id for x in stores})!=len(stores):
         raise ValueError('상품·매장 ID가 중복됩니다.')
     ids={p.id for p in products}
@@ -194,6 +195,15 @@ def solve(products, stores, offers, cart, settings=Settings()):
     available={(o.store_id,o.product_id):o for o in offers if o.product_id in spec and
                o.spec==spec[o.product_id] and valid_int(o.stock) and valid_int(o.price,1)}
     def cap(st,pid):return min(12,available[(st.id,pid)].stock) if (st.id,pid) in available else 0
+    # 점포별 동일 수량의 행사 계산을 수천 개 매장 조합마다 반복하지 않는다.
+    lines_by_quantity={}
+    for (sid,pid),o in available.items():
+        if pid not in cart:continue
+        promo,note=promotion_state(o,settings.as_of)
+        for qty in range(1,min(o.stock,cart[pid])+1):
+            lines_by_quantity[sid,pid,qty]=Line(sid,pid,qty,o.price,promo,cost(o,qty,settings.as_of),note)
+    @lru_cache(maxsize=1024)
+    def bounded_choices(target,caps):return tuple(allocations(target,caps))
     shortages={pid:max(0,q-sum(cap(st,pid) for st in selected)) for pid,q in cart.items()}
     plans=[]; partials=[]; checked=0; route_blocked=0
     for n in range(1,min(settings.max_stores,len(selected))+1):
@@ -207,17 +217,23 @@ def solve(products, stores, offers, cart, settings=Settings()):
             for pid,q in sorted(cart.items()):
                 caps=tuple(cap(st,pid) for st in subset)
                 target=min(q,sum(caps));delivered[pid]=target
-                choices=list(allocations(target,caps))
+                # 같은 품목·사용 매장 집합이면 최소 결제액 배분 하나만 다음 단계에 필요하다.
+                item_choices={}
+                for quantities in bounded_choices(target,caps):
+                    used=0;extra=[];subtotal=0
+                    for idx,(st,qty) in enumerate(zip(subset,quantities)):
+                        if not qty:continue
+                        line=lines_by_quantity[st.id,pid,qty]
+                        extra.append(line);subtotal+=line.amount;used|=1<<idx
+                    tie=tuple((x.store_id,x.product_id,x.quantity) for x in extra)
+                    old=item_choices.get(used)
+                    if old is None or (subtotal,tie)<(old[0],old[2]):
+                        item_choices[used]=(subtotal,tuple(extra),tie)
                 nxt={}
                 for mask,(amount,lines) in dp.items():
-                    for quantities in choices:
-                        newmask=mask;extra=[];subtotal=0
-                        for idx,(st,qty) in enumerate(zip(subset,quantities)):
-                            if not qty:continue
-                            o=available[st.id,pid];promo,note=promotion_state(o,settings.as_of)
-                            pay=cost(o,qty,settings.as_of);subtotal+=pay;newmask|=1<<idx
-                            extra.append(Line(st.id,pid,qty,o.price,promo,pay,note))
-                        newlines=tuple(sorted(lines+tuple(extra),key=lambda x:(x.store_id,x.product_id)))
+                    for used,(subtotal,extra,_) in item_choices.items():
+                        newmask=mask|used
+                        newlines=tuple(sorted(lines+extra,key=lambda x:(x.store_id,x.product_id)))
                         candidate=(amount+subtotal,newlines)
                         old=nxt.get(newmask)
                         tie=tuple((x.store_id,x.product_id,x.quantity) for x in newlines)
