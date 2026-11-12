@@ -1,4 +1,4 @@
-"""기존 TEST를 보존하고 LIVE 공공자료 참고 조회를 더한 v3.2.0."""
+"""TEST 계산을 유지하고 지도 재사용·탐색 화면을 개선한 v3.2.1."""
 import csv
 import io
 from pathlib import Path
@@ -16,7 +16,7 @@ from planner.providers import (BRANDS, TestProvider, LiveProvider, Snapshot, que
                                korean_today, link_conflict, calculation_scope, group_search_candidates)
 from legacy_v211.core.security.csv_cells import csv_cell
 
-st.set_page_config(page_title='편의점 장바구니 v3.2.0',page_icon=':material/shopping_basket:',layout='wide')
+st.set_page_config(page_title='편의점 장바구니 v3.2.1',page_icon=':material/shopping_basket:',layout='wide')
 
 
 def context_for(products, links):
@@ -136,6 +136,9 @@ def open_comparison():
     st.session_state['compare_requested']=True
 
 
+def open_cart():st.session_state['workspace_view']='장바구니'
+
+
 def reset_plan_choice():st.session_state.pop('plan_choice',None)
 
 
@@ -152,11 +155,11 @@ def remove_product(pid):
 
 
 def product_card(name,spec,pid,price,button_key,callback,args,in_cart=False):
-    with st.container(border=True,key='product-card-'+button_key.replace(':','-')):
-        st.image(str(icon_path(pid)),alt=name+' 구분용 그림',width=138)
+    with st.container(border=True,height='stretch',key='product-card-'+button_key.replace(':','-')):
+        st.image(str(icon_path(pid)),alt=name+' 구분용 그림',width=112)
         st.markdown('**'+short_name(name)+'**')
         st.caption(item_spec(spec,pid))
-        st.markdown(('**'+f'{price:,}원'+'**' if price else '**가격 미확인**')+' · 참고가')
+        st.markdown(('**'+f'{price:,}원'+'**' if price is not None else '**가격 미확인**')+' · 참고가')
         st.button('담김' if in_cart else '담기',key=button_key,on_click=callback,args=args,
                   disabled=in_cart,width='stretch',icon=':material/check:' if in_cart else ':material/add:')
 
@@ -204,7 +207,7 @@ with st.sidebar:
             st.dataframe(source_rows,hide_index=True,width='stretch')
             st.caption('점포명·위치만 공개자료 기반입니다. 상품·가격·행사·재고는 가상이며 현재 영업 여부를 보장하지 않습니다.')
             st.caption('그림은 상품 구분용입니다. 행사 기준일: '+provider.metadata['fixed_date'])
-    st.caption('컴퓨팅 실습 기말 과제 · v3.2.0')
+    st.caption('컴퓨팅 실습 기말 과제 · v3.2.1')
 
 with st.container(key='app_header',horizontal=True,horizontal_alignment='distribute',vertical_alignment='center'):
     st.title('편의점 장바구니')
@@ -212,7 +215,7 @@ with st.container(key='app_header',horizontal=True,horizontal_alignment='distrib
              color='orange' if data_mode=='TEST' else 'green')
 with st.container(key='workspace_nav'):
     view=st.segmented_control('작업 화면',('상품 찾기','장바구니','추천·경로'),key='workspace_view',required=True,
-                              label_visibility='collapsed')
+                              label_visibility='collapsed',width='stretch')
 
 products=st.session_state['products'];links=st.session_state['links']
 if data_mode=='LIVE':
@@ -220,8 +223,16 @@ if data_mode=='LIVE':
     render_public_data((st.session_state['origin_lat'],st.session_state['origin_lng']),
                        st.session_state['brands'], products)
 with st.container(key='view-'+{'상품 찾기':'search','장바구니':'cart','추천·경로':'recommendations'}[view]):
+    if view!='장바구니':
+        with st.container(border=True,key='mobile_cart_bar'):
+            selected_count=sum(st.session_state.get('qty_'+p.id,0)>0 for p in products)
+            st.markdown(f'**장바구니 {selected_count}종**')
+            with st.container(horizontal=True,gap='small'):
+                st.button('장바구니 보기',key='mobile_cart_view',on_click=open_cart,width='stretch',icon=':material/shopping_basket:')
+                st.button('구매안 비교',key='mobile_lookup_button',on_click=open_comparison,type='primary',width='stretch',
+                          disabled=not selected_count or not st.session_state['brands'])
     with st.container(key='shopping_workspace'):
-        workspace,cart_column=st.columns([1.75,1],gap='medium')
+        workspace,cart_column=st.columns([2,1],gap='large')
 with cart_column:
     with st.container(border=True,key='cart_panel'):
         st.subheader('내 장바구니')
@@ -316,11 +327,12 @@ with workspace:
         else:st.warning(message)
     for issue in issues:st.warning(issue)
     if view=='상품 찾기':
+        st.subheader('상품 둘러보기')
         saved_context=st.session_state.get('search_context')
         st.session_state.setdefault('search_keyword',saved_context[2] if saved_context else '')
         with st.form('product_search',border=False):
             search_input,search_action=st.columns([4,1],gap='small',vertical_alignment='bottom')
-            search_input.text_input('상품 이름',key='search_keyword',max_chars=80,placeholder='상품명으로 검색 · 우유, 과자, 커피',label_visibility='collapsed',persist_state='session')
+            search_input.text_input('상품 이름',key='search_keyword',max_chars=80,placeholder='우유, 과자, 커피 등',persist_state='session')
             searched=search_action.form_submit_button('검색',key='search_button',width='stretch')
         if searched:
             reset_confirmation();keyword=st.session_state['search_keyword'].strip()
@@ -376,6 +388,7 @@ with workspace:
                         add_from_gallery,(p,),p['id'] in cart)
         else:st.caption('상품 이름을 검색해 시작하세요.')
     elif view=='추천·경로':
+        st.subheader('구매안과 방문 경로')
         representatives={}
         for label,plan in result.winners.items():
             if plan:representatives.setdefault(plan.signature,[plan,[]])[1].append(label)
@@ -393,9 +406,10 @@ with workspace:
             active,labels=next((p,labels) for p,labels in entries if p.signature==selected)
             with st.container(border=True,key='recommendation_summary'):
                 st.caption(' · '.join(labels))
-                a,b=st.columns(2)
-                a.metric('상품 결제액',f'{active.total:,}원')
-                b.metric(distance_label,f'{active.distance_km*1000:,.0f}m',help='도보 거리는 점포 위치와 보행로 사이의 추정 연결을 포함합니다.' if walking else '좌표 사이의 직선 거리입니다.')
+                with st.container(horizontal=True,gap='medium',horizontal_alignment='distribute'):
+                    st.metric('상품 결제액',f'{active.total:,}원',width='content')
+                    st.metric(distance_label,f'{active.distance_km*1000:,.0f}m',width='content',help='도보 거리는 점포 위치와 보행로 사이의 추정 연결을 포함합니다.' if walking else '좌표 사이의 직선 거리입니다.')
+                    st.metric('방문 매장',f'{active.count}곳',width='content')
                 balance=settings.budget-active.total
                 st.caption(f'{active.count}곳 방문 · {sum(cart.values())}개 구매 · '+(f'예산 잔액 {balance:,}원' if balance>=0 else f'예산 초과 {-balance:,}원'))
             with st.expander('다른 구매안 비교'):

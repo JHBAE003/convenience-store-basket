@@ -1,0 +1,235 @@
+{
+  "scope": "로컬 OSM SVG/GPX 문자열 생성만 측정. 앱 전체, 네트워크, 재고 조회 속도 측정 아님.",
+  "conditions": {
+    "python": "3.15.2",
+    "stores": 24,
+    "origin": [
+      37.48121,
+      126.9527
+    ],
+    "warm_samples": 50,
+    "cold_definition": "지도망·거리행렬 준비 후 해당 경로의 첫 출력 생성",
+    "warm_definition": "동일 지도망/방문 순서/왕복 조건을 반복 출력",
+    "cache_limit_per_network": 8
+  },
+  "versions": {
+    "3.2.0": {
+      "network_first_build": {
+        "median_ms": 554.5407,
+        "min_ms": 554.5407,
+        "max_ms": 554.5407,
+        "samples": 1
+      },
+      "matrix_first_build": {
+        "median_ms": 541.4203,
+        "min_ms": 541.4203,
+        "max_ms": 541.4203,
+        "samples": 1
+      },
+      "svg": {
+        "first_render": {
+          "median_ms": 56.805,
+          "min_ms": 56.805,
+          "max_ms": 56.805,
+          "samples": 1
+        },
+        "warm_render": {
+          "median_ms": 15.2735,
+          "min_ms": 13.3222,
+          "max_ms": 23.3025,
+          "samples": 50
+        },
+        "utf8_bytes": 48336,
+        "sha256": "f7cbc05e8af69f0d09318207504b13a6291d896c1cef4b6479be8b0998b874a2"
+      },
+      "gpx": {
+        "first_render": {
+          "median_ms": 0.0581,
+          "min_ms": 0.0581,
+          "max_ms": 0.0581,
+          "samples": 1
+        },
+        "warm_render": {
+          "median_ms": 0.02365,
+          "min_ms": 0.0234,
+          "max_ms": 0.0351,
+          "samples": 50
+        },
+        "utf8_bytes": 1522,
+        "sha256": "9840e42157a5e1bcf71b2005957501c1427ccef3f8d66ce8823335db1d824316"
+      }
+    },
+    "3.2.1": {
+      "network_first_build": {
+        "median_ms": 524.0155,
+        "min_ms": 524.0155,
+        "max_ms": 524.0155,
+        "samples": 1
+      },
+      "matrix_first_build": {
+        "median_ms": 565.4304,
+        "min_ms": 565.4304,
+        "max_ms": 565.4304,
+        "samples": 1
+      },
+      "svg": {
+        "first_render": {
+          "median_ms": 70.8165,
+          "min_ms": 70.8165,
+          "max_ms": 70.8165,
+          "samples": 1
+        },
+        "warm_render": {
+          "median_ms": 0.0008,
+          "min_ms": 0.0007,
+          "max_ms": 0.0077,
+          "samples": 50
+        },
+        "utf8_bytes": 48336,
+        "sha256": "f7cbc05e8af69f0d09318207504b13a6291d896c1cef4b6479be8b0998b874a2"
+      },
+      "gpx": {
+        "first_render": {
+          "median_ms": 0.086,
+          "min_ms": 0.086,
+          "max_ms": 0.086,
+          "samples": 1
+        },
+        "warm_render": {
+          "median_ms": 0.0008,
+          "min_ms": 0.0007,
+          "max_ms": 0.0028,
+          "samples": 50
+        },
+        "utf8_bytes": 1522,
+        "sha256": "9840e42157a5e1bcf71b2005957501c1427ccef3f8d66ce8823335db1d824316"
+      }
+    }
+  },
+  "equivalence": [
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "1b94187612e370515efb87319b21b18007bcb77480bbfb8a782d0690730eb3b8"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "e2341288ec59542d45c8d18048f73cead043e9b37d7c99fa7b21d39757c63855"
+    },
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "5d7123079d21cff1a580a5033ab2b3b4568fdb5b82674d965b9b5245ca21272a"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "6bc1e57cba7e825029901634df4f6181cf04d82c3f58ad789425c5318000a656"
+    },
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "f7cbc05e8af69f0d09318207504b13a6291d896c1cef4b6479be8b0998b874a2"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "9840e42157a5e1bcf71b2005957501c1427ccef3f8d66ce8823335db1d824316"
+    },
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "6876518da28168c4369de17f8cab534db58d4d4588a2dc788d577c142e6b6c79"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "4723e3465f9e7c5855ba926d375e5444604bc6d84f254b001a5bb8a094eda0e6"
+    },
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점",
+        "CU:샤로수길점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "059b068304c20ce560d783f4801e9e014b5d51092febc61d0a602df244437544"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점",
+        "CU:샤로수길점"
+      ],
+      "return_home": false,
+      "identical": true,
+      "sha256": "42c75f7d9654f7d1db072c32dfde9906d6456aac94d37186ac33ca43ae1298a9"
+    },
+    {
+      "format": "svg",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점",
+        "CU:샤로수길점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "c9bc383d6c2a3e6f662fd0c979e103c1f0ccc3be7ffcbb3cad7c0af788c352be"
+    },
+    {
+      "format": "gpx",
+      "route": [
+        "CU:서울대입구역점",
+        "CU:서울대우신점",
+        "CU:샤로수길점"
+      ],
+      "return_home": true,
+      "identical": true,
+      "sha256": "7ab2acf23acf765189da7f03c45fbcfd1cc32fe96388202385436d5a1e743d1a"
+    }
+  ],
+  "warm_median_speedup": {
+    "svg": 19091.88,
+    "gpx": 29.56
+  }
+}

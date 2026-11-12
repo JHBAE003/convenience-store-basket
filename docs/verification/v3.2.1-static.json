@@ -1,0 +1,49 @@
+{
+  "python_ast_files": 125,
+  "broken_document_links": [],
+  "predecessor_files_unchanged": 550,
+  "actual_secrets_copied": false,
+  "launcher_port": 8512,
+  "screenshots": {
+    "v3.2.1-1024px.jpg": {
+      "format": "JPEG",
+      "width": 1024,
+      "height": 900
+    },
+    "v3.2.1-320px.jpg": {
+      "format": "JPEG",
+      "width": 320,
+      "height": 800
+    },
+    "v3.2.1-desktop.jpg": {
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000
+    },
+    "v3.2.1-empty-search.jpg": {
+      "format": "JPEG",
+      "width": 320,
+      "height": 800
+    },
+    "v3.2.1-mobile-cart.jpg": {
+      "format": "JPEG",
+      "width": 390,
+      "height": 843
+    },
+    "v3.2.1-mobile-recommendations.jpg": {
+      "format": "JPEG",
+      "width": 390,
+      "height": 843
+    },
+    "v3.2.1-recommendations.jpg": {
+      "format": "JPEG",
+      "width": 1440,
+      "height": 1000
+    },
+    "v3.2.1-tablet.jpg": {
+      "format": "JPEG",
+      "width": 768,
+      "height": 900
+    }
+  }
+}

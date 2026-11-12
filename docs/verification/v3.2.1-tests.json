@@ -1,0 +1,29 @@
+{
+  "version": "3.2.1",
+  "modules": [
+    "test_engine",
+    "test_dataset",
+    "test_ui",
+    "test_product_art",
+    "test_walk_map",
+    "test_v311_ui",
+    "test_search_ui",
+    "test_design_ui",
+    "test_public_records",
+    "test_v321_map_cache",
+    "test_v321_ui"
+  ],
+  "tests_run": 86,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 37.218,
+  "external_socket_attempts": 0,
+  "passed": true,
+  "excluded": [
+    "LIVE 조회",
+    "LIVE 전환",
+    "모의 LIVE 공급자",
+    "배포 검증"
+  ]
+}

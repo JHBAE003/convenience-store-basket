@@ -1,5 +1,6 @@
 """다운로드된 OSM 도보망의 최단 경로. 런타임 외부 요청 없음."""
 from dataclasses import dataclass
+from collections import OrderedDict
 from functools import lru_cache
 import gzip
 import hashlib
@@ -8,6 +9,7 @@ from html import escape
 import json
 from math import cos,radians,isfinite
 from pathlib import Path
+from threading import RLock
 from planner.engine import haversine_km
 
 MAP_DIR=Path(__file__).resolve().parents[1]/'data/maps'
@@ -15,6 +17,7 @@ ORIGIN='@origin'
 ALLOWED={'footway','pedestrian','path','steps','living_street','residential','service',
          'unclassified','tertiary','tertiary_link','secondary','secondary_link','primary','primary_link','track','road'}
 BLOCKED={'no','private','permit','customers','delivery','agricultural','forestry','use_sidepath'}
+RENDER_CACHE_SIZE=8
 
 
 def walkable(tags):
@@ -104,6 +107,9 @@ class WalkMap:
 class WalkNetwork:
     def __init__(self,base,points):
         self.base=base;self.points=dict(points);self.snaps={};self.issues={};self._matrix=None
+        # 지도망은 생성 후 변경하지 않는다. 경로별 문자열만 소량 보관하며,
+        # 좌표가 다른 지도망 및 다른 방문 순서/왕복 조건과 공유하지 않는다.
+        self._render_cache=OrderedDict();self._render_lock=RLock()
         self.coords=dict(base.nodes);self.adj={};self.node_ids={}
         for key,point in sorted(self.points.items()):
             try:self.snaps[key]=base.snap(point)
@@ -157,6 +163,19 @@ class WalkNetwork:
         order=(ORIGIN,)+tuple(route)+((ORIGIN,) if return_home else ())
         return tuple(self.leg(a,b) for a,b in zip(order,order[1:]))
 
+    def _cached_render(self,kind,route,return_home,renderer):
+        key=(kind,tuple(route),bool(return_home))
+        # 동일 지도망의 동시 요청은 완성된 문자열을 공유한다. 실패는 저장하지 않는다.
+        with self._render_lock:
+            if key in self._render_cache:
+                self._render_cache.move_to_end(key)
+                return self._render_cache[key]
+            value=renderer(self,key[1],key[2])
+            self._render_cache[key]=value
+            if len(self._render_cache)>RENDER_CACHE_SIZE:
+                self._render_cache.popitem(last=False)
+            return value
+
 
 @lru_cache(maxsize=1)
 def load_map():
@@ -171,6 +190,10 @@ def get_network(points):return load_map().network(points)
 
 
 def walking_svg(network,route,return_home=False):
+    return network._cached_render('svg',route,return_home,_walking_svg)
+
+
+def _walking_svg(network,route,return_home=False):
     legs=network.legs(route,return_home)
     points=[p for leg in legs for p in leg.points]+[network.points[k] for k in (ORIGIN,)+tuple(route)]
     center=sum(p[0] for p in points)/len(points);scale=cos(radians(center))
@@ -209,6 +232,10 @@ def walking_svg(network,route,return_home=False):
 
 
 def route_gpx(network,route,return_home=False):
+    return network._cached_render('gpx',route,return_home,_route_gpx)
+
+
+def _route_gpx(network,route,return_home=False):
     # 도로 구간만 내보낸다. 미확인 진입 연결은 별도 트랙 세그먼트로 남기지 않는다.
     segments=['<trkseg>'+''.join(f'<trkpt lat="{lat:.7f}" lon="{lng:.7f}"/>' for lat,lng in leg.points)+'</trkseg>' for leg in network.legs(route,return_home)]
     return '<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="ConvenienceBasket3.1.1" xmlns="http://www.topografix.com/GPX/1/1"><metadata><desc>OSM 도로 구간; 점포 진입 연결 미포함. © OpenStreetMap contributors, ODbL 1.0</desc><link href="https://www.openstreetmap.org/copyright"/></metadata><trk><name>편의점 도보 방문 경로</name>'+''.join(segments)+'</trk></gpx>'

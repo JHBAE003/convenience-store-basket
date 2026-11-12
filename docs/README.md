@@ -1,5 +1,8 @@
 # 문서 안내
 
+- [v3.2.1 검증 기록](verification/v3.2.1.md): 화면 개선·지도 최적화·TEST 검사와 검증 제외 범위
+- [v3.2.1 성능 측정](verification/v3.2.1-performance.json): 로컬 지도 출력 비교 원자료
+- [이전 v3.2.0 안내](README-v3.2.0.md): 공공자료 기능 도입 당시 기록
 - [v3.2.0 공공자료 연동](public-data-v3.2.0.md): API 계약, 캐시와 키 설정, 자료 해석의 한계
 - [v3.2.0 검증 기록](verification/v3.2.0.md): TEST 보존과 실행 결과
 - [이전 v3.1.1 안내](README-v3.1.1.md): 기존 상품·지도·추천 사용법
