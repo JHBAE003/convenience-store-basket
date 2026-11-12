@@ -1,0 +1,16 @@
+[server]
+address = "127.0.0.1"
+enableCORS = true
+enableXsrfProtection = true
+enableStaticServing = false
+[browser]
+gatherUsageStats = false
+[theme]
+base = "light"
+primaryColor = "#17664E"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F3F6F4"
+textColor = "#20382F"
+font = "sans-serif"
+baseFontSize = 16
+baseRadius = "0.5rem"

@@ -7,6 +7,10 @@ from test_providers import FakeManager
 from planner.providers import LiveProvider
 
 
+def add_first_result(at):
+    next(b for b in at.button if (b.key or '').startswith('search_add_')).click().run()
+
+
 class ModeUiTests(unittest.TestCase):
     def app(self):return AppTest.from_file(str(APP),default_timeout=20).run()
 
@@ -35,7 +39,7 @@ class ModeUiTests(unittest.TestCase):
             at.button(key='clear_cart').click().run()
             at.text_input(key='search_keyword').set_value('우유')
             at.button(key='search_button').click().run()
-            at.button(key='add_candidate').click().run()
+            add_first_result(at)
             at.number_input(key='qty_TEST-P001').set_value(2).run()
             at.button(key='lookup_button').click().run()
             self.assertFalse(at.exception)
@@ -46,7 +50,7 @@ class ModeUiTests(unittest.TestCase):
             at.text_input(key='search_keyword').set_value('우유')
             at.button(key='search_button').click().run()
             self.assertEqual(len(manager.calls),1)
-            at.button(key='add_candidate').click().run()
+            add_first_result(at)
             pid=at.session_state['products'][0].id
             at.number_input(key='qty_'+pid).set_value(2).run()
             self.assertEqual(len(manager.calls),1)  # 담기/수량 변경은 외부 요청 아님
@@ -68,7 +72,7 @@ class ModeUiTests(unittest.TestCase):
             at=self.app();at.radio(key='data_mode').set_value('LIVE').run()
             at.text_input(key='search_keyword').set_value('우유')
             at.button(key='search_button').click().run()
-            at.button(key='add_candidate').click().run()
+            add_first_result(at)
             manager.rows=[]
             at.button(key='lookup_button').click().run()
             self.assertFalse(at.exception)
@@ -82,7 +86,7 @@ class ModeUiTests(unittest.TestCase):
             at=self.app();at.radio(key='data_mode').set_value('LIVE').run()
             at.text_input(key='search_keyword').set_value('우유')
             at.button(key='search_button').click().run()
-            at.button(key='add_candidate').click().run()
+            add_first_result(at)
             at.button(key='lookup_button').click().run()
             self.assertGreater(at.session_state['last_plan_count'],0)
             count=len(manager.calls)

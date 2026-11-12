@@ -37,6 +37,15 @@ class Search:
     messages: tuple[str, ...] = ()
 
 
+def group_search_candidates(candidates):
+    """식별이 확실한 가상 상품만 브랜드별 중복을 합친다. 이름 유사도로 묶지 않는다."""
+    groups={}
+    for c in candidates:
+        key=('test',c.seed_id,c.spec) if c.seed_id else ('candidate',c.id)
+        groups.setdefault(key,[]).append(c)
+    return tuple(tuple(group) for group in groups.values())
+
+
 @dataclass
 class Snapshot:
     stores: tuple[Store, ...] = ()
@@ -92,8 +101,7 @@ class TestProvider:
     def search(self, keyword, origin, brands):
         rows=self.dataset.search(keyword,brands)
         messages=['저장된 가상 상품입니다. 점포 이름·위치만 공개자료를 사용하며 가격·행사·재고는 시연용입니다.']
-        if len(rows)>200:messages.append(f'후보 {len(rows)}개 중 앞의 200개입니다. 상품 이름이나 용량을 더 입력해 주세요.')
-        return Search(tuple(self._candidate(r) for r in rows[:200]),tuple(messages))
+        return Search(tuple(self._candidate(r) for r in rows),tuple(messages))
 
     def lookup(self, products, links, origin, brands, context, force=False):
         stores={r['id']:r for r in self.dataset.stores()}
@@ -111,7 +119,8 @@ class TestProvider:
             if r['spec']!=p.spec:continue
             store=stores[r['store_id']]
             offers.append(Offer(r['store_id'],pid,r['price'],r['stock'],r['promotion'],r['start'],r['end'],bool(r['conditions_verified']),p.spec))
-            observations.append({'매장':store['name'],'상품':p.name,'판매가':f'{r["price"]:,}원',
+            observations.append({'브랜드':store['brand'],'점포 코드':store['id'],'상품 ID':p.id,
+                '매장':store['name'],'상품':p.name,'판매가':f'{r["price"]:,}원',
                 '가격 상태':'가상 데이터','재고':str(r['stock']),'행사':r['promotion'] or '없음 (가상)',
                 '앱 수신 시각':'저장된 시연 파일','원본 자료 시각':'해당 없음 (가상 데이터)','앱 캐시':'로컬 파일',
                 '점포 위치 출처':store['source_kind'],'점포 확인일':store['checked_at'][:10]})
@@ -204,7 +213,8 @@ class LiveProvider:
                     price_ok = (not source_bad and row.price_data_status == 'LIVE' and type(row.price) is int and row.price > 0)
                     # 기간·조건이 확인되지 않은 행사는 엔진에서 일반 판매로 계산한다.
                     promo_ok = row.promotion_data_status == 'LIVE' and promotion_applicability(row)[0]
-                    observations.append({'매장': row.store_name, '상품': p.name,
+                    observations.append({'브랜드':row.brand,'점포 코드':row.store_code or row.store_name,'상품 ID':p.id,
+                        '매장': row.store_name, '상품': p.name,
                         '판매가': f'{row.price:,}원' if row.price > 0 else '미확인',
                         '가격 상태': '점포 확인' if price_ok else '참고/미확인 · 추천 제외',
                         '재고': str(row.stock) if stock_ok else ('있음 · 수량 미확인' if row.stock_known and not row.stock_quantity_exact else '미확인/과거 자료'),

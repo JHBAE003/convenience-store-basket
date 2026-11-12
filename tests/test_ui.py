@@ -27,6 +27,7 @@ class UiTests(unittest.TestCase):
 
     def test_extra_gift_is_explicit_and_clear_cart(self):
         at=AppTest.from_file(str(APP),default_timeout=30).run()
+        at.button_group(key='workspace_view').set_value('추천·경로').run()
         options=[b for b in at.button if (b.key or '').startswith('extra_')]
         self.assertTrue(options)
         before=sum(at.session_state['qty_'+p.id] for p in at.session_state['products'])

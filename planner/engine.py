@@ -115,12 +115,16 @@ def allocations(total, caps):
     for q in range(low, min(total, caps[0])+1):
         for tail in allocations(total-q, caps[1:]): yield (q,)+tail
 
-def route_for(stores, settings):
+def route_for(stores, settings, distances=None):
     best = None
     for order in permutations(sorted(stores, key=lambda s:s.id)):
-        points = [settings.origin]+[(s.lat,s.lng) for s in order]
-        if settings.return_home: points.append(settings.origin)
-        distance = sum(haversine_km(*a,*b) for a,b in zip(points,points[1:]))
+        if distances is None:
+            points = [settings.origin]+[(s.lat,s.lng) for s in order]
+            if settings.return_home: points.append(settings.origin)
+            distance = sum(haversine_km(*a,*b) for a,b in zip(points,points[1:]))
+        else:
+            ids=['@origin']+[s.id for s in order]+(['@origin'] if settings.return_home else [])
+            distance=sum(distances.get((a,b),float('inf')) for a,b in zip(ids,ids[1:]))
         candidate = (distance, tuple(s.id for s in order))
         if best is None or candidate < best: best = candidate
     return best[1], best[0]
@@ -152,7 +156,7 @@ def _validate(products, stores, offers, cart, s):
     if not coordinate(s.origin) or any(not coordinate((x.lat,x.lng)) for x in stores): raise ValueError('좌표 범위를 확인해 주세요.')
     date.fromisoformat(s.as_of)
 
-def partial_budget_examples(selected, available, cart, settings):
+def partial_budget_examples(selected, available, cart, settings, distances=None):
     """Feasible examples only: greedy marginal cost, never claimed optimal.
 
     Full-quantity recommendations use the exact DP. This optional fallback
@@ -161,7 +165,7 @@ def partial_budget_examples(selected, available, cart, settings):
     examples=[]
     for n in range(1,min(settings.max_stores,len(selected))+1):
         for subset in combinations(selected,n):
-            route,distance=route_for(subset,settings)
+            route,distance=route_for(subset,settings,distances)
             if distance>settings.route_limit_km:continue
             quantities={};delivered={pid:0 for pid in cart};amount=0
             while True:
@@ -177,7 +181,8 @@ def partial_budget_examples(selected, available, cart, settings):
                 quantities[sid,pid]=quantities.get((sid,pid),0)+1;delivered[pid]+=1;amount+=extra
             used=[st for st in subset if any(sid==st.id for sid,pid in quantities)]
             if not used or all(delivered[k]==cart[k] for k in cart):continue
-            route,distance=route_for(used,settings)
+            route,distance=route_for(used,settings,distances)
+            if distance>settings.route_limit_km:continue
             lines=[]
             for (sid,pid),qty in sorted(quantities.items()):
                 o=available[sid,pid];promo,note=promotion_state(o,settings.as_of)
@@ -185,8 +190,16 @@ def partial_budget_examples(selected, available, cart, settings):
             examples.append(Plan(tuple(lines),route,distance,amount,amount+distance*settings.distance_weight+(len(used)-1)*settings.visit_weight))
     return examples
 
-def solve(products, stores, offers, cart, settings=Settings()):
+def solve(products, stores, offers, cart, settings=Settings(), distance_matrix=None):
     _validate(products,stores,offers,cart,settings)
+    distances=None
+    if distance_matrix is not None:
+        distances={}
+        for a,b,value in distance_matrix:
+            if not isinstance(value,(int,float)) or isinstance(value,bool) or not value>=0:
+                raise ValueError('경로 거리는 0 이상이어야 합니다. 연결되지 않은 경로는 무한대로 표시합니다.')
+            if (a,b) in distances:raise ValueError('경로 거리 자료에 중복이 있습니다.')
+            distances[a,b]=value
     if not cart:return Result((),dict.fromkeys(MODES),{},None,('상품을 한 개 이상 담아 주세요.',),0)
     spec={p.id:p.spec for p in products}
     selected=sorted([s for s in stores if s.brand in settings.brands and
@@ -209,7 +222,7 @@ def solve(products, stores, offers, cart, settings=Settings()):
     for n in range(1,min(settings.max_stores,len(selected))+1):
         for subset in combinations(selected,n):
             checked+=1
-            route,dist=route_for(subset,settings)
+            route,dist=route_for(subset,settings,distances)
             if dist>settings.route_limit_km+1e-12:
                 route_blocked+=1;continue
             # Track the cheapest allocation per used-store mask after each item.
@@ -257,7 +270,7 @@ def solve(products, stores, offers, cart, settings=Settings()):
     if not selected:reasons.append('선택 브랜드와 출발지 반경 안에 매장이 없습니다.')
     if any(shortages.values()):reasons.append('반경·브랜드 조건 안의 확인된 전체 재고가 부족합니다.')
     if not plans and selected:reasons.append(f'최대 {settings.max_stores}곳 방문·전체 이동거리 제한으로 전체 수량을 충족하지 못합니다.')
-    if route_blocked:reasons.append(f'매장 조합 {route_blocked}개가 전체 이동거리 제한을 초과했습니다.')
+    if route_blocked:reasons.append(f'매장 조합 {route_blocked}개가 이동거리 제한을 초과했거나 연결 가능한 경로가 없습니다.')
     if settings.strict_budget and plans and not eligible:
         reasons.append(f'전체 수량 구매의 최소 결제액 {min(p.total for p in plans):,}원이 예산 {settings.budget:,}원을 초과합니다.')
     if settings.strict_budget and not plans:
@@ -265,6 +278,6 @@ def solve(products, stores, offers, cart, settings=Settings()):
     if not any(p.count==1 for p in eligible):reasons.append('현재 조건으로 한 곳에서 모두 구매할 수 없습니다. 2·3곳 대안을 확인하세요.')
     partial_pool=[p for p in partials if not settings.strict_budget or p.total<=settings.budget]
     if settings.strict_budget and not eligible:
-        partial_pool.extend(partial_budget_examples(selected,available,cart,settings))
+        partial_pool.extend(partial_budget_examples(selected,available,cart,settings,distances))
     partial=min(partial_pool,key=lambda p:(-sum(x.quantity for x in p.lines),*rank(p,MODES[0])),default=None)
     return Result(tuple(eligible),winners,shortages,partial,tuple(reasons),checked)

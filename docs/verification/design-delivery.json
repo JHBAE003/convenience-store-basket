@@ -1,0 +1,18 @@
+{
+  "version": "3.1.1",
+  "tests": 61,
+  "external_test_connections": 0,
+  "live_tested": false,
+  "browser_widths_css_px": [
+    320,
+    768,
+    1280
+  ],
+  "files": {
+    "streamlit_app.py": "a4f6aa2b6d6600a4cc3955ff3d2837af3f9e95b1e720fdff729e665698150458",
+    "assets/app.css": "44153b97b3dff5d2677b6fbe706224e01663d225f7a67ad994571f8a92deab0d",
+    ".streamlit/config.toml": "8dfa24f5924a37300d01de4663afc3c2763a5e8d4cbfc029fadc0f799e94027c",
+    "data/test_dataset.sqlite3": "90a77f0b400432e023bce0b1ce4382b5d4a36758ada0d7441db2181fc43742ba"
+  },
+  "release_scope": "local-only, no GitHub upload or deployment"
+}

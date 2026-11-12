@@ -1,0 +1,40 @@
+{
+  "python": "3.15.2",
+  "network_requests_during_measurement": 0,
+  "scope": "로컬 TEST 단일 측정, UI 렌더링 제외, LIVE 미검증",
+  "stores": 24,
+  "products": 3,
+  "max_visits": 3,
+  "cold_map_and_600_distances_seconds": 1.0018112999969162,
+  "map_nodes": 14856,
+  "map_ways": 3043,
+  "directed_walking_edges": 33358,
+  "results": [
+    {
+      "distance_basis": "직선 참고",
+      "solve_seconds": 0.22029630000179168,
+      "combinations": 2324,
+      "total": 4100,
+      "route": [
+        "SEVEN:53905",
+        "GS25:VGW36"
+      ],
+      "meters": 247.65021242509718
+    },
+    {
+      "distance_basis": "OSM 도로+위치 연결 추정",
+      "solve_seconds": 0.1721793000033358,
+      "combinations": 2324,
+      "total": 4100,
+      "route": [
+        "SEVEN:53905",
+        "GS25:VGW36"
+      ],
+      "meters": 360.36287272855907
+    }
+  ],
+  "product_icons": 300,
+  "icon_bytes": 240880,
+  "map_bytes": 366423,
+  "original_files_verified_unchanged": 206
+}

@@ -1,10 +1,10 @@
 """Local SVG route map and calculation-based prose; no remote map tiles."""
 from html import escape
 
-def comparison_text(plan, other):
+def comparison_text(plan, other, distance_label='직선 이동'):
     delta=plan.total-other.total;distance=plan.distance_km-other.distance_km;visits=plan.count-other.count
     return (f'비교안 대비 {abs(delta):,}원 '+('저렴' if delta<0 else '비쌈' if delta>0 else '차이 없음')+
-            f' · 직선 이동 {abs(distance)*1000:,.0f}m '+('감소' if distance<0 else '증가' if distance>0 else '차이 없음')+
+            f' · {distance_label} {abs(distance)*1000:,.0f}m '+('감소' if distance<0 else '증가' if distance>0 else '차이 없음')+
             f' · 방문 {abs(visits)}곳 '+('감소' if visits<0 else '증가' if visits>0 else '차이 없음'))
 
 def route_svg(plan, stores, origin, return_home=False):

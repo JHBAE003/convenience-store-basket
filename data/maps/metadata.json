@@ -1,0 +1,42 @@
+{
+  "bbox": [
+    37.465,
+    126.926,
+    37.495,
+    126.975
+  ],
+  "endpoint": "https://api.openstreetmap.org/api/0.6/map.json",
+  "query": null,
+  "downloaded_at": "2026-11-05T11:07:50.739483+00:00",
+  "source_updated_at": null,
+  "requests": [
+    {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json",
+      "bbox": "126.926,37.465,126.9505,37.48",
+      "elements": 15017
+    },
+    {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json",
+      "bbox": "126.9505,37.465,126.975,37.48",
+      "elements": 21838
+    },
+    {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json",
+      "bbox": "126.926,37.48,126.9505,37.495",
+      "elements": 32461
+    },
+    {
+      "url": "https://api.openstreetmap.org/api/0.6/map.json",
+      "bbox": "126.9505,37.48,126.975,37.495",
+      "elements": 15967
+    }
+  ],
+  "nodes": 14856,
+  "ways": 3043,
+  "compressed_bytes": 366423,
+  "sha256": "9db9038509d2e0495d6d4970eda293151a98261563311c8f48af005063f5cf89",
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "source_url": "https://www.openstreetmap.org/copyright"
+}

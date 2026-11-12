@@ -1,0 +1,57 @@
+test_all_24_stores_participate_and_default_cost_is_independently_bounded (test_dataset.DatasetTests.test_all_24_stores_participate_and_default_cost_is_independently_bounded) ... ok
+test_database_is_read_only_and_missing_file_has_no_fallback (test_dataset.DatasetTests.test_database_is_read_only_and_missing_file_has_no_fallback) ... ok
+test_exact_counts_and_actual_location_provenance (test_dataset.DatasetTests.test_exact_counts_and_actual_location_provenance) ... ok
+test_search_brand_size_category_and_literal_sql_characters (test_dataset.DatasetTests.test_search_brand_size_category_and_literal_sql_characters) ... ok
+test_seed_rebuild_reproduces_all_virtual_values (test_dataset.DatasetTests.test_seed_rebuild_reproduces_all_virtual_values) ... ok
+test_brands_radius_route_visits (test_engine.EngineTests.test_brands_radius_route_visits) ... ok
+test_budget_failure_explained_and_partial (test_engine.EngineTests.test_budget_failure_explained_and_partial) ... ok
+test_budget_only_partial_and_double_failure_reason (test_engine.EngineTests.test_budget_only_partial_and_double_failure_reason) ... ok
+test_budget_strict_reference_and_zero (test_engine.EngineTests.test_budget_strict_reference_and_zero) ... ok
+test_determinism_and_stable_ties (test_engine.EngineTests.test_determinism_and_stable_ties) ... ok
+test_eight_scenarios (test_engine.EngineTests.test_eight_scenarios) ... ok
+test_fixed_date_expired_unknown_and_future (test_engine.EngineTests.test_fixed_date_expired_unknown_and_future) ... ok
+test_gifts_consume_stock_and_no_cross_store_bundle (test_engine.EngineTests.test_gifts_consume_stock_and_no_cross_store_bundle) ... ok
+test_modes_and_balance_weights (test_engine.EngineTests.test_modes_and_balance_weights) ... ok
+test_promotion_boundaries (test_engine.EngineTests.test_promotion_boundaries) ... ok
+test_random_small_full_enumeration (test_engine.EngineTests.test_random_small_full_enumeration) ... ok
+test_return_route_and_permutations (test_engine.EngineTests.test_return_route_and_permutations) ... ok
+test_same_brand_different_branches (test_engine.EngineTests.test_same_brand_different_branches) ... ok
+test_same_item_split_and_three_store_requirement (test_engine.EngineTests.test_same_item_split_and_three_store_requirement) ... ok
+test_three_can_be_cheaper_than_two (test_engine.EngineTests.test_three_can_be_cheaper_than_two) ... ok
+test_unknown_missing_zero_and_mismatched_spec (test_engine.EngineTests.test_unknown_missing_zero_and_mismatched_spec) ... ok
+test_validation (test_engine.EngineTests.test_validation) ... ok
+test_live_expiry_and_force_refresh_are_explicit (test_mode_ui.ModeUiTests.test_live_expiry_and_force_refresh_are_explicit) ... 2026-11-05 13:33:43.022 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_live_failure_remains_live_and_no_fake_recommendation (test_mode_ui.ModeUiTests.test_live_failure_remains_live_and_no_fake_recommendation) ... 2026-11-05 13:33:44.829 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_same_search_cart_lookup_and_recommendation_flow (test_mode_ui.ModeUiTests.test_same_search_cart_lookup_and_recommendation_flow) ... 2026-11-05 13:33:45.423 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_switch_clears_cart_results_and_does_not_initialize_live (test_mode_ui.ModeUiTests.test_switch_clears_cart_results_and_does_not_initialize_live) ... 2026-11-05 13:33:46.493 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_age_from_manager_cache_reduces_remaining_ttl (test_providers.ProviderTests.test_age_from_manager_cache_reduces_remaining_ttl) ... ok
+test_cache_after_failure_is_only_reference_and_timestamps_preserved (test_providers.ProviderTests.test_cache_after_failure_is_only_reference_and_timestamps_preserved) ... ok
+test_conflicting_duplicate_rows_cannot_choose_lower_price (test_providers.ProviderTests.test_conflicting_duplicate_rows_cannot_choose_lower_price) ... ok
+test_conflicting_variants_cannot_be_user_linked (test_providers.ProviderTests.test_conflicting_variants_cannot_be_user_linked) ... ok
+test_context_and_ttl_isolate_mode_product_position_brands_links (test_providers.ProviderTests.test_context_and_ttl_isolate_mode_product_position_brands_links) ... ok
+test_expired_live_promotion_uses_regular_price (test_providers.ProviderTests.test_expired_live_promotion_uses_regular_price) ... ok
+test_failures_and_empty_results_do_not_substitute_test_data (test_providers.ProviderTests.test_failures_and_empty_results_do_not_substitute_test_data) ... ok
+test_foreign_product_rows_rejected (test_providers.ProviderTests.test_foreign_product_rows_rejected) ... ok
+test_live_promotions_recheck_member_card_cross_gift_and_bundle_quantities (test_providers.ProviderTests.test_live_promotions_recheck_member_card_cross_gift_and_bundle_quantities) ... ok
+test_live_selected_code_and_force_are_forwarded (test_providers.ProviderTests.test_live_selected_code_and_force_are_forwarded) ... ok
+test_reference_price_unknown_and_inexact_stock_are_not_recommendations (test_providers.ProviderTests.test_reference_price_unknown_and_inexact_stock_are_not_recommendations) ... ok
+test_store_limit_applies_after_radius_filter_and_does_not_destroy_observations (test_providers.ProviderTests.test_store_limit_applies_after_radius_filter_and_does_not_destroy_observations) ... ok
+test_store_limit_reports_issue_when_all_twenty_five_stores_in_radius (test_providers.ProviderTests.test_store_limit_reports_issue_when_all_twenty_five_stores_in_radius) ... ok
+test_test_provider_uses_common_contract_without_live_initialization (test_providers.ProviderTests.test_test_provider_uses_common_contract_without_live_initialization) ... ok
+test_zero_stock_is_not_failure_or_fake (test_providers.ProviderTests.test_zero_stock_is_not_failure_or_fake) ... ok
+test_budget_constraints_recompute_from_same_database (test_ui.UiTests.test_budget_constraints_recompute_from_same_database) ... 2026-11-05 13:33:47.267 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_database_default_all_stores_and_no_scenario_picker (test_ui.UiTests.test_database_default_all_stores_and_no_scenario_picker) ... 2026-11-05 13:33:48.605 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_extra_gift_is_explicit_and_clear_cart (test_ui.UiTests.test_extra_gift_is_explicit_and_clear_cart) ... 2026-11-05 13:33:49.032 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 7.253s
+
+OK
+TEST 외부 네트워크 연결 시도: 0 (Windows 내부 loopback 허용)

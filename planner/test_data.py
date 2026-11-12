@@ -32,6 +32,9 @@ class TestDataset:
         with self.connect() as db:
             return {table:db.execute('SELECT count(*) FROM '+table).fetchone()[0] for table in ('stores','products','offers')}
 
+    def catalog(self):
+        with self.connect() as db:return tuple(dict(r) for r in db.execute('SELECT * FROM products ORDER BY id'))
+
     def search(self,keyword,brands,product_ids=()):
         if not brands:return ()
         # LIKE 특수 문자도 일반 검색어로 처리하고 값은 모두 매개변수로 전달한다.

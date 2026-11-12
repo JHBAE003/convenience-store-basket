@@ -5,12 +5,28 @@ enableXsrfProtection = true
 enableStaticServing = false
 [browser]
 gatherUsageStats = false
+[client]
+toolbarMode = "minimal"
 [theme]
 base = "light"
-primaryColor = "#17664E"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F3F6F4"
-textColor = "#20382F"
+primaryColor = "#245D45"
+backgroundColor = "#F7F9F5"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#203B2F"
 font = "sans-serif"
 baseFontSize = 16
-baseRadius = "0.5rem"
+baseRadius = "0.7rem"
+buttonRadius = "0.5rem"
+headingFontSizes = ["28px", "23px", "20px", "18px", "16px", "14px"]
+headingFontWeights = [650, 650, 600, 600, 600, 600]
+metricValueFontSize = "2rem"
+paddingTop = "2rem"
+paddingBottom = "2rem"
+showSidebarBorder = true
+showWidgetBorder = true
+orangeTextColor = "#8B4B12"
+orangeBackgroundColor = "#FFF0DE"
+[theme.sidebar]
+backgroundColor = "#EDF2EB"
+secondaryBackgroundColor = "#FFFFFF"
+paddingTop = "2rem"
