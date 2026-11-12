@@ -1,4 +1,4 @@
-"""같은 구매 화면에 로컬 상품 그림과 실제 도보망을 더한 v3.1.1."""
+"""기존 TEST를 보존하고 LIVE 공공자료 참고 조회를 더한 v3.2.0."""
 import csv
 import io
 from pathlib import Path
@@ -16,7 +16,7 @@ from planner.providers import (BRANDS, TestProvider, LiveProvider, Snapshot, que
                                korean_today, link_conflict, calculation_scope, group_search_candidates)
 from legacy_v211.core.security.csv_cells import csv_cell
 
-st.set_page_config(page_title='편의점 장바구니 v3.1.1',page_icon=':material/shopping_basket:',layout='wide')
+st.set_page_config(page_title='편의점 장바구니 v3.2.0',page_icon=':material/shopping_basket:',layout='wide')
 
 
 def context_for(products, links):
@@ -204,7 +204,7 @@ with st.sidebar:
             st.dataframe(source_rows,hide_index=True,width='stretch')
             st.caption('점포명·위치만 공개자료 기반입니다. 상품·가격·행사·재고는 가상이며 현재 영업 여부를 보장하지 않습니다.')
             st.caption('그림은 상품 구분용입니다. 행사 기준일: '+provider.metadata['fixed_date'])
-    st.caption('컴퓨팅 실습 기말 과제 · v3.1.1')
+    st.caption('컴퓨팅 실습 기말 과제 · v3.2.0')
 
 with st.container(key='app_header',horizontal=True,horizontal_alignment='distribute',vertical_alignment='center'):
     st.title('편의점 장바구니')
@@ -215,6 +215,10 @@ with st.container(key='workspace_nav'):
                               label_visibility='collapsed')
 
 products=st.session_state['products'];links=st.session_state['links']
+if data_mode=='LIVE':
+    from planner.public_data_ui import render_public_data
+    render_public_data((st.session_state['origin_lat'],st.session_state['origin_lng']),
+                       st.session_state['brands'], products)
 with st.container(key='view-'+{'상품 찾기':'search','장바구니':'cart','추천·경로':'recommendations'}[view]):
     with st.container(key='shopping_workspace'):
         workspace,cart_column=st.columns([1.75,1],gap='medium')
