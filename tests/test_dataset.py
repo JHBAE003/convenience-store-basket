@@ -3,10 +3,10 @@ import sqlite3
 import tempfile
 import unittest
 
-from planner.test_data import TestDataset,DEFAULT_PRODUCTS
+from planner.test_data import TestDataset
 from planner.providers import TestProvider,BRANDS,query_context,calculation_scope
 from planner.engine import Settings,solve,MODES,haversine_km
-from scripts.build_test_dataset import build
+from scripts.build_real_test_dataset import build
 
 
 class DatasetTests(unittest.TestCase):
@@ -38,13 +38,19 @@ class DatasetTests(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):TestProvider(Path(folder)/'missing.sqlite3')
 
     def test_search_brand_size_category_and_literal_sql_characters(self):
-        result=self.data.search('흰 우유 500ml',['CU'])
-        self.assertEqual(len(result),1)
-        self.assertEqual(result[0]['id'],'TEST-P003')
-        self.assertEqual(len(self.data.search('우유',BRANDS)),100)
-        self.assertEqual(len(self.data.search('생활용품',['GS25'])),25)
+        catalogue=self.data.catalog();product=catalogue[0]
+        result=self.data.search(product['name'],['CU'])
+        expected={p['id'] for p in catalogue if product['name'].casefold() in (p['name']+' '+p['spec']+' '+p['category']).casefold()}
+        self.assertEqual({r['id'] for r in result},expected)
+        for keyword,brands in (('우유',BRANDS),('생활용품',['GS25'])):
+            expected={p['id'] for p in catalogue if keyword in p['name']+' '+p['spec']+' '+p['category']}
+            found=self.data.search(keyword,brands)
+            self.assertEqual({r['id'] for r in found},expected)
+            self.assertEqual(len(found),len(expected)*len(brands))
         self.assertFalse(self.data.search("%' OR 1=1 --",BRANDS))
-        self.assertFalse(self.data.search('%',BRANDS))
+        for literal in ('%','_'):
+            expected={p['id'] for p in catalogue if literal in p['name']+' '+p['spec']+' '+p['category']}
+            self.assertEqual({r['id'] for r in self.data.search(literal,BRANDS)},expected)
         self.assertFalse(self.data.search('우유',[]))
 
     def test_seed_rebuild_reproduces_all_virtual_values(self):
@@ -52,7 +58,7 @@ class DatasetTests(unittest.TestCase):
             path=build(Path(folder)/'test.sqlite3')
             other=TestDataset(path)
             with self.data.connect() as original,other.connect() as regenerated:
-                for table in ('products','brand_products','offers'):
+                for table in ('metadata','stores','products','brand_products','offers','product_sources'):
                     self.assertEqual([tuple(r) for r in original.execute('SELECT * FROM '+table)],
                                      [tuple(r) for r in regenerated.execute('SELECT * FROM '+table)])
             with self.assertRaises(FileExistsError):build(path)
@@ -67,7 +73,7 @@ class DatasetTests(unittest.TestCase):
         result=solve(products,stores,offers,{p.id:1 for p in products},settings)
         # 품목 3종·각 1개이면 최대 3곳에서 품목별 최저 판매가를 모두 확보할 수 있다.
         with self.data.connect() as db:
-            lower=sum(db.execute('SELECT min(price) FROM offers WHERE product_id=? AND stock>=1',(pid,)).fetchone()[0] for pid in DEFAULT_PRODUCTS)
+            lower=sum(db.execute('SELECT min(price) FROM offers WHERE product_id=? AND stock>=1',(pid,)).fetchone()[0] for pid in self.data.metadata()['default_products'])
         self.assertEqual(result.winners[MODES[0]].total,lower)
         self.assertEqual(result.combinations_checked,24+276+2024)
 

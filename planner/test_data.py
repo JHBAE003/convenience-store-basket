@@ -5,7 +5,7 @@ import sqlite3
 from contextlib import contextmanager
 
 DATA_PATH=Path(__file__).resolve().parents[1]/'data/test_dataset.sqlite3'
-DEFAULT_PRODUCTS=('TEST-P003','TEST-P027','TEST-P077')
+DEFAULT_PRODUCTS=('TEST-P099','TEST-P136','TEST-P084')
 
 
 class TestDataset:
@@ -34,6 +34,12 @@ class TestDataset:
 
     def catalog(self):
         with self.connect() as db:return tuple(dict(r) for r in db.execute('SELECT * FROM products ORDER BY id'))
+
+    def provenance(self,product_ids):
+        if not product_ids:return ()
+        query='SELECT product_id,brand,fact_json FROM product_sources WHERE product_id IN ('+','.join('?' for _ in product_ids)+') ORDER BY product_id,brand'
+        with self.connect() as db:
+            return tuple({'product_id':r['product_id'],**json.loads(r['fact_json'])} for r in db.execute(query,list(product_ids)))
 
     def search(self,keyword,brands,product_ids=()):
         if not brands:return ()

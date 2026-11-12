@@ -12,8 +12,8 @@ class ProductArtTests(unittest.TestCase):
         for p in products:
             raw=icon_path(p['id']).read_text(encoding='utf-8')
             self.assertEqual(raw,product_svg(p));self.assertLess(len(raw.encode()),2300)
-            ET.fromstring(raw)
-            self.assertIn(p['volume'],raw);self.assertIn(p['flavor'],raw)
+            xml=ET.fromstring(raw)
+            self.assertIn(p['volume'],''.join(xml.itertext()));self.assertIn(p['flavor'],''.join(xml.itertext()))
             self.assertNotIn('<script',raw);self.assertNotIn('href=',raw)
             drawings.append(raw)
         self.assertEqual(len(set(drawings)),300)

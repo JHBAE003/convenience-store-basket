@@ -1,5 +1,8 @@
 # 문서 안내
 
+- [v3.2.2 실제 상품 TEST 검증](verification/v3.2.2.md): 새 데이터·출처·총 도보 경로·검사 범위
+- [v3.2.2 조사 기록](research/real-test-v3.2.2/research-log.md): 조사 계획, 근거와 미확인 조건
+- [v3.2.2 데이터 검사 원자료](verification/v3.2.2-data.json): 개수·실제 관측/가정·원본 보존
 - [v3.2.1 검증 기록](verification/v3.2.1.md): 화면 개선·지도 최적화·TEST 검사와 검증 제외 범위
 - [v3.2.1 성능 측정](verification/v3.2.1-performance.json): 로컬 지도 출력 비교 원자료
 - [이전 v3.2.0 안내](README-v3.2.0.md): 공공자료 기능 도입 당시 기록

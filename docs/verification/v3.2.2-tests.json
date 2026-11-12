@@ -1,0 +1,32 @@
+{
+  "version": "3.2.2",
+  "modules": [
+    "test_engine",
+    "test_dataset",
+    "test_ui",
+    "test_product_art",
+    "test_walk_map",
+    "test_v311_ui",
+    "test_search_ui",
+    "test_design_ui",
+    "test_public_records",
+    "test_v321_map_cache",
+    "test_v321_ui",
+    "test_real_catalogue",
+    "test_route_total",
+    "test_v322_ui"
+  ],
+  "tests_run": 99,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 36.755,
+  "external_socket_attempts": 0,
+  "passed": true,
+  "excluded": [
+    "LIVE 조회",
+    "LIVE 전환",
+    "모의 LIVE 공급자",
+    "배포 검증"
+  ]
+}

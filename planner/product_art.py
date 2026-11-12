@@ -19,6 +19,7 @@ def product_svg(product):
     index=int(product['id'][-3:])-1
     color=COLORS[(index%25)//5]
     category=product['category'];flavor=escape(product['flavor']);volume=escape(product['volume'])
+    short_label=escape(product['flavor'][:14]+('…' if len(product['flavor'])>14 else ''))
     if category=='우유':
         shape='<path d="M91 69 111 46h50l20 23v120H91z"/><path d="M91 69h90M111 46v23" fill="none"/>'
     elif category in ('음료','생수'):
@@ -40,7 +41,7 @@ def product_svg(product):
             f'<g fill="{color}" stroke="{color}" stroke-width="3" stroke-linejoin="round">{shape}</g>'
             '<rect x="94" y="123" width="84" height="38" rx="8" fill="white"/>'
             f'<g font-family="sans-serif" text-anchor="middle" fill="#263c32"><text x="136" y="147" font-size="16" font-weight="700">{volume}</text>'
-            f'<text x="136" y="226" font-size="13">{flavor}</text><text x="136" y="246" font-size="10" fill="#65756a">가상 상품 · {escape(product["id"])} · {product["pack_count"]}개 구성</text></g></svg>')
+            f'<text x="136" y="226" font-size="13">{short_label}</text><text x="136" y="246" font-size="10" fill="#65756a">TEST 구분 그림 · {escape(product["id"])}</text><desc>{flavor}</desc></g></svg>')
 
 
 GENERIC_SVG='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 260" role="img" aria-label="상품 공통 그림"><rect width="272" height="260" rx="24" fill="#f3f6f2"/><rect x="83" y="70" width="106" height="116" rx="18" fill="#658c76"/><path d="M112 72V60a24 24 0 0 1 48 0v12" fill="none" stroke="#658c76" stroke-width="10"/><text x="136" y="226" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#263c32">상품 공통 그림</text></svg>'

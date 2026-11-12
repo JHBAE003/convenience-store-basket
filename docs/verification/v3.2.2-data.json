@@ -1,0 +1,71 @@
+{
+  "version": "3.2.2",
+  "counts": {
+    "stores": 24,
+    "products": 300,
+    "brand_products": 1200,
+    "offers": 7200,
+    "product_sources": 345
+  },
+  "offers_per_store": [
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300,
+    300
+  ],
+  "listing_basis": {
+    "공개 목록 관측·점포 판매는 가정": 343,
+    "브랜드 판매 미확인·TEST 가정": 857
+  },
+  "promotions": {
+    "": 5226,
+    "1+1": 666,
+    "2+1": 1308
+  },
+  "integrity": "ok",
+  "foreign_key_errors": [],
+  "raw_observations": 1104,
+  "selected_explicit_volume": 226,
+  "sqlite_bytes": 2400256,
+  "source_fact_counts": {
+    "CU": 127,
+    "GS25": 29,
+    "세븐일레븐": 99,
+    "이마트24": 90
+  },
+  "default_products": [
+    "TEST-P099",
+    "TEST-P136",
+    "TEST-P084"
+  ],
+  "predecessor_files_unchanged": 569,
+  "unchanged_engine_map_live_public": {
+    "planner/engine.py": true,
+    "planner/walk_map.py": true,
+    "planner/public_data.py": true,
+    "planner/public_data_ui.py": true,
+    "data/maps/seoul_walk.osm.json.gz": true,
+    "data/store_sources.json": true
+  },
+  "live_provider_ast_unchanged": true
+}

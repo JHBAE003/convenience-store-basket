@@ -1,0 +1,34 @@
+{
+  "ast_files": 130,
+  "broken_links": [],
+  "predecessor_files_unchanged": 569,
+  "actual_secret_file_copied": false,
+  "screenshots": {
+    "v3.2.2-balanced-route.jpg": [
+      "JPEG",
+      1440,
+      1000
+    ],
+    "v3.2.2-cheapest-route.jpg": [
+      "JPEG",
+      1440,
+      1000
+    ],
+    "v3.2.2-mobile.jpg": [
+      "JPEG",
+      390,
+      843
+    ],
+    "v3.2.2-products.jpg": [
+      "JPEG",
+      1440,
+      1000
+    ],
+    "v3.2.2-provenance.jpg": [
+      "JPEG",
+      1440,
+      1000
+    ]
+  },
+  "launcher_port": 8513
+}

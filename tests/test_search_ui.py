@@ -3,6 +3,7 @@ from dataclasses import replace
 import unittest
 from streamlit.testing.v1 import AppTest
 from planner.providers import TestProvider,BRANDS,group_search_candidates
+from planner.test_data import TestDataset
 from planner.engine import Product,Store,Offer,Settings
 from planner.brand_summary import brand_offer_rows,observation_rows
 
@@ -11,7 +12,7 @@ APP=Path(__file__).resolve().parents[1]/'streamlit_app.py'
 
 class SearchDataTests(unittest.TestCase):
     def test_test_search_keeps_every_brand_and_all_300_products(self):
-        result=TestProvider().search('시연',(37.48121,126.9527),BRANDS)
+        result=TestProvider().search('',(37.48121,126.9527),BRANDS)
         self.assertEqual(len(result.candidates),1200)
         self.assertEqual(len(group_search_candidates(result.candidates)),300)
         for brand in BRANDS:
@@ -22,7 +23,11 @@ class SearchDataTests(unittest.TestCase):
     def test_different_sizes_and_flavors_remain_separate(self):
         result=TestProvider().search('우유',(37.48121,126.9527),BRANDS)
         groups=group_search_candidates(result.candidates)
-        self.assertEqual(len(groups),25)
+        expected={p['id'] for p in TestDataset().catalog() if '우유' in p['name']+' '+p['spec']+' '+p['category']}
+        self.assertEqual(len(groups),len(expected))
+        self.assertGreater(len(groups),1)
+        self.assertEqual({c.seed_id for group in groups for c in group},expected)
+        self.assertGreater(len({group[0].spec for group in groups}),1)
         self.assertTrue(all(len({c.spec for c in group})==1 for group in groups))
         self.assertTrue(all(len(group)==4 for group in groups))
 
@@ -63,18 +68,21 @@ class SearchUiTests(unittest.TestCase):
     def test_search_shows_all_related_products_in_brand_tabs_without_add_method(self):
         at=self.search(self.app(),'우유')
         self.assertFalse(at.exception)
-        self.assertEqual([t.label for t in at.tabs],[b+' · 25종' for b in BRANDS])
+        expected=len(TestDataset().search('우유',['CU']))
+        self.assertGreater(expected,1)
+        self.assertEqual([t.label for t in at.tabs],[f'{b} · {expected}종' for b in BRANDS])
         buttons=[b for b in at.button if (b.key or '').startswith('search_add_')]
-        self.assertEqual(len(buttons),100)
-        self.assertEqual(len({b.key for b in buttons}),100)
+        self.assertEqual(len(buttons),expected*len(BRANDS))
+        self.assertEqual(len({b.key for b in buttons}),len(buttons))
         self.assertFalse(any(s.label in ('장바구니에 담는 방법','검색된 상품') for s in at.selectbox))
         self.assertFalse(any(c.key=='confirm_link' for c in at.checkbox))
-        at.session_state['manual_link_target']='TEST-P003'
+        pid=next(r['id'] for r in TestDataset().search('우유',['CU']) if r['id'] not in {p.id for p in at.session_state['products']})
+        at.session_state['manual_link_target']=at.session_state['products'][0].id
         at.session_state['confirm_link']=True
-        at.button(key='search_add_T:CU:TEST-P025').click().run()
-        self.assertEqual(len(at.session_state['links']['TEST-P025']),4)
+        at.button(key='search_add_T:CU:'+pid).click().run()
+        self.assertEqual(len(at.session_state['links'][pid]),4)
         self.assertIsNone(at.session_state['snapshot'])
-        self.assertTrue(at.button(key='search_add_T:GS25:TEST-P025').disabled)
+        self.assertTrue(at.button(key='search_add_T:GS25:'+pid).disabled)
         at.button(key='lookup_button').click().run()
         self.assertGreater(at.session_state['last_plan_count'],0);self.assertFalse(at.exception)
 
@@ -96,18 +104,24 @@ class SearchUiTests(unittest.TestCase):
         self.assertTrue(all(compared_table['확인 점포 수']==6));self.assertFalse(at.exception)
 
     def test_brand_change_hides_previous_search_until_resubmitted(self):
-        at=self.search(self.app(),'흰 우유')
+        at=self.app()
+        product=next(p for p in TestDataset().catalog() if p['id'] not in {p.id for p in at.session_state['products']})
+        at=self.search(at,product['name'])
         at.multiselect(key='brands').set_value(['GS25']).run()
         self.assertFalse(any((b.key or '').startswith('search_add_') for b in at.button))
         at.button(key='search_button').click().run()
-        self.assertEqual([t.label for t in at.tabs],['GS25 · 5종'])
-        at.button(key='search_add_T:GS25:TEST-P001').click().run()
-        self.assertEqual([c.brand for c in at.session_state['links']['TEST-P001']],['GS25'])
+        expected=len(TestDataset().search(product['name'],['GS25']))
+        self.assertEqual([t.label for t in at.tabs],[f'GS25 · {expected}종'])
+        at.button(key='search_add_T:GS25:'+product['id']).click().run()
+        self.assertEqual([c.brand for c in at.session_state['links'][product['id']]],['GS25'])
         self.assertFalse(at.exception)
 
     def test_broad_search_has_no_hidden_200_candidate_limit(self):
-        at=self.search(self.app(),'시연')
-        self.assertEqual([t.label for t in at.tabs],[b+' · 300종' for b in BRANDS])
-        self.assertEqual(sum((b.key or '').startswith('search_add_') for b in at.button),1200)
-        self.assertTrue(at.button(key='search_add_T:이마트24:TEST-P300'))
+        keyword=')'
+        rows=TestDataset().search(keyword,BRANDS);expected=len(rows)//len(BRANDS)
+        self.assertGreater(len(rows),200)
+        at=self.search(self.app(),keyword)
+        self.assertEqual([t.label for t in at.tabs],[f'{b} · {expected}종' for b in BRANDS])
+        self.assertEqual(sum((b.key or '').startswith('search_add_') for b in at.button),len(rows))
+        last=rows[-1];self.assertTrue(at.button(key=f'search_add_T:{last["brand"]}:{last["id"]}'))
         self.assertFalse(at.exception)

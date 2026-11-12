@@ -63,7 +63,7 @@ class Snapshot:
 
 def query_context(data_mode, products, links, origin, brands):
     # 수량·예산 변경은 같은 관측으로 재계산한다. 상품·연결·위치·브랜드 변경은 별도 조회다.
-    return (data_mode, 'sqlite-v1' if data_mode == 'TEST' else None,
+    return (data_mode, 'real-catalogue-v322' if data_mode == 'TEST' else None,
             tuple(sorted(p.id for p in products)),
             tuple(sorted((pid, c.id) for pid, cs in links.items() for c in cs)),
             tuple(origin), tuple(sorted(brands)))
@@ -91,16 +91,17 @@ class TestProvider:
                          reference_price=row['base_price'], seed_id=row['id'])
 
     def defaults(self):
-        rows=self.dataset.search('',BRANDS,DEFAULT_PRODUCTS)
+        defaults=tuple(self.metadata.get('default_products',DEFAULT_PRODUCTS))
+        rows=self.dataset.search('',BRANDS,defaults)
         by_id={row['id']:Product(row['id'],row['name'],row['spec']) for row in rows}
-        products=tuple(by_id[id] for id in DEFAULT_PRODUCTS)
+        products=tuple(by_id[id] for id in defaults)
         links={p.id:[self._candidate(r) for r in rows if r['id']==p.id] for p in products}
         origin=self.metadata['origin']
         return products,links,(origin['lat'],origin['lng'])
 
     def search(self, keyword, origin, brands):
         rows=self.dataset.search(keyword,brands)
-        messages=['저장된 가상 상품입니다. 점포 이름·위치만 공개자료를 사용하며 가격·행사·재고는 시연용입니다.']
+        messages=['공개 목록의 실제 상품명·행사 표시를 참고한 TEST입니다. 점포별 판매 여부·판매가·재고와 미확인 행사 조건은 가정입니다.']
         return Search(tuple(self._candidate(r) for r in rows),tuple(messages))
 
     def lookup(self, products, links, origin, brands, context, force=False):
@@ -121,12 +122,14 @@ class TestProvider:
             offers.append(Offer(r['store_id'],pid,r['price'],r['stock'],r['promotion'],r['start'],r['end'],bool(r['conditions_verified']),p.spec))
             observations.append({'브랜드':store['brand'],'점포 코드':store['id'],'상품 ID':p.id,
                 '매장':store['name'],'상품':p.name,'판매가':f'{r["price"]:,}원',
-                '가격 상태':'가상 데이터','재고':str(r['stock']),'행사':r['promotion'] or '없음 (가상)',
-                '앱 수신 시각':'저장된 시연 파일','원본 자료 시각':'해당 없음 (가상 데이터)','앱 캐시':'로컬 파일',
+                '가격 상태':r['price_basis'],'재고':str(r['stock'])+' (가상)','행사':r['promotion'] or '일반 판매 (TEST 가정)',
+                '앱 수신 시각':'저장된 TEST 파일','원본 자료 시각':'해당 없음 (TEST 판매가·재고)','앱 캐시':'로컬 파일',
+                '행사 적용 근거':r['promotion_basis'],'행사 참고 출처':r['promotion_source_url'],
+                '참고 자료 확인 시각':r['source_checked_at'],'참고 원본 갱신 시각':r['source_updated_at'] or '미제공',
                 '점포 위치 출처':store['source_kind'],'점포 확인일':store['checked_at'][:10]})
         used={o.store_id for o in offers}
         return Snapshot(tuple(Store(s['id'],s['brand'],s['name'],s['lat'],s['lng']) for s in stores.values() if s['id'] in used),
-                        tuple(offers),tuple(observations),('점포명·위치는 공개자료 기반이며 상품·가격·행사·재고는 모두 가상입니다. 현재 영업 여부를 보장하지 않습니다.',),context,ttl=None)
+                        tuple(offers),tuple(observations),('실제 상품·공개 행사 참고 TEST입니다. 점포별 판매 여부·판매가·재고·미확인 조건은 가정이며 현재 영업·취급·재고를 보장하지 않습니다.',),context,ttl=None)
 
 
 def load_legacy():

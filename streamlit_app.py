@@ -1,4 +1,4 @@
-"""TEST 계산을 유지하고 지도 재사용·탐색 화면을 개선한 v3.2.1."""
+"""실제 상품·공개 행사 기반 TEST와 총 도보거리 비교를 제공하는 v3.2.2."""
 import csv
 import io
 from pathlib import Path
@@ -16,7 +16,7 @@ from planner.providers import (BRANDS, TestProvider, LiveProvider, Snapshot, que
                                korean_today, link_conflict, calculation_scope, group_search_candidates)
 from legacy_v211.core.security.csv_cells import csv_cell
 
-st.set_page_config(page_title='편의점 장바구니 v3.2.1',page_icon=':material/shopping_basket:',layout='wide')
+st.set_page_config(page_title='편의점 장바구니 v3.2.2',page_icon=':material/shopping_basket:',layout='wide')
 
 
 def context_for(products, links):
@@ -26,7 +26,7 @@ def context_for(products, links):
 
 
 def initialize():
-    st.session_state.update(search_keyword='',confirm_link=False,force_refresh=False,dataset_revision='sqlite24-map-v311',search_ui_revision='brand-cards-v1')
+    st.session_state.update(search_keyword='',confirm_link=False,force_refresh=False,dataset_revision='real-catalogue-v322',search_ui_revision='brand-cards-v1')
     test=st.session_state['data_mode']=='TEST'
     provider=TestProvider() if test else LiveProvider()
     if test:
@@ -39,7 +39,7 @@ def initialize():
     for key in ('budget','strict_budget','max_stores','radius_km','route_limit_km','return_home','distance_weight','visit_weight'):
         st.session_state[key]=getattr(defaults,key)
     st.session_state.update(products=list(products),links=links,_provider=provider,snapshot=None,search_result=None,
-                            origin_lat=defaults.origin[0],origin_lng=defaults.origin[1],brands=list(BRANDS),mode=MODES[0])
+                            origin_lat=defaults.origin[0],origin_lng=defaults.origin[1],brands=list(BRANDS),mode=MODES[3] if test else MODES[0])
     if test:
         for p in products:st.session_state['qty_'+p.id]=1
         st.session_state['snapshot']=provider.lookup(products,links,defaults.origin,BRANDS,context_for(products,links))
@@ -139,7 +139,7 @@ def open_comparison():
 def open_cart():st.session_state['workspace_view']='장바구니'
 
 
-def reset_plan_choice():st.session_state.pop('plan_choice',None)
+def reset_plan_choice():st.session_state['_reset_plan_choice']=True
 
 
 def clear_search():
@@ -165,7 +165,7 @@ def product_card(name,spec,pid,price,button_key,callback,args,in_cart=False):
 
 
 st.session_state.setdefault('data_mode','TEST')
-if st.session_state.get('dataset_revision')!='sqlite24-map-v311':switch_data_mode()
+if st.session_state.get('dataset_revision')!='real-catalogue-v322':switch_data_mode()
 data_mode=st.session_state['data_mode']
 if st.session_state.get('search_ui_revision')!='brand-cards-v1':
     st.session_state.update(search_result=None,search_ui_revision='brand-cards-v1',confirm_link=False)
@@ -179,7 +179,8 @@ with st.sidebar:
     st.radio('데이터 모드',('TEST','LIVE'),key='data_mode',on_change=switch_data_mode,horizontal=True,
              help='TEST는 가상 데이터입니다. 모드를 바꾸면 장바구니와 조회 결과를 초기화합니다.')
     st.multiselect('비교 브랜드',BRANDS,key='brands')
-    st.selectbox('추천 기준',MODES,key='mode',on_change=reset_plan_choice)
+    st.selectbox('추천 기준',MODES,key='mode',on_change=reset_plan_choice,
+                 help='가격·거리 균형은 결제액과 실제 총 이동거리·추가 방문 부담을 함께 비교합니다. 최저 결제액은 가격을 우선합니다.')
     st.number_input('예산 (원)',min_value=0,max_value=1000000,step=100,key='budget')
     st.slider('최대 방문 매장 수',1,3,key='max_stores')
     with st.expander('이동·세부 조건'):
@@ -200,18 +201,19 @@ with st.sidebar:
             locations=provider.dataset.stores();source_rows=[]
             for brand in BRANDS:
                 points=[r for r in locations if r['brand']==brand]
-                source_rows.append({'브랜드':brand,'포함 점포 수':len(points),'공통 가상 상품 수':300,
+                source_rows.append({'브랜드':brand,'포함 점포 수':len(points),'TEST 상품 수':300,
                     '점포 위치 출처':', '.join(sorted({r['source_kind'] for r in points})),
                     '확인일':', '.join(sorted({r['checked_at'][:10] for r in points})),
                     '대표 출처 링크':points[0]['source_url'] if points else ''})
             st.dataframe(source_rows,hide_index=True,width='stretch')
-            st.caption('점포명·위치만 공개자료 기반입니다. 상품·가격·행사·재고는 가상이며 현재 영업 여부를 보장하지 않습니다.')
-            st.caption('그림은 상품 구분용입니다. 행사 기준일: '+provider.metadata['fixed_date'])
-    st.caption('컴퓨팅 실습 기말 과제 · v3.2.1')
+            st.caption('상품명·표기 규격·행사 표시는 공개 자료 기반입니다. 점포별 판매 여부·판매가·재고와 미확인 조건은 TEST 가정입니다.')
+            st.caption('CU·세븐일레븐·이마트24는 공식 목록, GS25는 제3자 목록을 참고했습니다. 실제 재고를 조회하지 않습니다.')
+            st.caption('그림은 구분용이며 실제 포장 사진이 아닙니다. TEST 기준일: '+provider.metadata['fixed_date'])
+    st.caption('컴퓨팅 실습 기말 과제 · v3.2.2')
 
 with st.container(key='app_header',horizontal=True,horizontal_alignment='distribute',vertical_alignment='center'):
     st.title('편의점 장바구니')
-    st.badge('TEST · 가상 데이터' if data_mode=='TEST' else 'LIVE · 확인 범위 비교',
+    st.badge('TEST · 실제 상품 / 가상 재고' if data_mode=='TEST' else 'LIVE · 확인 범위 비교',
              color='orange' if data_mode=='TEST' else 'green')
 with st.container(key='workspace_nav'):
     view=st.segmented_control('작업 화면',('상품 찾기','장바구니','추천·경로'),key='workspace_view',required=True,
@@ -287,6 +289,7 @@ if scope_issue:issues.append(scope_issue)
 walking=st.session_state['distance_basis']=='도보 경로'
 distance_label='도보 이동' if walking else '직선 이동'
 network=None;distance_matrix=None
+st.session_state.pop('last_route_legs',None)
 if walking:
     distance_matrix=()
     if calculation_stores and cart:
@@ -376,8 +379,7 @@ with workspace:
             filters,pagination=st.columns([2,1],gap='small')
             category=filters.selectbox('상품 분류',('전체',)+tuple(dict.fromkeys(p['category'] for p in catalog)),key='catalog_category',on_change=reset_gallery_page,persist_state='session')
             visible=[p for p in catalog if category=='전체' or p['category']==category]
-            # 첫 화면에서 여러 분류를 둘러볼 수 있게 섞되 각 분류의 순서는 유지한다.
-            if category=='전체':visible=sorted(visible,key=lambda p:((int(p['id'][-3:])-1)%25,(int(p['id'][-3:])-1)//25))
+            # 공개 목록에서 고른 서로 다른 분류의 실제 상품 순서를 그대로 유지한다.
             pages=(len(visible)+11)//12
             page=pagination.selectbox('목록 페이지',range(1,pages+1),key='catalog_page',format_func=lambda p:f'{p} / {pages}',persist_state='session')
             st.caption(f'{len(visible)}종 · 상품 구분용 그림 · 참고가')
@@ -400,7 +402,8 @@ with workspace:
             st.warning(f'「{mode}」 조건을 만족하는 구매안이 없습니다. 아래에서 다른 구매안을 확인할 수 있습니다.')
         if entries:
             options=[p.signature for p,_ in entries];default=options.index(chosen.signature) if chosen else 0
-            if st.session_state.get('plan_choice') not in options:st.session_state.pop('plan_choice',None)
+            if st.session_state.pop('_reset_plan_choice',False) or st.session_state.get('plan_choice') not in options:
+                st.session_state['plan_choice']=options[default]
             selected=st.selectbox('구매안',options,index=default,key='plan_choice',
                 format_func=lambda sig:next(f'{p.total:,}원 · {p.count}곳 · {p.distance_km*1000:.0f}m / '+' · '.join(labels) for p,labels in entries if p.signature==sig),persist_state='session')
             active,labels=next((p,labels) for p,labels in entries if p.signature==selected)
@@ -412,6 +415,9 @@ with workspace:
                     st.metric('방문 매장',f'{active.count}곳',width='content')
                 balance=settings.budget-active.total
                 st.caption(f'{active.count}곳 방문 · {sum(cart.values())}개 구매 · '+(f'예산 잔액 {balance:,}원' if balance>=0 else f'예산 초과 {-balance:,}원'))
+                cheapest=result.winners[MODES[0]]
+                if cheapest and cheapest.signature!=active.signature:
+                    st.caption('최저 결제액 안과 비교: '+comparison_text(active,cheapest,distance_label).removeprefix('비교안 대비 '))
             with st.expander('다른 구매안 비교'):
                 st.dataframe([{'추천 기준':' · '.join(labels),'결제액 (원)':p.total,distance_label+' (m)':round(p.distance_km*1000),'방문 수':p.count} for p,labels in entries],hide_index=True,width='stretch')
                 other=next((p for p,_ in entries if p.signature!=active.signature),None)
@@ -426,6 +432,15 @@ with workspace:
             st.subheader('방문 경로')
             st.caption('출발지 → '+describe(active)+(' → 출발지' if settings.return_home else ''))
             if walking and network:
+                st.caption('각 매장까지의 개별 거리가 아니라 방문 순서대로 합산한 총 도보 거리입니다.')
+                order=(ORIGIN,)+active.route+((ORIGIN,) if settings.return_home else ())
+                legs=network.legs(active.route,settings.return_home);cumulative=0;leg_rows=[]
+                for a,b,leg in zip(order,order[1:],legs):
+                    cumulative+=leg.distance_km
+                    label=lambda sid:'출발지' if sid==ORIGIN else store_byid[sid].name
+                    leg_rows.append({'이동 구간':label(a)+' → '+label(b),'구간 거리 (m)':round(leg.distance_km*1000),'누적 거리 (m)':round(cumulative*1000)})
+                st.dataframe(leg_rows,hide_index=True,width='stretch',alt='방문 순서에 따른 구간별 도보 거리와 누적 거리')
+                st.session_state['last_route_legs']=leg_rows
                 svg=walking_svg(network,active.route,settings.return_home)
                 st.image(svg,alt='실제 거리와 보행로 위에 출발지와 방문 순서를 표시한 도보 경로 지도',width='stretch')
                 st.caption('점선은 진입 추정 구간입니다. 현장 통행 가능 여부는 확인이 필요합니다. [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright)')
@@ -478,6 +493,15 @@ with workspace:
                 st.dataframe(observation_rows(received_snapshot.observations,received_snapshot.stores),hide_index=True,width='stretch')
                 if data_mode=='LIVE':
                     for notice in received_snapshot.messages:st.caption(notice)
+        if data_mode=='TEST' and active_products:
+            with st.expander('상품·행사 참고 자료',expanded=False):
+                facts=provider.dataset.provenance([p.id for p in active_products])
+                rows=[{'상품':f['name'],'브랜드':f['brand'],'공개 참고가':f.get('reference_price'),
+                       '공개 행사 표시':f.get('promotion') or '미확인','원본 시작일':f.get('start') or '미제공',
+                       '원본 종료일':f.get('end') or '미제공','회원·카드·교차 조건':f.get('conditions') or '미확인',
+                       '자료 확인 시각':f.get('retrieved_at') or '미제공','출처':f.get('source_page_url',f['source_url'])} for f in facts]
+                st.dataframe(rows,hide_index=True,width='stretch',column_config={'출처':st.column_config.LinkColumn('출처',display_text='원문 보기')},alt='장바구니 실제 상품명과 행사 표시를 참고한 공개 자료')
+                st.caption('참고가는 특정 매장의 확정 판매가가 아닙니다. 재고·점포별 취급과 판매가, 미확인 행사 기간·동일상품 증정 조건은 TEST 가정입니다. 실제 조건은 원본에서 미확인으로 보존합니다.')
         if data_mode=='LIVE':
             unlinked=[short_name(p.name)+': '+', '.join(b for b in brands if b not in {c.brand for c in active_links.get(p.id,())}) for p in active_products if any(b not in {c.brand for c in active_links.get(p.id,())} for b in brands)]
             if unlinked:st.caption('같은 상품 연결 미확인 — '+' / '.join(unlinked))

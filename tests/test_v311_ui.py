@@ -2,6 +2,8 @@ from pathlib import Path
 import unittest
 from streamlit.testing.v1 import AppTest
 from planner.walk_map import get_network,ORIGIN
+from planner.test_data import TestDataset
+from collections import Counter
 
 APP=Path(__file__).resolve().parents[1]/'streamlit_app.py'
 
@@ -23,11 +25,16 @@ class V311UiTests(unittest.TestCase):
     def test_gallery_filter_page_and_add_reuse_existing_flow(self):
         at=self.app()
         self.assertEqual(len([b for b in at.button if (b.key or '').startswith('catalog_add_')]),12)
-        at.selectbox(key='catalog_category').set_value('커피').run()
-        at.selectbox(key='catalog_page').set_value(3).run()
-        self.assertEqual(len([b for b in at.button if (b.key or '').startswith('catalog_add_')]),1)
-        at.button(key='catalog_add_TEST-P250').click().run()
-        self.assertTrue(any(p.id=='TEST-P250' for p in at.session_state['products']))
+        counts=Counter(p['category'] for p in TestDataset().catalog())
+        category,count=next((category,count) for category,count in counts.items() if count>24)
+        at.selectbox(key='catalog_category').set_value(category).run()
+        page=(count+11)//12
+        at.selectbox(key='catalog_page').set_value(page).run()
+        buttons=[b for b in at.button if (b.key or '').startswith('catalog_add_')]
+        self.assertEqual(len(buttons),count-(page-1)*12)
+        button=next(b for b in buttons if not b.disabled);pid=button.key.removeprefix('catalog_add_')
+        button.click().run()
+        self.assertTrue(any(p.id==pid for p in at.session_state['products']))
         self.assertIsNone(at.session_state['snapshot'])
         at.button(key='lookup_button').click().run()
         self.assertGreater(at.session_state['last_plan_count'],0);self.assertFalse(at.exception)

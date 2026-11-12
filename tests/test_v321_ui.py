@@ -5,6 +5,7 @@ import sys
 import unittest
 
 from streamlit.testing.v1 import AppTest
+from planner.walk_map import get_network,ORIGIN
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,30 +21,36 @@ class V321UiTests(unittest.TestCase):
 
     def test_mobile_cart_navigation_preserves_search_and_quantities(self):
         app = self.app()
-        app.number_input(key="qty_TEST-P003").set_value(3).run()
+        pid=app.session_state["products"][0].id
+        app.number_input(key="qty_"+pid).set_value(3).run()
         app.text_input(key="search_keyword").set_value("커피")
         app.button(key="search_button").click().run()
         app.button(key="mobile_cart_view").click().run()
 
         self.assertEqual(app.session_state["workspace_view"], "장바구니")
-        self.assertEqual(app.number_input(key="qty_TEST-P003").value, 3)
+        self.assertEqual(app.number_input(key="qty_"+pid).value, 3)
         self.assertEqual(app.session_state["search_keyword"], "커피")
         self.assertTrue(app.session_state["search_result"].candidates)
 
         app.button_group(key="workspace_view").set_value("상품 찾기").run()
         self.assertEqual(app.text_input(key="search_keyword").value, "커피")
-        self.assertEqual(app.number_input(key="qty_TEST-P003").value, 3)
+        self.assertEqual(app.number_input(key="qty_"+pid).value, 3)
         self.assertFalse(app.exception)
 
     def test_mobile_compare_keeps_default_test_recommendation(self):
         app = self.app()
+        before=app.session_state["last_summary"]["최저 결제액"]
         app.button(key="mobile_lookup_button").click().run()
 
         self.assertEqual(app.session_state["workspace_view"], "추천·경로")
         plan = app.session_state["last_summary"]["최저 결제액"]
-        self.assertEqual(plan["total"], 4100)
-        self.assertEqual(len(plan["route"]), 2)
-        self.assertAlmostEqual(plan["distance"], 0.36, delta=0.02)
+        self.assertEqual(plan,before)
+        self.assertGreater(plan["total"],0)
+        self.assertTrue(1<=len(plan["route"])<=3)
+        snapshot=app.session_state["snapshot"];origin=(app.session_state["origin_lat"],app.session_state["origin_lng"])
+        points=((ORIGIN,origin),)+tuple((s.id,(s.lat,s.lng)) for s in snapshot.stores)
+        net=get_network(tuple(sorted(points)))
+        self.assertAlmostEqual(plan["distance"],sum(l.distance_km for l in net.legs(plan["route"])))
         self.assertEqual(app.session_state["last_distance_basis"], "도보 경로")
         self.assertTrue(any(item.value == "방문 경로" for item in app.subheader))
         self.assertFalse(app.exception)
@@ -84,7 +91,9 @@ with patch.object(socket.socket, 'connect', new=guard(original_connect)), patch.
     app = AppTest.from_file(str(Path.cwd() / 'streamlit_app.py'), default_timeout=30).run()
 assert not app.exception, list(app.exception)
 assert app.session_state['data_mode'] == 'TEST'
-assert app.session_state['last_summary']['최저 결제액']['total'] == 4100
+assert app.session_state['last_summary']['최저 결제액']['total'] > 0
+assert len(app.session_state['products']) == 3
+assert len(app.session_state['snapshot'].stores) == 24
 assert 'planner.public_data' not in sys.modules
 assert 'planner.public_data_ui' not in sys.modules
 assert not attempts, attempts
